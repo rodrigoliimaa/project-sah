@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<design>
+	<namespaces>
+		<namespace prefix="leonelcasado" uri="http://www.leonelcasado.com.br/mxml"/>
+	</namespaces>
+ 
+	<categories>
+		<category id="categoriaComponentes" label="Componentes(Leonel Casado)" defaultExpand="true"/>
+	</categories>
+ 
+	<components>
+		<component name="AutoComplete" displayName="AutoComplete" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="BarraLayoutView" displayName="BarraLayoutView" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="CapturaImagem" displayName="CapturaImagem" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="Cep" displayName="CEP" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="Cpf_Cnpj" displayName="CPF/CNPJ" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="Cnpj" displayName="CNPJ" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="Cpf" displayName="CPF" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="Cns" displayName="CNS" namespace="leonelcasado" category="categoriaComponentes"/>		
+		<component name="CustomButton" displayName="CustomButton" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="CustomCheckBox" displayName="CustomCheckBox" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="CustomComboBox" displayName="CustomComboBox" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<textfield id="selectedValue" name="Selected Value:" />
+				<combo id="isAddSelecione" name="Add Selecione:" multiline="false/true" />
+				<combo id="isAddTodos" name="Add Todos:" multiline="false/true" />
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="CustomComboBoxCheck" displayName="CustomComboBoxCheck" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="CustomComboBoxCrud" displayName="CustomComboBoxCrud" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<textfield id="selectedValue" name="Selected Value:" />
+				<combo id="includeInLayoutBtnAdicionar" name="Exibir Botão Adicionar:" multiline="false/true" />
+				<combo id="includeInLayoutBtnAlterar" name="Exibir Botão Alterar" multiline="false/true" />
+				<combo id="includeInLayoutBtnExcluir" name="Exibir Botão Excluir:" multiline="false/true" />
+				<combo id="isAddSelecione" name="Add Selecione:" multiline="false/true" />
+				<combo id="isAddTodos" name="Add Todos:" multiline="false/true" />
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="CustomComboBoxMultSelection" displayName="CustomComboBoxMultSelection" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<combo id="isAddSelecione" name="Add Selecione:" multiline="false/true" />
+				<combo id="isAddTodos" name="Add Todos:" multiline="false/true" />
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="CustomComboBoxTree" displayName="CustomComboBoxTree" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="CustomDataGrid" displayName="CustomDataGrid" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="CustomDataGridPesquisaAvancada" displayName="CustomDataGridPesquisaAvancada" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="CustomDataGridPesquisaDinamica" displayName="CustomDataGridPesquisaDinamica" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="CustomFieldSet" displayName="CustomFieldSet" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="CustomDateField" displayName="CustomDateField" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="CustomImagem" displayName="CustomImagem" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="CustomLabel" displayName="CustomLabel" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="CustomSearchTextInput" displayName="CustomSearchTextInput" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="CustomTextArea" displayName="CustomTextArea" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<combo id="isUpperCase" name="Upper Case:" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="CustomTextInput" displayName="CustomTextInput" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<combo id="isUpperCase" name="Upper Case:" multiline="false/true" />
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="Danfe" displayName="Danfe" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="Data" displayName="Data" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="DataGridExporter" displayName="DataGridExporter" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<textfield id="excelExport" name="Arquivo Excel:" />
+				<textfield id="pdfExport" name="Arquivo PDF:" />
+			</mxmlProperties>
+		</component>
+		<component name="Decimal" displayName="Decimal" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="DecimalPrecisao" displayName="Decimal Precisão" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="Documentos" displayName="Documentos(IE/CPF/CNPJ)" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="Efeitos" displayName="Efeitos" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="Email" displayName="E-mail" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="FieldSet" displayName="FieldSet" namespace="leonelcasado" category="categoriaComponentes"/>		
+		<component name="FileUpload" displayName="FileUpload" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<textfield id="titulo" name="Label:" />
+				<combo id="required" name="Campo obrigatório:" multiline="false/true" />
+				<textfield id="tamArquivoBytes" name="Tamanho do Arquivo(Bytes):" />
+			</mxmlProperties>
+		</component>
+		<component name="Ie_Cnpj" displayName="IE/CNPJ" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="Ie" displayName="IE" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="IFrame" displayName="IFrame" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="IFrameCustom" displayName="IFrameCustom" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="MensagensSistemaList" displayName="MensagensSistemaList" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="ModuleLoaderWithProgress" displayName="ModuleLoaderWithProgress" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="Municipio" displayName="Municipio" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="Numero" displayName="Número" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="Placa" displayName="Placa" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="SpringLoadedTree" displayName="SpringLoadedTree" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="Telefone" displayName="Telefone" namespace="leonelcasado" category="categoriaComponentes">
+			<mxmlProperties>
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+		<component name="Uf" displayName="Uf" namespace="leonelcasado" category="categoriaComponentes"> 
+			<mxmlProperties>
+				<combo id="labelView" name="Label View:" multiline="uf/nome" />
+				<textfield id="selectedUFValue" name="Selected UF Value:" />
+				<combo id="isNaoMudarFoco" name="Não Mudar Foco(Enter):" multiline="false/true" />
+			</mxmlProperties>
+		</component>
+
+		<component name="MDIWindow" displayName="MDIWindow" namespace="leonelcasado" category="categoriaComponentes"/>
+		<component name="MDICanvas" displayName="MDICanvas" namespace="leonelcasado" category="categoriaComponentes"/>
+	</components>
+</design>

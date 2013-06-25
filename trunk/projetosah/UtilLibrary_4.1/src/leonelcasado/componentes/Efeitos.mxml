@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml">
+	<mx:Script>
+	    <![CDATA[
+	        import mx.effects.easing.Bounce;
+	    ]]>
+	</mx:Script>
+	
+	<!--mx:Zoom id="zoom" easingFunction="Bounce.easeOut" /-->
+	
+    <!--mx:SeriesInterpolate id="Interpolate" elementOffset="10"/-->
+	<mx:WipeRight id="WipeRight" duration="500"/>
+	<mx:WipeLeft id="WipeLeft" duration="500"/>
+	<mx:WipeUp id="WipeUp" duration="500"/>
+	<mx:Iris id="IrisIn" duration="500" showTarget="true"/>
+	<mx:Iris id="IrisOut" duration="500" showTarget="false"/>
+</mx:Canvas>

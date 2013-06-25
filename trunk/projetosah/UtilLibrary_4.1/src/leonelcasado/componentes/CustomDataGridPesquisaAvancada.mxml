@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+	width="100%" height="100%" verticalGap="3"
+	creationComplete="init()" xmlns:componentes="leonelcasado.componentes.*">
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.dataGridClasses.DataGridColumn;
+			import mx.core.Container;
+			
+			[Bindable] public var includeInLayoutBtnManterRegistro:Boolean=true;
+			[Bindable] public var includeInLayoutPaginacao:Boolean=true;
+			[Bindable] public var includeInLayoutTotalRegistro:Boolean=true;
+			[Bindable] public var moduleContainer:Container;
+
+			private var _arrayPaginacao:ArrayCollection=new ArrayCollection();
+			private var quantidadeItemPaginacao:uint;
+			private var indice:uint;
+			private var maximo:uint;
+			public var qtdeObjetos:uint;
+			
+			private function init():void{
+				getQuantidadeItemPaginacao();
+			}
+			
+			public function setDataGrid(customDataProvider:Array):void{
+				dtgCustom.dataProvider=customDataProvider;
+			}		
+			
+			public function addColuna(headerText:String,dataField:String,widhtColuna:Number=0,
+				labelFunction:Function=null,visible:Boolean=true,textAlign:String=null,editable:Boolean=false,itemRenderer:*=null):void{
+				var colunas:Array = dtgCustom.columns;
+				colunas.push(criarColuna(headerText,dataField,widhtColuna,labelFunction,visible,textAlign,editable,itemRenderer));
+				dtgCustom.columns = colunas; 
+			}
+			
+			private function criarColuna(headerText:String,dataField:String,widhtColuna:Number, 
+				labelFunction:Function,visible:Boolean,textAlign:String,editable:Boolean,itemRenderer:*):DataGridColumn{
+				var novaColuna:DataGridColumn = new DataGridColumn();
+				novaColuna.headerText = headerText;
+				novaColuna.dataField = dataField;
+				novaColuna.visible=visible;
+				//-----------------------------------
+				widhtColuna>0?novaColuna.width=widhtColuna:null;
+				labelFunction!=null?novaColuna.labelFunction=labelFunction:null;
+				textAlign!=null?novaColuna.setStyle("textAlign",textAlign):null;
+				//-----------------------------------
+				novaColuna.editable = editable;
+				novaColuna.itemRenderer=itemRenderer;
+				return novaColuna;
+			}
+			
+			public function habilitarPesquisaAvancada():void{
+				if (boxPesquisaAvancada.width<=0){
+					boxPesquisaAvancada.width=220;
+				}else if (boxPesquisaAvancada.width>=0){
+					boxPesquisaAvancada.width=0;
+				}
+			}
+
+			private function getQuantidadeItemPaginacao():void{
+				quantidadeItemPaginacao=Number(cmbQuantidadeItemPaginacao.selectedLabel);
+				inicio();
+			}
+			
+			public function get arrayPaginacao():ArrayCollection{
+				return this._arrayPaginacao;
+			}
+			
+			public function set arrayPaginacao(lista:ArrayCollection):void{
+				this._arrayPaginacao=lista;
+				controleBotoesPaginacao();
+			}
+			
+			public function controleBotoesPaginacao():void{
+				if(this.qtdeObjetos>0){
+					var tamPag:uint=_arrayPaginacao.length;
+					//------------------------------------------------				
+					if ((tamPag < quantidadeItemPaginacao) || (this.qtdeObjetos == (this.indice + this.maximo))){
+						btnProximoRegistro.enabled=false;
+						btnUltimoRegistro.enabled=false;
+					}else{
+						btnProximoRegistro.enabled=true;
+						btnUltimoRegistro.enabled=true;
+					}
+					
+					if (this.indice == 0){
+						btnPrimeiroRegistro.enabled=false;
+						btnAnteriorRegistro.enabled=false;
+						btnProximoRegistro.enabled=true;
+						btnUltimoRegistro.enabled=true;
+					}else{
+						btnPrimeiroRegistro.enabled=true;
+						btnAnteriorRegistro.enabled=true;					
+					}
+					
+					if (this.qtdeObjetos > 0)var temp1:int=this.indice + 1;
+					var temp2:int=this.indice + this.maximo;
+					if (temp2 > this.qtdeObjetos)temp2=this.qtdeObjetos;
+					lblVisualizacao.text=temp1.toString() + " - " + temp2.toString()+" de "+this.qtdeObjetos.toString();
+					
+				}
+			}
+			
+			public function inicio():void{
+				this.indice=0;
+				this.maximo=quantidadeItemPaginacao;
+			}
+			
+			public function retroceder():void{
+				if ((this.indice - quantidadeItemPaginacao) <= 0)
+					this.indice=0;
+				else
+					this.indice=this.indice - quantidadeItemPaginacao;
+				this.maximo=quantidadeItemPaginacao;
+			}
+			
+			public function avancar():void{
+				this.indice=this.indice + quantidadeItemPaginacao;
+				this.maximo=quantidadeItemPaginacao;
+			}
+			
+			public function fim():void{
+				var numReal:Number=this.qtdeObjetos/quantidadeItemPaginacao;
+				var numInteiro:uint=numReal;
+				var numResto:Number=(numReal - numInteiro)*quantidadeItemPaginacao;
+				//-----------------------------------------------------------
+				this.indice=this.qtdeObjetos - numResto;
+				this.maximo=this.qtdeObjetos;
+			}						
+		]]>
+	</fx:Script>
+	<mx:Box width="100%" height="100%">
+		<mx:DataGrid id="dtgCustom" width="100%" height="100%" rowHeight="25" itemRenderer="mx.controls.Label"/>
+		<mx:HBox width="100%" borderStyle="none" horizontalGap="2" verticalAlign="middle">
+			<leonelcasado:CustomButton id="btnPrimeiroRegistro" width="28" height="25" icon="{Imagens.iconPlayFirst}"
+				includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}" enabled="false"/>
+			<leonelcasado:CustomButton id="btnAnteriorRegistro" width="28" height="25" icon="{Imagens.iconPlayBack}"
+				includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}" enabled="false"/>
+			<mx:VRule height="25" includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"/>
+			<mx:ComboBox id="cmbQuantidadeItemPaginacao" width="50" height="25" fontWeight="bold"
+				includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"
+				change="getQuantidadeItemPaginacao()">
+				<mx:dataProvider>
+					<fx:Array>
+						<fx:Object label="10"/>
+						<fx:Object label="20"/>
+						<fx:Object label="50"/>
+						<fx:Object label="100"/>
+					</fx:Array>
+				</mx:dataProvider>
+			</mx:ComboBox>
+			<mx:VRule height="25" includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"/>
+			<leonelcasado:CustomButton id="btnProximoRegistro" width="28" height="25" icon="{Imagens.iconPlay}"
+				includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}" enabled="false"/>
+			<leonelcasado:CustomButton id="btnUltimoRegistro" width="28" height="25" icon="{Imagens.iconPlayForward}"
+				includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}" enabled="false"/>
+			<leonelcasado:CustomButton id="btnAtualizarRegistro" width="28" height="25" icon="{Imagens.iconReload}"
+			includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"/>
+			<mx:VRule height="25" includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"/>
+			<leonelcasado:CustomButton id="btnAlterarRegistro" width="28" height="25" icon="{Imagens.iconEdit}"
+				includeInLayout="{includeInLayoutBtnManterRegistro}" visible="{includeInLayoutBtnManterRegistro}"/>
+			<leonelcasado:CustomButton id="btnExcluirRegistro" width="28" height="25" icon="{Imagens.iconDelete}"
+				includeInLayout="{includeInLayoutBtnManterRegistro}" visible="{includeInLayoutBtnManterRegistro}"/>
+			<mx:Label text="Visualizando" includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"/>
+			<mx:Label id="lblVisualizacao" text="0 - 0 de 0" includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"/>
+			<mx:Spacer width="100%"/>
+			<mx:Label text="{'Total de Registro(s): '+ dtgCustom.dataProvider.length}" fontWeight="bold"
+				includeInLayout="{includeInLayoutTotalRegistro}" visible="{includeInLayoutTotalRegistro}"/>
+			<leonelcasado:CustomButton id="btnPesquisaAvancada" label="Pesquisa Avançada" click="habilitarPesquisaAvancada()"/>
+		</mx:HBox>	
+	</mx:Box>
+	<mx:Box id="boxPesquisaAvancada" width="0">
+		<componentes:FormularioPesquisaAvancada id="formularioPesquisaAvancada" tela="{this}" width="100%" height="100%"/>
+	</mx:Box>
+</mx:HBox>

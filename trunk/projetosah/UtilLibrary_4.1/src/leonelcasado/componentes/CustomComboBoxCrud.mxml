@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		 width="100%" verticalAlign="middle" horizontalGap="5">
+	<fx:Metadata>
+		[Event(name="selecionarItem", type="flash.events.Event")]
+		[Event(name="salvarItem", type="flash.events.Event")]
+		[Event(name="alterarItem", type="flash.events.Event")]
+		[Event(name="excluirItem", type="flash.events.Event")]
+	</fx:Metadata>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.events.CloseEvent;
+
+			[Bindable] public var includeInLayoutBtnNovo:Boolean=true;
+			[Bindable] public var includeInLayoutBtnAlterar:Boolean=true;
+			[Bindable] public var includeInLayoutBtnExcluir:Boolean=true;
+			[Bindable] public var includeInLayoutBtnAtualizar:Boolean=true;
+			
+			[Bindable] public var styleButtons:String;			
+			[Bindable] public var customLabelField:String;
+			[Bindable] public var prompt:String;
+			
+			[Bindable] public var isEditable:Boolean=false;
+			[Bindable] public var isAddSelecione:Boolean=true;
+			[Bindable] public var isAddTodos:Boolean=false;
+			[Bindable] public var isNaoMudarFoco:Boolean=false;
+			[Bindable] public var isUpperCase:Boolean=true;
+			[Bindable] public var isOrdenarLista:Boolean=false;
+			[Bindable] public var isOrdenacaoDesc:Boolean=false;
+			[Bindable] public var isAdicionarAlterar:Boolean=false;
+
+			[Bindable] public var parentAlert:Sprite=null;
+			
+			public var itemSelecionado:Object;
+			private var eventoDisparado:String;
+			private var classeEventoListar:*;
+			private var eventoListar:*;
+
+			public function listar(classeEvento:*,evento:String,telaResult:*=null):void{
+				eventoDisparado="listar";
+				classeEventoListar=classeEvento;
+				eventoListar=evento;
+				new classeEvento(evento,(telaResult==null?this:telaResult)).dispatch();
+			}
+			
+			public function inserir(classeEvento:*,evento:String,obj:*,telaResult:*=null):void{
+				if((cmbCrud.text!="SELECIONE" && cmbCrud.text!="TODOS") && cmbCrud.text.length>0){
+					eventoDisparado="inserir";
+					new classeEvento(evento,(telaResult==null?this:telaResult),obj).dispatch();
+					restaurarComboBoxSelecao();
+				}else{
+					cmbCrud.selectedIndex=-1;
+				}
+			}
+			
+			public function alterar(classeEvento:*,evento:String,obj:*,telaResult:*=null):void{
+				if((cmbCrud.text!="SELECIONE" && cmbCrud.text!="TODOS") && cmbCrud.text.length>0){
+					eventoDisparado="alterar";
+					new classeEvento(evento,(telaResult==null?this:telaResult),obj).dispatch();
+					restaurarComboBoxSelecao();
+				}else{
+					Alerta.info('Selecione um registro.',"Atenção",null,parentAlert);
+				}
+			}
+						
+			public function excluir(classeEvento:*,evento:String,obj:*,telaResult:*=null):void{
+				if((cmbCrud.text!="SELECIONE" && cmbCrud.text!="TODOS") && cmbCrud.text.length>0){
+					var tela:CustomComboBoxCrud=this;
+					Alerta.confirm('Deseja excluir o registro selecionado?',
+						function(event:CloseEvent):void{
+							if(event.detail == Alert.YES){
+								eventoDisparado="excluir";
+								new classeEvento(evento,(telaResult==null?tela:telaResult),obj).dispatch();
+								restaurarComboBoxSelecao();
+							}
+						}
+					,null,2,parentAlert);
+				}
+			}
+
+			public function result(data:Object,event:Event):void{
+				if(eventoDisparado=="listar"){					
+					cmbCrud.dataProvider=data.result as ArrayCollection;
+					return;
+				}else if(eventoDisparado=="inserir"){
+					alteraState('sttNovo');
+				}else if(eventoDisparado=="alterar"){
+					alteraState('sttNovo');
+				}
+				listar(classeEventoListar,eventoListar);
+			}
+			
+			private function obterItemSelecionado():void{
+				itemSelecionado = cmbCrud.selectedItem;
+			}
+			
+			protected function onSelecionarItem():void{
+				this.dispatchEvent(new Event("selecionarItem"));
+			}
+			
+			protected function onSalvarItem():void{
+				this.dispatchEvent(new Event("salvarItem"));
+			}
+			
+			protected function onAlterarItem():void{
+				this.dispatchEvent(new Event("alterarItem"));
+			}
+			
+			protected function onExcluirItem():void{
+				this.dispatchEvent(new Event("excluirItem"));
+			}
+			
+			private function alteraState(state:String):void{
+				this.currentState=state;
+				switch(state){
+					case 'sttSalvar':
+						cmbCrud.editable=true;
+						cmbCrud.text="";
+						cmbCrud.setFocus();
+						break;
+					case 'sttNovo':
+						cmbCrud.editable=false;
+						cmbCrud.selectedIndex=0;
+						cmbCrud.initialize();
+						break;
+					case 'sttAlterar':
+						cmbCrud.editable=true;
+						cmbCrud.setFocus();
+						break;
+				}
+			}
+			
+			public function restaurarComboBoxSelecao():void{
+				this.currentState='sttNovo';
+				cmbCrud.editable=false;
+				cmbCrud.selectedIndex=0;
+			}
+		]]>
+	</fx:Script>
+	<mx:states>
+		<s:State name="sttNovo"/>
+		<s:State name="sttSalvar"/>
+		<s:State name="sttAlterar"/>
+	</mx:states>
+	<leonelcasado:CustomComboBox id="cmbCrud" width="100%" editable="{isEditable}" labelField="{customLabelField}"
+		isAddSelecione="{isAddSelecione}" isAddTodos="{isAddTodos}" isNaoMudarFoco="{isNaoMudarFoco}"
+		isOrdenacaoDesc="{isOrdenacaoDesc}" isOrdenarLista="{isOrdenarLista}" isUpperCase="{isUpperCase}"
+		close="obterItemSelecionado()" change="onSelecionarItem()" prompt="{prompt}"/>
+	
+	<leonelcasado:CustomButton id="btnNovo" width="28" height="25" styleName="{styleButtons}" icon="{Imagens.iconAdd}" 
+		visible="{includeInLayoutBtnNovo}" includeInLayout="{includeInLayoutBtnNovo}"
+		click="alteraState('sttSalvar')" enter="alteraState('sttSalvar')" includeIn="sttNovo"/>
+	<leonelcasado:CustomButton id="btnAdicionar" width="28" height="25" styleName="{styleButtons}" icon="{Imagens.iconSave}"
+		click="onSalvarItem()" enter="onSalvarItem()" includeIn="sttSalvar"/>
+	
+	<mx:VRule height="{cmbCrud.height}" includeIn="sttNovo" visible="{includeInLayoutBtnAlterar}" includeInLayout="{includeInLayoutBtnAlterar}"/>
+	<leonelcasado:CustomButton id="btnAlterar" width="28" height="25" styleName="{styleButtons}" icon="{Imagens.iconEdit}"
+		visible="{includeInLayoutBtnAlterar}" includeInLayout="{includeInLayoutBtnAlterar}"
+		click="alteraState('sttAlterar')" enter="alteraState('sttAlterar')" includeIn="sttNovo"/>
+	<leonelcasado:CustomButton id="btnAdicionar2" width="28" height="25" styleName="{styleButtons}" icon="{Imagens.iconSave}"
+		click="onAlterarItem()" enter="onAlterarItem()" includeIn="sttAlterar"/>
+	
+	<mx:VRule height="{cmbCrud.height}" visible="{includeInLayoutBtnExcluir}" includeInLayout="{includeInLayoutBtnExcluir}"/>
+	<leonelcasado:CustomButton id="btnExcluir" width="28" height="25" styleName="{styleButtons}" icon="{Imagens.iconDelete}"
+   		visible="{includeInLayoutBtnExcluir}" includeInLayout="{includeInLayoutBtnExcluir}" click="onExcluirItem()" enter="onExcluirItem()"/>
+	
+	<mx:VRule height="{cmbCrud.height}" visible="{includeInLayoutBtnAtualizar}" includeInLayout="{includeInLayoutBtnAtualizar}"/>
+	<leonelcasado:CustomButton id="btnAtualizar" width="28" height="25" styleName="{styleButtons}" icon="{Imagens.iconReload}"
+		visible="{includeInLayoutBtnAtualizar}" includeInLayout="{includeInLayoutBtnAtualizar}" click="alteraState('sttNovo')" enter="alteraState('sttNovo')"/>
+</mx:HBox>

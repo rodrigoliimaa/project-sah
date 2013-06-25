@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	horizontalAlign="center" verticalAlign="middle"
+	backgroundAlpha="0.5" cornerRadius="5" backgroundColor="#656565"
+	verticalGap="0"	initialize="init()" show="init()">
+	<fx:Script>
+		<![CDATA[
+			import mx.graphics.ImageSnapshot;
+			//import mx.graphics.codec.JPEGEncoder;
+			
+			[Bindable]private var _source:Object=null;
+			private var camera:Camera;
+			public var imgByte:ByteArray;
+			
+			
+			public function get source():Object{
+				return _source;
+			}
+
+			public function set source(value:Object):void{
+				_source = BitmapEncoder.decodeByteArray(value as ByteArray);
+			}
+
+			private function init():void{				
+				if(!Camera.isSupported)return;
+				cmbWebCam.dataProvider=Camera.names;
+				cmbWebCam.selectedIndex=-1;
+			}
+			
+			public function inicializarCamera():void{
+				this.currentState="stgImagem";				
+				img.source=null;//Imagens.iconImagem;
+				source=null;
+				imgByte=null;
+			}
+			
+			private function loadCamera():void{
+				if(!Camera.isSupported)return;
+				this.currentState="stgCapturar";
+				var cameraName:String = cmbWebCam.selectedIndex.toString();
+				camera = Camera.getCamera(cameraName);
+				webCam.attachCamera(camera);
+			}
+			
+			//http://flex.eduardokraus.com/capturar-imagem-da-webcam-e-salvar-com-php
+			//http://www.actionscript.org/forums/showthread.php3?t=131547
+			private function capturarImagem():void{
+				//Primeiro criamos a imagem Bitmap da câmera
+				var imageBitmapData:BitmapData = ImageSnapshot.captureBitmapData(webCam);
+				//img.source=new Bitmap(imageBitmapData);
+				img.source=imageBitmapData;
+				
+				imgByte=BitmapEncoder.encodeByteArray(imageBitmapData);
+				this.currentState="stgImagem";
+	
+				//Depois transformamos essa imagem em bytecodes
+				//var encoder:JPEGEncoder = new JPEGEncoder();
+				//imagemCapturada = encoder.encode(imageBitmapData);
+					
+				//FileReference é usado para salvar a imagem no disco
+				//var myFileRef:FileReference = new FileReference();
+				//myFileRef.save(rawBytes,"WebCam.jpg");
+				webCam.attachCamera(null); 
+			}
+		]]>
+	</fx:Script>
+	<mx:states>
+		<s:State name="stgImagem"/>
+		<s:State name="stgCapturar"/>
+	</mx:states>
+	<mx:ComboBox id="cmbWebCam" labelField="name" prompt="SELECIONE" width="100%"/>
+	<s:Image id="img" source="{_source}" width="180" height="167" includeIn="stgImagem"/>
+	<mx:VideoDisplay id="webCam" width="180" height="167" includeIn="stgCapturar" borderStyle="none"/>
+	<mx:Button icon.stgImagem="{Imagens.iconCam}" click.stgImagem="loadCamera()" width="100%"
+		icon.stgCapturar="{Imagens.iconSave}" click.stgCapturar="capturarImagem()"/>	
+</mx:Box>
