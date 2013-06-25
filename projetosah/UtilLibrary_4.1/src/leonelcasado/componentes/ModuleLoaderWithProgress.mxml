@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:ModuleLoader xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	width="100%" height="100%" horizontalAlign="center" verticalAlign="middle"
+	ready="this.removeAllChildren()" unload="this.removeAllChildren()"
+	error="{onError(event)}" loading="this.progressBar.visible = true">
+	<fx:Script>
+		<![CDATA[			
+			import mx.events.ModuleEvent;
+			
+			private function onError(event:ModuleEvent):void{
+				Alerta.error(event.errorText);
+			}
+		]]>
+	</fx:Script>
+	<mx:Box	backgroundAlpha="0"	horizontalCenter="0" verticalCenter="0">
+		<mx:ProgressBar id="progressBar" source="{this}" visible="false"/>
+	</mx:Box>
+</mx:ModuleLoader>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+	title="Mensagens" layout="absolute" styleName="titleWindowComClose"
+	width="500" paddingLeft="50" borderAlpha="1"
+	horizontalScrollPolicy="off" verticalScrollPolicy="off">
+
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.core.FlexGlobals;
+			import mx.managers.PopUpManager;
+			
+			[Bindable] public var mensagem:String;
+			[Bindable] public var mensagens:ArrayCollection = new ArrayCollection();
+			[Bindable] public var detalhes:String = "";
+			
+			
+			public static function show(mensagens:ArrayCollection, titulo:String=null, stackTrace:String=null):MensagensSistema {
+				var parentApp:DisplayObject = FlexGlobals.topLevelApplication as DisplayObject;
+				var ms:MensagensSistema = PopUpManager.createPopUp(parentApp,MensagensSistema, true) as MensagensSistema;
+				PopUpManager.centerPopUp(ms);
+				ms.mensagem = titulo;				
+				ms.mensagens = mensagens;
+				ms.detalhes = stackTrace;
+				ms.idMensagensList.invalidateDisplayList();
+				ms.invalidateDisplayList();
+				ms.botaoFechar.setFocus();
+				return ms;
+			}
+			
+			public function close():void {
+				PopUpManager.removePopUp(this);
+			}
+						
+			private function visualizarDetalhes():void{
+				textAreaDetalhes.visible=!textAreaDetalhes.visible;
+				textAreaDetalhes.includeInLayout=!textAreaDetalhes.includeInLayout;
+			}
+		]]>
+	</fx:Script>
+	<mx:states>
+		<s:State name="default"/>
+		<s:State name="detalhes"/>
+	</mx:states>
+
+	<mx:VBox id="canvasPrincipal" width="100%" height="100%" horizontalScrollPolicy="off" verticalScrollPolicy="off">
+		<!--mx:Label id="idTitulo" text="{mensagem}" visible="{mensagem != ''}" toolTip="{mensagem}" fontWeight="bold" fontSize="11" fontFamily="arial"/-->
+		<leonelcasado:MensagensSistemaList id="idMensagensList" dataProvider="{mensagens}" width="100%" height="100%"/>
+		<leonelcasado:CustomTextArea id="textAreaDetalhes" text="{detalhes}" width="100%" height="100%" editable="false" color="#F4331F"
+			visible="false" includeInLayout="false" moveEffect="Move"/>
+	</mx:VBox>	
+	<mx:ControlBar>
+		<mx:Spacer width="100%"/>
+		<leonelcasado:CustomButton id="buttonDetalhes" label.default="Detalhes &gt;&gt;" label.detalhes="&lt;&lt; Detalhes"
+			click="visualizarDetalhes()"/>
+		<leonelcasado:CustomButton id="botaoFechar" label="Fechar" click="{close()}" textAlign="center" styleName=""/>
+	</mx:ControlBar>
+</mx:TitleWindow>

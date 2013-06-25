@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		 width="100%">
+	<fx:Script>
+		<![CDATA[
+			import flash.events.Event;
+			import flash.events.IOErrorEvent;
+			import flash.events.ProgressEvent;
+			import flash.net.FileFilter;
+			import flash.net.FileReference;
+			import flash.net.URLRequest;
+			import flash.net.URLRequestMethod;
+			import flash.net.URLVariables;
+			import flash.net.navigateToURL;
+			
+			import mx.rpc.events.ResultEvent;
+			
+			[Bindable] public var titulo:String;
+			[Bindable] public var required:Boolean=false;
+			[Bindable] public var tamArquivoBytes:uint=1048576;
+			private var arquivo:FileReference;			
+			public var urlServidor:String;
+			public var nomeServlet:String;
+			public var diretorioServidor:String;
+			
+			public static var METHOD_ATTACHMENT:String='attachment';
+
+			/**
+			 * Funções para Upload
+			 */
+			public function procurarArquivo(url:String=null):void{
+				arquivo = new FileReference();
+				
+				//Ao Selecionar....
+				arquivo.addEventListener(Event.SELECT,
+					function(event:Event):void{
+						txtArquivo.text = arquivo.name;
+						arquivo.load();
+					} 
+				);
+				
+				//Enquanto estiver fazendo o Upload..
+				arquivo.addEventListener(ProgressEvent.PROGRESS,
+					function(event:ProgressEvent):void{
+						var numPerc:Number = Math.round((Number(event.bytesLoaded) / Number(event.bytesTotal)) * 100);
+						//titleWindow.status = "Carregando Imagem..."+numPerc+"%";
+					} 
+				);
+				
+				//Ao ocorrer um erro.....
+				arquivo.addEventListener(IOErrorEvent.IO_ERROR, 
+					function(event:IOErrorEvent):void{
+						//Alerta.error("Ocurreu um erro ao Realizar o Upload \nDetalhes: "+event.text);
+					}
+				);
+				
+				//Ao Terminar o Upload.....
+				arquivo.addEventListener(Event.COMPLETE, 
+					function(event:Event):void{
+						//Alerta.success("Upload efetuado com sucesso!");
+						viewPDF(arquivo.data,url);
+					}
+				);
+				
+				//utilizando filtro para upload somente de imagem 
+				var tipos:FileFilter = new FileFilter("Arquivos *.pdf; *.doc; *.docx; *.xls; *.xlsx; *.jpg; *.jpeg; *.gif; *.png"
+					,"*.pdf; *.doc; *.docx; *.xls; *.xlsx; *.jpg; *.jpeg; *.gif; *.png");
+				var tiposArray:Array = new Array(tipos);
+				arquivo.browse(tiposArray);
+			}
+			
+			public function loadArquivo():Object{
+				var obj:Object=new Object;
+				obj.name=arquivo.name;
+				obj.size=arquivo.size;
+				obj.type=arquivo.type;
+				obj.data=arquivo.data;
+				obj.creator=arquivo.creator;
+				obj.creationDate=arquivo.creationDate;
+				obj.modificationDate=arquivo.modificationDate;
+				return obj;
+			}
+			
+			public function uploadArquivo():void{
+				if (txtArquivo.text != "" && arquivo != null){
+					if (arquivo.size <= tamArquivoBytes){
+						var request:URLRequest = new URLRequest;
+						request.url=urlServidor+"/"+nomeServlet;
+						//-------------------------------------
+						var vars:URLVariables  = new URLVariables();
+						vars.diretorioServidor=diretorioServidor;
+						vars.arquivoImagem = txtArquivo.text;
+						//-------------------------------------
+						request.data = vars;
+						request.method = URLRequestMethod.GET;
+						//-------------------------------------
+						arquivo.upload(request);	
+					}else{
+						Alerta.info("O tamanho do arquivo excedeu o limite máximo permitido");
+					}
+				}else{
+					Alerta.info("Selecione um arquivo"); 	
+				}
+			}	
+
+			public function viewPDF(pdfBinary:ByteArray,url:String,method:String=null):void{
+				var header:URLRequestHeader = new URLRequestHeader("Content-type","application/octet-stream");
+				var urlString:String = url;
+				if(method != null)
+					urlString += "?method=attachment&name=arquivo.pdf";
+				var sendRequest:URLRequest = new URLRequest(urlString);
+				sendRequest.requestHeaders.push(header);
+				sendRequest.method = URLRequestMethod.POST;
+				sendRequest.data = pdfBinary;
+				navigateToURL(sendRequest,"_blank");
+			}
+			
+		]]>
+	</fx:Script>
+	<leonelcasado:CustomLabel text="{titulo}" required="{required}"
+		includeInLayout="{titulo==null?false:true}" visible="{titulo==null?false:true}"/>
+	<leonelcasado:CustomTextInput id="txtArquivo" width="100%" isUpperCase="false"/>
+</mx:HBox>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:List xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	iconFunction="getIconDetalhe" labelField="detalhe"
+	wordWrap="true" borderColor="white">
+	<fx:Script>
+		<![CDATA[
+			private function getIconDetalhe(obj:Object):Class {
+				switch(obj.tipo) {
+					case "INFO":
+						return Imagens.iconInfo;
+					case "ALERT":
+						return Imagens.iconAlert;
+					case "ERRO":
+						return Imagens.iconErro;
+					case "FATAL":
+						return Imagens.iconFatal;
+					case "SECURITY":
+						return Imagens.iconSecurity;
+					default:
+						return Imagens.iconInfo;
+				}
+				return iconInfo;
+			}			
+		]]>
+	</fx:Script>
+</mx:List>

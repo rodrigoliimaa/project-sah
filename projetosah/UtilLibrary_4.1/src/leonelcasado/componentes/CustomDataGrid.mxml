@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+	width="100%" height="100%" verticalGap="3"
+	creationComplete="init()">
+	<fx:Metadata>
+		[Event(name="change", type="flash.events.Event")]
+		
+		[Event(name="primeiroRegistro", type="flash.events.Event")]
+		[Event(name="registroAlterior", type="flash.events.Event")]
+		[Event(name="proximoRegistro", type="flash.events.Event")]
+		[Event(name="ultimoRegistro", type="flash.events.Event")]
+		
+		[Event(name="selecionarItem", type="flash.events.Event")]
+		[Event(name="novoRegistro", type="flash.events.Event")]
+		[Event(name="alterarRegistro", type="flash.events.Event")]
+		[Event(name="excluirRegistro", type="flash.events.Event")]
+		[Event(name="visualizarRegistro", type="flash.events.Event")]
+	</fx:Metadata>
+	<fx:Script>
+		<![CDATA[
+			import flashx.textLayout.tlf_internal;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Label;
+			import mx.controls.dataGridClasses.DataGridColumn;
+			import mx.core.Container;
+
+			[Bindable] public var labelFunction:Function;
+			
+			[Bindable] public var horizontalScrollCustomDataGrid:String;//="off";			
+			[Bindable] public var includeInLayoutBtnInserirRegistro:Boolean=false;
+			[Bindable] public var includeInLayoutBtnAlterarRegistro:Boolean=false;
+			[Bindable] public var includeInLayoutBtnExcluirRegistro:Boolean=true;
+			[Bindable] public var includeInLayoutBtnVisualizarRegistro:Boolean=false;
+			[Bindable] public var includeInLayoutPaginacao:Boolean=true;
+			[Bindable] public var includeInLayoutTotalRegistro:Boolean=true;
+			[Bindable] public var editable:Boolean=false;
+			[Bindable] public var allowMultipleSelection:Boolean=false;
+
+			public var colunas:Array=[];
+			public var indice:uint;
+			public var maximo:uint;
+			
+			public const LEFT:String="left";
+			public const RIGHT:String="right";
+			public const CENTER:String="center";
+			
+			private var _arrayPaginacao:ArrayCollection=new ArrayCollection();
+			//[Bindable] public var _dataProvider:ArrayCollection=new ArrayCollection();
+			[Bindable] private var quantidadeItemPaginacao:uint;
+			[Bindable] public var qtdObjetos:uint;
+			
+			private function init():void{
+				cmbQuantidadeItemPaginacao.selectedIndex=0;
+				getQuantidadeItemPaginacao();
+			}
+
+			public function setDataGridPaginado(qtdTotalObjetos:uint,listaObjetos:ArrayCollection):void{
+				this.qtdObjetos=qtdTotalObjetos;
+				arrayPaginacao=listaObjetos;
+			}
+			
+			public function inicializarTotalizadores():void{
+				this.qtdObjetos=0;
+				lblVisualizacao.text="0 - 0 de 0";
+				dtgCustom.dataProvider=[];
+				dtgCustom.initialize();
+				dtgCustom.validateNow();
+			}
+			
+			public function inicializarDataGrid(arr:ArrayCollection):void{
+				arr.removeAll();
+				_arrayPaginacao=arr;
+				this.qtdObjetos=0;
+				lblVisualizacao.text="0 - 0 de 0";
+				dtgCustom.initialize();
+			}
+			
+			public function setDataGrid(customDataProvider:Array):void{
+				this.qtdObjetos=customDataProvider.length;
+				dtgCustom.dataProvider=customDataProvider;
+			}		
+
+			private function getQuantidadeItemPaginacao():void{
+				quantidadeItemPaginacao=Number(cmbQuantidadeItemPaginacao.selectedLabel);
+				inicio();
+			}
+			
+			public function get arrayPaginacao():ArrayCollection{
+				return _arrayPaginacao;
+			}
+			
+			public function set arrayPaginacao(lista:ArrayCollection):void{
+				_arrayPaginacao=lista;
+				dtgCustom.dataProvider=_arrayPaginacao;
+				controleBotoesPaginacao();
+			}
+
+			public function addColunaTexto(headerText:String,dataField:String,labelFunction:Function=null,textAlign:String="left",widhtColuna:Number=0,
+				visible:Boolean=true,ordena:Boolean=true,editable:Boolean=false):void{
+				colunas.push(criarColuna(headerText,dataField,widhtColuna,visible,ordena,labelFunction,textAlign==null?LEFT:textAlign,editable));
+				dtgCustom.columns = colunas; 
+			}
+
+			public function addColunaNumero(headerText:String,dataField:String,labelFunction:Function=null,textAlign:String="right",widhtColuna:Number=0,
+				visible:Boolean=true,ordena:Boolean=true,editable:Boolean=false):void{
+				colunas.push(criarColuna(headerText,dataField,widhtColuna,visible,ordena,labelFunction,textAlign==null?RIGHT:textAlign,editable));
+				dtgCustom.columns = colunas; 
+			}
+
+			public function addColunaData(headerText:String,dataField:String,labelFunction:Function=null,widhtColuna:Number=0,
+				visible:Boolean=true,ordena:Boolean=true,editable:Boolean=false):void{
+				colunas.push(criarColuna(headerText,dataField,widhtColuna,visible,ordena,CustomViewHelper.dataGridMascararData,"center",editable));
+				dtgCustom.columns = colunas;
+			}
+
+			public function addColunaDataHora(headerText:String,dataField:String,labelFunction:Function=null,widhtColuna:Number=0,
+				visible:Boolean=true,ordena:Boolean=true,editable:Boolean=false):void{
+				colunas.push(criarColuna(headerText,dataField,widhtColuna,visible,ordena,CustomViewHelper.dataGridMascararDataHora,"center",editable));
+				dtgCustom.columns = colunas;
+			}
+
+			public function addColunaCentralizada(headerText:String,dataField:String,labelFunction:Function=null,widhtColuna:Number=0,
+				visible:Boolean=true,ordena:Boolean=true,editable:Boolean=false):void{
+				colunas.push(criarColuna(headerText,dataField,widhtColuna,visible,ordena,labelFunction,"center",editable));
+				dtgCustom.columns = colunas; 
+			}
+
+			public function addColunaComponenteItemRenderer(headerText:String,itemRenderer:*=null,widhtColuna:Number=0,editable:Boolean=false,
+				dataField:String=null,editorDataField:String=null,rendererIsEditor:Boolean=false,textAlign:String="center",visible:Boolean=true):void{
+				var novaColuna:DataGridColumn = new DataGridColumn();
+				novaColuna.headerText = headerText;
+				novaColuna.visible=visible;
+				novaColuna.setStyle("textAlign",textAlign);
+				widhtColuna>0?novaColuna.width=widhtColuna:null;
+				//-----------------------------------				
+				novaColuna.itemRenderer=new ClassFactory(itemRenderer);
+				dataField!=null?novaColuna.dataField=dataField:null;
+				novaColuna.editorDataField=editorDataField;
+				novaColuna.rendererIsEditor=rendererIsEditor;
+				//-----------------------------------
+				novaColuna.sortable = false;
+				novaColuna.headerWordWrap=true;
+				novaColuna.editable=editable;
+				//-----------------------------------
+				colunas.push(novaColuna);
+				dtgCustom.columns = colunas; 
+			}
+
+			public function addColunaComponenteItemEditor(headerText:String,itemEditor:*=null,widhtColuna:Number=0,editorDataField:String=null,editable:Boolean=false,textAlign:String="center",visible:Boolean=true):void{
+				var novaColuna:DataGridColumn = new DataGridColumn();
+				novaColuna.headerText = headerText;
+				novaColuna.visible=visible;
+				novaColuna.setStyle("textAlign",textAlign);
+				widhtColuna>0?novaColuna.width=widhtColuna:null;
+				novaColuna.itemEditor=new ClassFactory(itemEditor);
+				novaColuna.sortable = false;
+				novaColuna.headerWordWrap=true;
+				novaColuna.editable=editable;
+				editorDataField!=null?novaColuna.editorDataField=editorDataField:null;
+				//-----------------------------------
+				colunas.push(novaColuna);
+				dtgCustom.columns = colunas; 
+			}
+
+			private function criarColuna(headerText:String,dataField:String,widhtColuna:Number, 
+				visible:Boolean,ordena:Boolean,labelFunction:Function,textAlign:String,editable:Boolean):DataGridColumn{
+				var novaColuna:DataGridColumn = new DataGridColumn();
+				novaColuna.headerText = headerText;
+				novaColuna.dataField = dataField;
+				novaColuna.visible=visible;
+				//-----------------------------------
+				widhtColuna>0?novaColuna.width=widhtColuna:null;
+				//-----------------------------------
+				labelFunction!=null?novaColuna.labelFunction=labelFunction:null;
+				textAlign!=null?novaColuna.setStyle("textAlign",textAlign):null;
+				novaColuna.sortable = ordena;
+				//-----------------------------------
+				novaColuna.editable = editable;
+				novaColuna.itemRenderer=new ClassFactory(CustomDataGridLabel);
+				//novaColuna.headerWordWrap=true;
+				return novaColuna;
+				//-----------------------------------
+//				http://blog.flexexamples.com/2008/09/16/aligning-the-header-text-in-a-datagrid-column-in-flex/
+//				leonelcasado|CustomDataGrid{
+//					headerStyleName: textAlignDataGridColumn;
+//				}
+//				
+//				.textAlignDataGridColumn{
+//					fontWeight: bold;
+//					textAlign: left;
+//				}
+			}
+
+			protected function onChange():void{
+				this.dispatchEvent(new Event("change"));
+			}
+
+			protected function onPrimeiroRegistro():void{
+				this.dispatchEvent(new Event("primeiroRegistro"));
+			}
+
+			protected function onRegistroAlterior():void{
+				this.dispatchEvent(new Event("registroAlterior"));
+			}
+
+			protected function onProximoRegistro():void{
+				this.dispatchEvent(new Event("proximoRegistro"));
+			}
+
+			protected function onUltimoRegistro():void{
+				this.dispatchEvent(new Event("ultimoRegistro"));
+			}
+			
+			protected function onSelecionarItem():void{
+				this.dispatchEvent(new Event("selecionarItem"));
+			}
+
+			protected function onNovoRegistro():void{
+				this.dispatchEvent(new Event("novoRegistro"));
+			}
+
+			protected function onAlterarRegistro():void{
+				this.dispatchEvent(new Event("alterarRegistro"));
+			}
+
+			protected function onExcluirRegistro():void{
+				this.dispatchEvent(new Event("excluirRegistro"));
+			}
+
+			protected function onVisualizarRegistro():void{
+				this.dispatchEvent(new Event("visualizarRegistro"));
+			}
+			
+			public function controleBotoesPaginacao():void{
+				if(qtdObjetos>0){
+					var tamPag:uint=_arrayPaginacao.length;
+					//------------------------------------------------				
+					if ((tamPag < quantidadeItemPaginacao) || (qtdObjetos == (indice + maximo))){
+						btnProximoRegistro.enabled=false;
+						btnUltimoRegistro.enabled=false;
+					}else{
+						btnProximoRegistro.enabled=true;
+						btnUltimoRegistro.enabled=true;
+					}
+					
+					if ((indice == 0) && (qtdObjetos > quantidadeItemPaginacao)){
+						btnPrimeiroRegistro.enabled=false;
+						btnAnteriorRegistro.enabled=false;
+						btnProximoRegistro.enabled=true;
+						btnUltimoRegistro.enabled=true;
+					}else if(qtdObjetos > quantidadeItemPaginacao){
+						btnPrimeiroRegistro.enabled=true;
+						btnAnteriorRegistro.enabled=true;					
+					}
+					
+					if (qtdObjetos > 0)var temp1:int=indice + 1;
+					var temp2:int=indice + maximo;
+					if (temp2 > qtdObjetos)temp2=qtdObjetos;
+					lblVisualizacao.text=CustomViewHelper.formatarNumeroInteiro(temp1.toString())+ " - " +
+						CustomViewHelper.formatarNumeroInteiro(temp2.toString())+" de "+
+						CustomViewHelper.formatarNumeroInteiro(qtdObjetos.toString());					
+				}
+			}
+			
+			public function inicio():void{
+				indice=0;
+				maximo=quantidadeItemPaginacao;
+			}
+			
+			public function retroceder():void{
+				if ((indice - quantidadeItemPaginacao) <= 0)
+					indice=0;
+				else
+					indice=indice - quantidadeItemPaginacao;
+				maximo=quantidadeItemPaginacao;
+			}
+			
+			public function avancar():void{
+				indice=indice + quantidadeItemPaginacao;
+				maximo=quantidadeItemPaginacao;
+			}
+			
+			public function fim():void{
+				var numReal:Number=qtdObjetos/quantidadeItemPaginacao;
+				var numInteiro:uint=numReal;
+				var numResto:Number=(numReal - numInteiro)*quantidadeItemPaginacao;
+				//-----------------------------------------------------------
+				indice=qtdObjetos - numResto;
+				maximo=qtdObjetos;
+			}						
+			
+			private function selecionarItem():void{
+				onSelecionarItem();
+				/* if(dtgCustom.selectedIndex>=0){
+					if(btnExcluirRegistro.visible)btnExcluirRegistro.enabled=true;
+					if(btnAlterarRegistro.visible)btnAlterarRegistro.enabled=true;
+				}else{
+					if(btnExcluirRegistro.visible)btnExcluirRegistro.enabled=false;
+					if(btnAlterarRegistro.visible)btnAlterarRegistro.enabled=false;
+				} */
+				btnExcluirRegistro.enabled=true;
+				btnAlterarRegistro.enabled=true;
+			}//itemRenderer="leonelcasado.componentes.CustomDataGridLabel"
+		]]>
+	</fx:Script>	
+	<mx:DataGrid id="dtgCustom" width="100%" height="100%" selectable="true" rowHeight="25"
+		horizontalScrollPolicy="{horizontalScrollCustomDataGrid}" labelFunction="{labelFunction}"
+		doubleClickEnabled="true" doubleClick="selecionarItem()" editable="{editable}"
+		keyDown="if(event.keyCode==Keyboard.ENTER)selecionarItem()" 
+		allowMultipleSelection="{allowMultipleSelection}" change="onChange()"/>
+	
+	<mx:HBox width="100%" borderStyle="none" horizontalGap="2" verticalAlign="middle">
+		<leonelcasado:CustomButton id="btnPrimeiroRegistro" width="28" height="25" icon="{Imagens.iconPlayFirst}"
+			includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}" enabled="false"
+			click="onPrimeiroRegistro()" enter="onPrimeiroRegistro()"/>
+		<leonelcasado:CustomButton id="btnAnteriorRegistro" width="28" height="25" icon="{Imagens.iconPlayBack}"
+			includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}" enabled="false"
+			click="onRegistroAlterior()" enter="onRegistroAlterior()"/>
+		<mx:VRule height="25" includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"/>
+		<leonelcasado:CustomComboBox id="cmbQuantidadeItemPaginacao" width="60" height="25"
+			includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"
+			change="getQuantidadeItemPaginacao()" prompt="10" textAlign="center" rowCount="6">
+			<fx:Array>
+				<fx:Object label="10"/>
+				<fx:Object label="20"/>
+				<fx:Object label="50"/>
+				<fx:Object label="100"/>
+				<fx:Object label="500"/>
+				<fx:Object label="1000"/>
+			</fx:Array>
+		</leonelcasado:CustomComboBox>
+		<mx:VRule height="25" includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"/>
+		<leonelcasado:CustomButton id="btnProximoRegistro" width="28" height="25" icon="{Imagens.iconPlay}"
+			includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}" enabled="false"
+			click="onProximoRegistro()" enter="onProximoRegistro()"/>
+		<leonelcasado:CustomButton id="btnUltimoRegistro" width="28" height="25" icon="{Imagens.iconPlayForward}"
+			includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}" enabled="false"
+			click="onUltimoRegistro()" enter="onUltimoRegistro()"/>
+		<!--leonelcasado:CustomButton id="btnAtualizarRegistro" width="28" height="25" icon="{Imagens.iconReload}"
+			includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"/-->
+		<mx:VRule height="{btnExcluirRegistro.visible==true?btnExcluirRegistro.height:0}"
+			includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"/>
+		<leonelcasado:CustomButton id="btnNovoRegistro" width="28" height="25" icon="{Imagens.iconAdd}"
+			includeInLayout="{includeInLayoutBtnInserirRegistro}" visible="{includeInLayoutBtnInserirRegistro}"
+			click="onNovoRegistro()" enter="onNovoRegistro()"/>
+		<leonelcasado:CustomButton id="btnAlterarRegistro" width="28" height="25" icon="{Imagens.iconEdit}"
+			includeInLayout="{includeInLayoutBtnAlterarRegistro}" visible="{includeInLayoutBtnAlterarRegistro}"
+			click="onAlterarRegistro()" enter="onAlterarRegistro()" enabled="false"/>
+		<leonelcasado:CustomButton id="btnExcluirRegistro" width="28" height="25" icon="{Imagens.iconDelete}"
+			includeInLayout="{includeInLayoutBtnExcluirRegistro}" visible="{includeInLayoutBtnExcluirRegistro}"
+			click="onExcluirRegistro()" enter="onExcluirRegistro()" enabled="false"/>
+		<leonelcasado:CustomButton id="btnVisualizarRegistro" width="28" height="25" icon="{Imagens.iconPesquisa}"
+			includeInLayout="{includeInLayoutBtnVisualizarRegistro}" visible="{includeInLayoutBtnVisualizarRegistro}"
+			click="onVisualizarRegistro()" enter="onVisualizarRegistro()"/>
+		<leonelcasado:CustomLabel text="Visualizando" includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"/>
+		<leonelcasado:CustomLabel id="lblVisualizacao" text="0 - 0 de 0" includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"/>
+		<mx:Spacer width="100%"/>
+		<leonelcasado:CustomLabel text="{'Total de Registro(s): '+ CustomViewHelper.formatarNumeroInteiro(this.qtdObjetos)}" fontWeight="bold"
+			includeInLayout="{includeInLayoutTotalRegistro}" visible="{includeInLayoutTotalRegistro}"/>
+	</mx:HBox>	
+</mx:VBox>

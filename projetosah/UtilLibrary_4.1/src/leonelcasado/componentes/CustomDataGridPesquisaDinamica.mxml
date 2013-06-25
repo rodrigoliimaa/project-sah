@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		 width="100%" height="100%" verticalGap="3"
+		 creationComplete="init()">
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.controls.ComboBox;
+			import mx.controls.dataGridClasses.DataGridColumn;
+			import mx.core.Container;
+			import mx.modules.ModuleLoader;
+			
+			[Bindable] public var includeInLayoutBtnManterRegistro:Boolean=true;
+			[Bindable] public var includeInLayoutBtnbNovoRegistro:Boolean=includeInLayoutBtnManterRegistro;
+			[Bindable] public var includeInLayoutBtnVisualizarRegistro:Boolean=false;
+			[Bindable] public var includeInLayoutPaginacao:Boolean=true;
+			[Bindable] public var includeInLayoutTotalRegistro:Boolean=true;
+			[Bindable] public var moduleContainer:Container;
+			[Bindable] public var arrayFiltro:Array=[];
+			
+			public const TIPO_CAMPO_UINT:String="uint";
+			public const TIPO_CAMPO_NUMBER:String="Number";
+			public const TIPO_CAMPO_STRING:String="String";
+			public const TIPO_CAMPO_DATE:String="Date";
+			
+			private var arrayFiltroPesquisa:Array=[{label:"SELECIONE",type:"String"}];
+			
+			private var _arrayPaginacao:ArrayCollection=new ArrayCollection();
+			private var quantidadeItemPaginacao:uint;
+			public var indice:uint;
+			public var maximo:uint;
+			public var qtdeObjetos:uint;
+			
+			private function init():void{
+				getQuantidadeItemPaginacao();
+			}
+			
+			public function setDataGrid(customDataProvider:Array):void{
+				dtgCustom.dataProvider=customDataProvider;
+				/*
+				var colunas:int = dtgCustom.columns.length;
+				var arr:Array=[];
+				arr.push("Selecione");
+				for(var i:int = 0; i < colunas; i++){
+				arr.push(dtgCustom.columns[i].headerText);
+				}
+				cmbFiltro.dataProvider=arr;
+				cmbFiltro.labelField=arr.data;
+				*/
+			}		
+			
+			public function setFiltroPesquisa(param:*):void{
+				var classAsXML:XML = describeType(param);
+				var colunas:int = classAsXML.variable.length();
+				var arr:Array=[];
+				arr.push({label:"SELECIONE",type:"String"});
+				for(var i:int = 0; i < colunas; i++){
+					for(var j:int = 0; j < colunas; j++){
+						if(dtgCustom.columns[j].dataField==classAsXML.variable[i].@name){
+							arr.push({label:dtgCustom.columns[j].headerText,campo:String(classAsXML.variable[i].@name),type:String(classAsXML.variable[i].@type)});
+						}
+					}
+				}
+				cmbFiltro.dataProvider=arr;
+				cmbFiltro.labelField="label";
+			}		
+			
+			public function addFiltroPesquisa(label:String,campo:String,tipoCampo:String):void{
+				arrayFiltroPesquisa.push({label:label,campo:campo,type:tipoCampo});
+				cmbFiltro.dataProvider=arrayFiltroPesquisa;
+				cmbFiltro.labelField="label";
+			}		
+			
+			private function adicionarFiltro(cmbFiltro:ComboBox):void{
+				if(cmbFiltro.selectedIndex>0){
+					var pesquisaDinamica:PesquisaDinamica=new PesquisaDinamica();
+					pesquisaDinamica.filtroLabel=cmbFiltro.selectedItem.label;
+					pesquisaDinamica.nomeCampo=cmbFiltro.selectedItem.campo;
+					pesquisaDinamica.tipo=cmbFiltro.selectedItem.type;
+					pesquisaDinamica.tile=tleFiltros;
+					pesquisaDinamica.tela=this;
+					tleFiltros.addChild(pesquisaDinamica);
+					tleFiltros.height=68;
+				}
+			}
+			
+			public function addColuna(headerText:String,dataField:String,widhtColuna:Number=0,
+				labelFunction:Function=null,visible:Boolean=true,textAlign:String=null,editable:Boolean=false,
+				itemRenderer:*=null):void{
+				var colunas:Array = dtgCustom.columns;
+				colunas.push(criarColuna(headerText,dataField,widhtColuna,labelFunction,visible,textAlign,editable,itemRenderer));
+				dtgCustom.columns = colunas; 
+			}
+			
+			private function criarColuna(headerText:String,dataField:String,widhtColuna:Number, 
+				labelFunction:Function,visible:Boolean,textAlign:String,editable:Boolean,itemRenderer:*=null):DataGridColumn{
+				var novaColuna:DataGridColumn = new DataGridColumn();
+				novaColuna.headerText = headerText;
+				novaColuna.dataField = dataField;
+				novaColuna.visible=visible;
+				//-----------------------------------
+				widhtColuna>0?novaColuna.width=widhtColuna:null;
+				labelFunction!=null?novaColuna.labelFunction=labelFunction:null;
+				textAlign!=null?novaColuna.setStyle("textAlign",textAlign):null;
+				//-----------------------------------
+				novaColuna.editable = editable;
+				novaColuna.itemRenderer=itemRenderer;
+				return novaColuna;
+			}
+			
+			public function sair(event:*):void{
+				if(event as KeyboardEvent && event.keyCode==Keyboard.ENTER){
+					ModuleLoader(moduleContainer).unloadModule();
+					return;
+				}
+				if(event as MouseEvent){
+					ModuleLoader(moduleContainer).unloadModule();
+					return;
+				}
+			}
+			
+			private function getQuantidadeItemPaginacao():void{
+				quantidadeItemPaginacao=Number(cmbQuantidadeItemPaginacao.selectedLabel);
+				inicio();
+			}
+
+			public function get arrayPaginacao():ArrayCollection{
+				return _arrayPaginacao;
+			}
+
+			public function set arrayPaginacao(lista:ArrayCollection):void{
+				_arrayPaginacao=lista;
+				controleBotoesPaginacao();
+			}
+
+			public function controleBotoesPaginacao():void{
+				if(qtdeObjetos>0){
+					var tamPag:uint=_arrayPaginacao.length;
+					//------------------------------------------------				
+					if ((tamPag < quantidadeItemPaginacao) || (qtdeObjetos == (indice + maximo))){
+						btnProximoRegistro.enabled=false;
+						btnUltimoRegistro.enabled=false;
+					}else{
+						btnProximoRegistro.enabled=true;
+						btnUltimoRegistro.enabled=true;
+					}
+					
+					if ((indice == 0) && (qtdeObjetos > quantidadeItemPaginacao)){
+						btnPrimeiroRegistro.enabled=false;
+						btnAnteriorRegistro.enabled=false;
+						btnProximoRegistro.enabled=true;
+						btnUltimoRegistro.enabled=true;
+					}else if(qtdeObjetos > quantidadeItemPaginacao){
+						btnPrimeiroRegistro.enabled=true;
+						btnAnteriorRegistro.enabled=true;					
+					}
+									
+					if (qtdeObjetos > 0)var temp1:int=indice + 1;
+					var temp2:int=indice + maximo;
+					if (temp2 > qtdeObjetos)temp2=qtdeObjetos;
+					lblVisualizacao.text=temp1.toString() + " - " + temp2.toString()+" de "+qtdeObjetos.toString();
+				
+				}
+			}
+			
+			public function inicio():void{
+				indice=0;
+				maximo=quantidadeItemPaginacao;
+			}
+			
+			public function retroceder():void{
+				if ((indice - quantidadeItemPaginacao) <= 0)
+					indice=0;
+				else
+					indice=indice - quantidadeItemPaginacao;
+				maximo=quantidadeItemPaginacao;
+			}
+			
+			public function avancar():void{
+				indice=indice + quantidadeItemPaginacao;
+				maximo=quantidadeItemPaginacao;
+			}
+			
+			public function fim():void{
+				var numReal:Number=qtdeObjetos/quantidadeItemPaginacao;
+				var numInteiro:uint=numReal;
+				var numResto:Number=(numReal - numInteiro)*quantidadeItemPaginacao;
+				//-----------------------------------------------------------
+				indice=qtdeObjetos - numResto;
+				maximo=qtdeObjetos;
+			}						
+		]]>
+	</fx:Script>
+	<mx:HBox width="100%" verticalAlign="middle">
+		<mx:Label text="Filtros:"/>
+		<leonelcasado:CustomComboBox id="cmbFiltro"/>
+		<leonelcasado:CustomButton icon="{Imagens.iconAdd}" click="adicionarFiltro(cmbFiltro)" width="28" height="25"/>
+		<mx:VRule height="{cmbFiltro.height}"/>
+		<leonelcasado:CustomButton id="btnConsultar" label="Consultar" icon="{Imagens.iconPesquisa}" styleName="menuButton"/>		
+		<mx:VRule height="{cmbFiltro.height}"/>
+		<leonelcasado:CustomButton id="btnSair" label="Sair" styleName="menuButton" icon="{Imagens.iconDelete}"/>
+	</mx:HBox>
+	<mx:Tile id="tleFiltros" direction="horizontal" width="100%" height="0"
+		horizontalGap="0" verticalGap="0" verticalScrollPolicy="auto"/>
+	<mx:DataGrid id="dtgCustom" width="100%" height="100%" rowHeight="25" itemRenderer="mx.controls.Label"/>
+	<mx:HBox width="100%" borderStyle="none" horizontalGap="2" verticalAlign="middle">
+		<leonelcasado:CustomButton id="btnPrimeiroRegistro" width="28" height="25" icon="{Imagens.iconPlayFirst}"
+			includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}" enabled="false"/>
+		<leonelcasado:CustomButton id="btnAnteriorRegistro" width="28" height="25" icon="{Imagens.iconPlayBack}"
+			includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}" enabled="false"/>
+		<mx:VRule height="25" includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"/>
+		<mx:ComboBox id="cmbQuantidadeItemPaginacao" width="50" height="25" fontWeight="bold"
+			includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"
+			change="getQuantidadeItemPaginacao()">
+			<mx:dataProvider>
+				<fx:Array>
+					<fx:Object label="10"/>
+					<fx:Object label="20"/>
+					<fx:Object label="50"/>
+					<fx:Object label="100"/>
+				</fx:Array>
+			</mx:dataProvider>
+		</mx:ComboBox>
+		<mx:VRule height="25" includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"/>
+		<leonelcasado:CustomButton id="btnProximoRegistro" width="28" height="25" icon="{Imagens.iconPlay}"
+			includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}" enabled="false"/>
+		<leonelcasado:CustomButton id="btnUltimoRegistro" width="28" height="25" icon="{Imagens.iconPlayForward}"
+			includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}" enabled="false"/>
+		<!--leonelcasado:CustomButton id="btnAtualizarRegistro" width="28" height="25" icon="{Imagens.iconReload}"
+			includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"/-->
+		<mx:VRule height="25" includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"/>
+		<leonelcasado:CustomButton id="btnNovoRegistro" width="28" height="25" icon="{Imagens.iconAdd}"
+			includeInLayout="{includeInLayoutBtnbNovoRegistro}" visible="{includeInLayoutBtnbNovoRegistro}"/>
+		<leonelcasado:CustomButton id="btnAlterarRegistro" width="28" height="25" icon="{Imagens.iconEdit}"
+			includeInLayout="{includeInLayoutBtnManterRegistro}" visible="{includeInLayoutBtnManterRegistro}"/>
+		<leonelcasado:CustomButton id="btnExcluirRegistro" width="28" height="25" icon="{Imagens.iconDelete}"
+			includeInLayout="{includeInLayoutBtnManterRegistro}" visible="{includeInLayoutBtnManterRegistro}"/>
+		<leonelcasado:CustomButton id="btnVisualizarRegistro" width="28" height="25" icon="{Imagens.iconPesquisa}"
+			includeInLayout="{includeInLayoutBtnVisualizarRegistro}" visible="{includeInLayoutBtnVisualizarRegistro}"/>
+		<mx:Label text="Visualizando" includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"/>
+		<mx:Label id="lblVisualizacao" text="0 - 0 de 0" includeInLayout="{includeInLayoutPaginacao}" visible="{includeInLayoutPaginacao}"/>
+		<mx:Spacer width="100%"/>
+		<mx:Label text="{'Total de Registro(s): '+ (qtdeObjetos>0?qtdeObjetos:dtgCustom.dataProvider.length)}" fontWeight="bold"
+			includeInLayout="{includeInLayoutTotalRegistro}" visible="{includeInLayoutTotalRegistro}"/>
+	</mx:HBox>
+</mx:VBox>

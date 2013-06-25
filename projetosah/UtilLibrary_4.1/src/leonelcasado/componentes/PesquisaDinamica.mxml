@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"  
+		 xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		 width="100%" height="100%" creationComplete="init()">
+	<s:states>
+		<s:State name="uint"/>
+		<s:State name="Number"/>
+		<s:State name="String"/>
+		<s:State name="Date"/>
+	</s:states>
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.containers.Tile;
+			import mx.controls.PopUpMenuButton;
+			import mx.events.MenuEvent;
+			
+			[Bindable] public var filtroLabel:String;
+			[Bindable] public var nomeCampo:String;
+			[Bindable] public var tile:Tile;
+			[Bindable] public var tipo:String;
+			[Bindable] public var tela:CustomDataGridPesquisaDinamica;
+			[Bindable] private var menuXML:XMLList;
+			[Bindable] private var menuXMLForString:XMLList =
+				<>
+					<menuitem label="Começa Com" restricao="like" tipoLike="START" toggled="true" type="radio" groupName="grupoFiltro"/>
+					<menuitem label="Termina Com" restricao="like" tipoLike="END" type="radio" groupName="grupoFiltro"/>
+					<menuitem label="Contém" restricao="like" tipoLike="ANYWHERE" type="radio" groupName="grupoFiltro"/>
+					<menuitem label="Igual a" restricao="eq" type="radio" groupName="grupoFiltro"/>
+					<menuitem label="Diferente de" restricao="ne" type="radio" groupName="grupoFiltro"/>
+					<menuitem type="separator"/>
+					<menuitem label="Sem Ordenação" ordem="no" type="radio" groupName="grupoOrdem"/>
+					<menuitem label="Ascendente" ordem="asc" toggled="true" type="radio" groupName="grupoOrdem"/>
+					<menuitem label="Descendente" ordem="desc" type="radio" groupName="grupoOrdem"/>
+					<menuitem type="separator"/>
+					<menuitem label="Excluir Filtro" type="radio" groupName="grupoExcluir"/>
+				</>;	
+
+			[Bindable] private var menuXMLForNumberDate:XMLList =
+				<>
+					<menuitem label="Igual a" restricao="eq" toggled="true" type="radio" groupName="grupoFiltro"/>
+					<menuitem label="Maior do Que" restricao="gt" type="radio" groupName="grupoFiltro"/>
+					<menuitem label="Menor do Que" restricao="lt" type="radio" groupName="grupoFiltro"/>
+					<menuitem label="Maior ou Igual a" restricao="ge" type="radio" groupName="grupoFiltro"/>
+					<menuitem label="Menor ou Igual a" restricao="le" type="radio" groupName="grupoFiltro"/>
+					<menuitem label="Diferente de" restricao="ne" type="radio" groupName="grupoFiltro"/>
+					<menuitem type="separator"/>
+					<menuitem label="Sem Ordenação" ordem="no" type="radio" groupName="grupoOrdem"/>
+					<menuitem label="Ascendente" ordem="asc" toggled="true" type="radio" groupName="grupoOrdem"/>
+					<menuitem label="Descendente" ordem="desc" type="radio" groupName="grupoOrdem"/>
+					<menuitem type="separator"/>
+					<menuitem label="Excluir Filtro" type="radio" groupName="grupoExcluir"/>
+				</>;	
+			
+			private function init():void{
+				this.currentState=tipo;
+				if(tipo=="uint" || tipo=="int" || tipo=="Number" || tipo=="Date"){
+					menuXML=menuXMLForNumberDate;
+				}else{
+					menuXML=menuXMLForString;
+				}
+				montarFiltro();
+			}
+			
+			private function itemClickHandler(event:MenuEvent):void {
+				if(event.item.@groupName=="grupoExcluir"){
+					tile.removeChild(this);
+					if(tile.numChildren==0)tile.height=0;
+					//for each (var obj:Object in event.item){
+						//trace(obj.label);
+						//tela.arrayFiltro.splice();
+					//}
+					
+					
+					/*}else{
+					var tam:uint=event.target.dataProvider.length;
+					for (var i:int=0;i<tam;i++){
+					if(event.target.dataProvider[i].@toggled=="true"){
+					trace(event.target.dataProvider[i].@label);                    	
+					}
+					}*/
+				}else{
+					montarFiltro();
+				}
+			}
+			
+			private function montarFiltro(valor:*=null):void{
+				if(valor!=null){
+					var obj:Object=new Object;
+					var dscFiltros:String=null;
+					var tam:uint=menuXML.length();
+					for (var i:int=0;i<tam;i++){
+						if(menuXML[i].@toggled=="true"){
+							obj.nome=nomeCampo;
+							obj.valor=valor;
+							obj.tipo=tipo;
+							obj.restricao=(obj.restricao==null?String(menuXML[i].@restricao):obj.restricao);
+							obj.tipoLike=(obj.tipoLike==null?String(menuXML[i].@tipoLike):obj.tipoLike);
+							obj.ordem=String(menuXML[i].@ordem);
+							
+							if(menuXML[i].@groupName=="grupoFiltro"){
+								dscFiltros=menuXML[i].@label;
+							}else if(menuXML[i].@groupName=="grupoOrdem"){
+								if(obj.ordem=="asc"){
+									dscFiltros+=" / Ascendente";
+								}else if(obj.ordem=="desc"){
+									dscFiltros+=" / Descendente";
+								}else{
+									dscFiltros+=" / Sem Ordenação";
+								}
+							}
+						}
+					}
+					lblTipoFiltro.text=dscFiltros;
+					tela.arrayFiltro.push(obj);
+					obj=null;
+				}else{
+					lblTipoFiltro.text=menuXML[0].@label+" / Ascendente";
+				}
+			}
+		]]>
+	</fx:Script>
+	<mx:Box width="100%" backgroundColor="#FFFFFF" horizontalGap="0" verticalGap="0"
+		paddingLeft="3" paddingRight="3" paddingTop="3" paddingBottom="3">
+		<mx:HBox width="100%" horizontalGap="0" verticalGap="0" verticalAlign="middle">
+			<leonelcasado:CustomLabel id="lblFiltro" text="{filtroLabel}" color="#1D4771"/>
+			<mx:Spacer width="5"/>
+			<mx:PopUpMenuButton id="popUpMenu" dataProvider="{menuXML}" labelField="@label"
+				itemClick="itemClickHandler(event)" alpha="0" width="0"/>
+			<leonelcasado:CustomButton id="btnImagem" width="20" height="20"
+				icon="{Imagens.iconDown}" click="{popUpMenu.open()}"/>
+		</mx:HBox>
+		<leonelcasado:Numero id="txtFiltro" excludeFrom="String,Date,Number" enter="{montarFiltro(txtFiltro.text)}" creationComplete="{txtFiltro.setFocus()}"/>
+		<leonelcasado:CustomTextInput id="txtFiltro2" excludeFrom="uint,Number,Date" enter="{montarFiltro(txtFiltro2.text)}" creationComplete="{txtFiltro2.setFocus()}"/>
+		<leonelcasado:CustomDateField id="txtFiltro3" excludeFrom="uint,Number,String" keyDown="if(event.keyCode==Keyboard.ENTER){montarFiltro(txtFiltro3.text)}" creationComplete="{txtFiltro3.setFocus()}"/>
+		<leonelcasado:Decimal id="txtFiltro4" excludeFrom="uint,String,Date" keyDown="if(event.keyCode==Keyboard.ENTER){montarFiltro(txtFiltro4.text)}" creationComplete="{txtFiltro4.setFocus()}"/>
+		<leonelcasado:CustomLabel id="lblTipoFiltro" color="#1D4771" fontSize="10"/>
+	</mx:Box>
+</s:VGroup>

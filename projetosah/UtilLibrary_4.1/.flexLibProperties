@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties includeAllClasses="false" useMultiPlatformConfig="false" version="3">
+  <includeClasses>
+    <classEntry path="leonelcasado.componentes.Alerta"/>
+    <classEntry path="leonelcasado.componentes.Creditos"/>
+    <classEntry path="leonelcasado.componentes.CustomEvent"/>
+    <classEntry path="leonelcasado.componentes.CustomViewHelper"/>
+    <classEntry path="leonelcasado.componentes.DataGridExporter"/>
+    <classEntry path="leonelcasado.componentes.Debugger"/>
+    <classEntry path="leonelcasado.componentes.Imagens"/>
+    <classEntry path="leonelcasado.componentes.MD5"/>
+    <classEntry path="leonelcasado.componentes.MensagensSistema"/>
+    <classEntry path="leonelcasado.componentes.MensagensSistemaList"/>
+    <classEntry path="leonelcasado.componentes.ModuleLoaderWithProgress"/>
+    <classEntry path="leonelcasado.componentes.TratamentoErros"/>
+    <classEntry path="leonelcasado.mdi.effects.effectsLib.MDILinearEffects"/>
+    <classEntry path="leonelcasado.mdi.effects.effectsLib.MDIRelationalEffects"/>
+    <classEntry path="leonelcasado.mdi.effects.effectsLib.MDIVistaEffects"/>
+    <classEntry path="leonelcasado.componentes.BitmapEncoder"/>
+    <classEntry path="leonelcasado.componentes.Municipio"/>
+  </includeClasses>
+  <includeResources>
+    <resourceEntry destPath="manifest.xml" sourcePath="manifest.xml"/>
+    <resourceEntry destPath="design.xml" sourcePath="design.xml"/>
+  </includeResources>
+  <namespaceManifests>
+    <namespaceManifestEntry manifest="manifest.xml" namespace="http://www.leonelcasado.com.br/mxml"/>
+  </namespaceManifests>
+</flexLibProperties>
