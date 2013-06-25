@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Ant" default="war">
+	<!-- ***************************************************** -->
+	<!-- Nome do seu projeto -->
+	<property name="war.name" value="sah"/> 
+	<!-- Local onde vai gerar o war -->
+	<property name="dist_producao.dir" value="../_deploy/v1.2.0"/>
+	<!-- Diretórios web -->
+	<property name="web.dir" value="WebContent"/>
+	<!-- ***************************************************** -->
+	<target name="clean">
+		<delete dir="${dist_producao.dir}" />
+	</target>
+	<target name="war" depends="clean">
+		<echo>GERANDO DEPLOY EM PRODUCAO</echo>
+		<mkdir dir="${dist_producao.dir}"/>		
+		<war destfile="${dist_producao.dir}/${war.name}.war" webxml="${web.dir}/WEB-INF/web.xml">
+			<fileset dir="${web.dir}" />
+			<classes dir="build/classes"/>
+		</war>	
+		<echo>FIM DO DEPLOY EM PRODUCAO</echo>
+		<echo>--------------------------------</echo>
+	</target>
+	<!-- ***************************************************** -->
+</project>

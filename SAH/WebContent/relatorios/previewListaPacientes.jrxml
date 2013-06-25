@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="previewListaPacientes" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="920f3697-ad08-4149-9938-ffc387261e14">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_PATH_IMAGENS" class="java.lang.String"/>
+	<field name="Nome" class="java.lang.String">
+		<fieldDescription><![CDATA[nome]]></fieldDescription>
+	</field>
+	<field name="CNS" class="java.lang.String">
+		<fieldDescription><![CDATA[cns]]></fieldDescription>
+	</field>
+	<field name="Telefone1" class="java.lang.String">
+		<fieldDescription><![CDATA[telefone01]]></fieldDescription>
+	</field>
+	<field name="Prontuario" class="java.lang.String">
+		<fieldDescription><![CDATA[sequencial]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="107" splitType="Stretch">
+			<image scaleImage="FillFrame">
+				<reportElement uuid="814127f3-2982-47a4-8a75-a9fe785b9318" x="212" y="4" width="116" height="44"/>
+				<imageExpression><![CDATA[$P{P_PATH_IMAGENS}+"/Logo_ADEFAL.gif"]]></imageExpression>
+			</image>
+			<rectangle>
+				<reportElement uuid="cc30137c-f0dc-4a59-bb3c-f490760416ec" x="0" y="89" width="555" height="18"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="ef6fd7e5-7d4a-4bdd-8134-567a4a3518a9" x="452" y="89" width="103" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[Telefone 1]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2dc92bf6-76b7-48b1-8fd0-b9043f0ff40f" x="85" y="89" width="268" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[NOME DO PACIENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="eb5c58bf-5694-4fee-99d4-42cb6123e14b" x="0" y="89" width="85" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Nº Pront.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2a9d46f9-0b0c-4505-b12d-e5a9cd3000f4" x="353" y="89" width="99" height="18"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[CNS]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="802434ae-227a-4af9-9fd8-b4b89484e7fe" x="0" y="49" width="553" height="20"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="5b16eb34-db82-49a4-a91b-985b45b97e59" x="0" y="69" width="554" height="20"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[RELATÓRIO DE PACIENTES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6efd9a5f-06aa-4513-868a-1deed86b6b91" x="0" y="49" width="554" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[CENTRO DE MEDICINA FÍSICA E REABILITAÇÃO GERONIMO CERQUEIRA ]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement uuid="8bac94cd-34fa-4be0-8f16-51d44eaeaf69" x="89" y="0" width="264" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{Nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="bebc11d9-4e01-4ccc-9a77-6de95e21ff74" x="353" y="0" width="99" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{CNS}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="e0f53689-81f2-46fa-8451-62414154395c" x="452" y="0" width="103" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{Telefone1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="fb67c828-f70e-473f-b508-013a102fed6e" x="0" y="0" width="85" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{Prontuario}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="47" splitType="Stretch">
+			<textField evaluationTime="Report">
+				<reportElement uuid="4a55b45e-bf06-4f05-8381-297cff34d66f" x="518" y="4" width="36" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="70d39a31-cb09-4492-bd04-2d3338873b9d" x="452" y="4" width="66" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="a7203d05-183d-4012-a374-fbff7bb9bd31" x="0" y="24" width="315" height="20"/>
+				<textElement/>
+				<text><![CDATA[SAUTH - Sistema de Automação Hospitalar / www.infoliver.com.br]]></text>
+			</staticText>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement uuid="42c902c8-097e-4599-b00f-546b74cb8351" x="0" y="4" width="158" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

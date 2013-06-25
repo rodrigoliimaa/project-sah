@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="previewRelatorioAgendamento" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_PATH_IMAGENS" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="data" class="java.util.Date">
+		<fieldDescription><![CDATA[data]]></fieldDescription>
+	</field>
+	<field name="turno" class="java.lang.String">
+		<fieldDescription><![CDATA[turno]]></fieldDescription>
+	</field>
+	<field name="situacao" class="java.lang.String">
+		<fieldDescription><![CDATA[situacao]]></fieldDescription>
+	</field>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.nome]]></fieldDescription>
+	</field>
+	<field name="nomeMae" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.nomeMae]]></fieldDescription>
+	</field>
+	<field name="cns" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.cns]]></fieldDescription>
+	</field>
+	<field name="sequencial" class="java.lang.Integer">
+		<fieldDescription><![CDATA[paciente.sequencial]]></fieldDescription>
+	</field>
+	<field name="nome_1" class="java.lang.String">
+		<fieldDescription><![CDATA[medico.nome]]></fieldDescription>
+	</field>
+	<field name="ocupacao" class="br.com.infoliver.sah.negocio.entity.Ocupacao">
+		<fieldDescription><![CDATA[medico.ocupacao]]></fieldDescription>
+	</field>
+	<field name="descricao" class="java.lang.String">
+		<fieldDescription><![CDATA[medico.ocupacao.descricao]]></fieldDescription>
+	</field>
+	<field name="equipe_medica" class="java.lang.String">
+		<fieldDescription><![CDATA[equipeMedica.descricao]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="76">
+			<image scaleImage="FillFrame">
+				<reportElement x="10" y="6" width="187" height="59"/>
+				<imageExpression><![CDATA[$P{P_PATH_IMAGENS}+"/Logo_ADEFAL.gif"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="202" y="17" width="293" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[AGENDAMENTOS]]></text>
+			</staticText>
+			<line>
+				<reportElement x="3" y="3" width="551" height="1"/>
+			</line>
+		</band>
+	</title>
+	<detail>
+		<band height="88" splitType="Stretch">
+			<line>
+				<reportElement x="3" y="-4" width="551" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="10" y="3" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Nome Paciente:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="110" y="3" width="445" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="11" y="24" width="52" height="20"/>
+				<textElement/>
+				<text><![CDATA[CNS:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="65" y="24" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cns}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="183" y="24" width="65" height="20"/>
+				<textElement/>
+				<text><![CDATA[Prontuário:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="248" y="24" width="135" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{sequencial}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="10" y="45" width="52" height="20"/>
+				<textElement/>
+				<text><![CDATA[Data:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="65" y="45" width="138" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{data}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="223" y="45" width="57" height="20"/>
+				<textElement/>
+				<text><![CDATA[Horário:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="280" y="45" width="143" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{turno}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="10" y="67" width="55" height="20"/>
+				<textElement markup="none"/>
+				<textFieldExpression><![CDATA[$F{nome_1} != null ? "Médico:" : "Equipe Médica"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="65" y="67" width="229" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{nome_1} != null ? $F{nome_1} : $F{equipe_medica}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="294" y="67" width="70" height="20"/>
+				<textElement/>
+				<text><![CDATA[Especialidade:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="364" y="67" width="191" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{descricao}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="26">
+			<staticText>
+				<reportElement x="0" y="3" width="315" height="20"/>
+				<textElement/>
+				<text><![CDATA[SAUTH - Sistema de Automação Hospitalar / www.infoliver.com.br]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="315" y="3" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="415" y="3" width="80" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="495" y="3" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="2" width="554" height="1"/>
+			</line>
+			<line>
+				<reportElement x="0" y="23" width="554" height="1"/>
+			</line>
+		</band>
+	</columnFooter>
+</jasperReport>

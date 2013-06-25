@@ -1,0 +1,366 @@
+010101Educação em saúde                                                                                   201207
+080301Deslocamento/Ajuda de custo                                                                         201207
+020101Coleta de material por meio de punção/biópsia                                                       201207
+020201Exames bioquimicos                                                                                  201207
+020301Exames citopatológicos                                                                              201207
+020401Exames radiológicos da cabeça e pescoço                                                             201207
+020501Ultra-sonografias do sistema circulatório (qualquer região anatômica)                               201207
+020601Tomografia da cabeça, pescoço e coluna vertebral                                                    201207
+020701RM da cabeça, pescoço e coluna vertebral                                                            201207
+020801Aparelho cardiovascular                                                                             201207
+020901Aparelho digestivo                                                                                  201207
+021001Exames radiológicos de vasos sangüíneos e linfáticos                                                201207
+021101Diagnóstico em angiologia                                                                           201207
+021201Exames do doador/receptor                                                                           201207
+021301Exames relacionados a doenças e agravos de notificação compulsória                                  201207
+021401Teste realizado fora da estrutura de laboratório                                                    201207
+030101Consultas médicas/outros profissionais  de nivel superior                                           201207
+030201Assistência fisioterapêutica em alterações obstétricas, neonatais e uroginecológicas                201207
+030301Tratamento de doenças infecciosas e parasitárias                                                    201207
+030401Radioterapia                                                                                        201207
+030501Tratamento dialítico                                                                                201207
+030601Procedimentos destinados a obtenção do sangue para fins de assistência hemoterapica                 201207
+030701Dentística                                                                                          201207
+030801Traumatismos                                                                                        201207
+030901Terapia nutricional                                                                                 201207
+031001Parto e nascimento                                                                                  201207
+040101Pequenas cirurgias                                                                                  201207
+040201Cirurgia de tireóide e paratireóide                                                                 201207
+040301Trauma e anomalias do desenvolvimento                                                               201207
+040401Cirurgia das vias aéreas superiores e do pescoço                                                    201207
+040501Palpebras e vias lacrimais                                                                          201207
+040601Cirurgia cardiovascular                                                                             201207
+040701Esôfago, estômago e duodeno                                                                         201207
+040801Cintura escapular                                                                                   201207
+040901Rim, ureter e bexiga                                                                                201207
+041001Mama                                                                                                201207
+041101Parto                                                                                               201207
+041201Traqueia e brônquios                                                                                201207
+041301Tratamento de queimados                                                                             201207
+041401Buco-maxilo-facial                                                                                  201207
+041501Múltiplas                                                                                           201207
+041601Urologia                                                                                            201207
+041701Anestesias                                                                                          201207
+041801Acessos para dialise                                                                                201207
+050101Coleta e exames para identificação de doador de células-tronco hematopoéticas (busca nacional)      201207
+050201Avaliação clínica de morte encefálica                                                               201207
+050301Ações relacionadas a doação de orgãos e tecidos para transpalnte                                    201207
+050401Processamento de córnea/esclera                                                                     201207
+050501Transplante de tecidos e células                                                                    201207
+050601Acompanhamento de paciente no pré e pós-transplante                                                 201207
+060101Agentes anticitocinas                                                                               201207
+060201Procoagulantes em coagulopatias hereditárias                                                        201207
+060301Antiinflamatórios                                                                                   201207
+060401Acido Aminosalicilico e Similares                                                                   201207
+070101OPM auxiliares da locomoção                                                                         201207
+070201OPM em neurocirurgia                                                                                201207
+080101Incentivos                                                                                          201207
+080201Diárias                                                                                             201207
+010201Vigilancia sanitária                                                                                201207
+010102Saúde bucal                                                                                         201207
+080202Outras ações                                                                                        201207
+020202Exames hematológicos e hemostasia                                                                   201207
+020302Exames anatomopatológicos                                                                           201207
+020402Exames radiológicos da coluna vertebral                                                             201207
+020502Ultra-sonografias dos demais sistemas                                                               201207
+020602Tomografia do torax e membros superiores                                                            201207
+020702RM do torax e membros superiores                                                                    201207
+020802Aparelho digestivo                                                                                  201207
+020902Aparelho urinário                                                                                   201207
+021002Vias biliares                                                                                       201207
+021102Diagnóstico em cardiologia                                                                          201207
+021202Procedimentos especiais em hemoterápica                                                             201207
+021302Exames relacionados ao meio ambiente                                                                201207
+030102Atendimento/Acompanhamento em saúde do trabalhador                                                  201207
+030202Assistência fisioterapêutica em alterações oncológicas                                              201207
+030302Tratamento de doenças do sangue, orgãos hematopoéticos e alguns transtornos imunitários             201207
+030402Quimioterapia paliativa - adulto                                                                    201207
+030502Tratamento em nefrologia em geral                                                                   201207
+030602Medicina transfusional                                                                              201207
+030702Endodontia                                                                                          201207
+030802Intoxicações e envenenamentos                                                                       201207
+030902Terapias em doenças alérgicas                                                                       201207
+040102Cirurgias de pele, tecido subcutâneo e mucosa                                                       201207
+040202Cirurgia da suprarrenal                                                                             201207
+040302Coluna e nervos periféricos                                                                         201207
+040402Cirurgia da face e do sistema estomatognático                                                       201207
+040502Músculos oculomotores                                                                               201207
+040602Cirurgia vascular                                                                                   201207
+040702Intestinos , reto e anus                                                                            201207
+040802Membros superiores                                                                                  201207
+040902Uretra                                                                                              201207
+041102Outras cirurgias relacionadas com o estado gestacional                                              201207
+041202Mediastino                                                                                          201207
+041302Reparadora em oncológica                                                                            201207
+041402Cirurgia oral                                                                                       201207
+041502Sequenciais                                                                                         201207
+041602Sistema linfático                                                                                   201207
+041802Intervençõess cirúrgicas em acessos para diálise                                                    201207
+050102Exames de histocompatibilidade para identificação de receptor de células-tronco hematopoéticas      201207
+050302Cirurgias para transplante - doador vivo                                                            201207
+050402Processamento de tecido ósteo-fascio-condro-ligamentoso humano                                      201207
+050502Transplante de orgãos                                                                               201207
+050602Intercorrência pós transplante                                                                      201207
+060102Antagonista do glutamato                                                                            201207
+060302Imunossupressores                                                                                   201207
+060402Agentes Quelantes de Ferro                                                                          201207
+070102OPM ortopédicas                                                                                     201207
+070202OPM em cirurgia buco-maxilo-facial                                                                  201207
+020102Outras formas de coleta de material                                                                 201207
+010103Visita domiciliar                                                                                   201207
+070203OPM em ortopedia                                                                                    201207
+020403Exames radiológicos do torax e mediastino                                                           201207
+020603Tomografia do abdomen, pelve e membros inferiores                                                   201207
+020703RM do abdomen, pelve e membros inferiores                                                           201207
+020803Aparelho endócrino                                                                                  201207
+020903Aparelho ginecológico                                                                               201207
+021103Diagnóstico cinético funcional                                                                      201207
+030103Atendimento pré-hospitalar de urgência                                                              201207
+030203Assistência fisioterapêutica em oftalmologia                                                        201207
+030303Tratamento de doenças endocrinas, metabólicas e nutricionais                                        201207
+030403Quimioterapia para controle temporário de doença - adulto                                           201207
+030703Periodontia clínica                                                                                 201207
+030803Outras consequências de causas externas                                                             201207
+030903Terapias do aparelho geniturinário                                                                  201207
+040303Tumores do sistema nervoso                                                                          201207
+040403Anomalia Crânio e bucomaxilo facial                                                                 201207
+040503Corpo vítreo, retina, coróide e esclera                                                             201207
+040603Cardiologia intervencionista                                                                        201207
+040703Pancreas, baco, figado e vias biliares                                                              201207
+040803Coluna vertebral e caixa torácica                                                                   201207
+040903Próstata e vesicula seminal                                                                         201207
+041203Pleura                                                                                              201207
+041303Reparadora para lipodistrofia                                                                       201207
+041503Politraumatizados                                                                                   201207
+041603Cabeça e pescoço                                                                                    201207
+050103Coleta e exames para ident. de doador de célula-tronco hematopoéticas (busca internacional/nacional)201207
+050303Manutenção e retirada de orgãos e tecidos para transplante                                          201207
+050403Processamento de válvula/tubo valvado cardíaco humano                                               201207
+060103Antianêmicos não hormonais                                                                          201207
+060303Imunoterápicos                                                                                      201207
+060403Agonistas da Dopamina/inibidor da prolactina                                                        201207
+070103OPM auditivas                                                                                       201207
+020203Exames sorológicos e imunológicos                                                                   201207
+010104Alimentação e nutrição                                                                              201207
+020204Exames coprológicos                                                                                 201207
+020404Exames radiológicos da cintura escapular e dos membros superiores                                   201207
+020804Aparelho geniturinário                                                                              201207
+020904Aparelho respiratório                                                                               201207
+021104Diagnóstico em ginecologia-obstetrícia                                                              201207
+030104Outros atendimentos realizados por profissionais de níveis superior                                 201207
+030204Assistência fisioterapêutica cardiovasculares e pneumo-funcionais                                   201207
+030304Tratamento de doenças do sistema nervoso central e periférico                                       201207
+030404Quimioterapia prévia (neoadjuvante/citorredutora)- adulto                                           201207
+030704Moldagem/Manutenção                                                                                 201207
+030804Complicações consequentes a procedimentos em saúde                                                  201207
+030904Terapias do aparelho cardiovascular                                                                 201207
+040304Neurocirurgias vasculares                                                                           201207
+040504Cavidade orbitária e globo ocular                                                                   201207
+040604Cirurgia endovascular                                                                               201207
+040704Parede e cavidade abdominal                                                                         201207
+040804Cintura pélvica                                                                                     201207
+040904Bolsa escrotal, testículos e cordão espermático                                                     201207
+041204Parede torácica                                                                                     201207
+041304Outras cirurgias plásticas/reparadoras                                                              201207
+041504Procedimentos cirúrgicos gerais                                                                     201207
+041604Esôfago-gastro duodenal e vísceras anexas e outros orgãos intra-abdominais                          201207
+050104Exames imunogenéticos/histocompatibilidade para identificação de doador de orgãos                   201207
+050304Açõess complementares destinadas a doação de orgãos, tecidos e células.                             201207
+050404Processamento de pele humana                                                                        201207
+060104Antianêmicos hormonais                                                                              201207
+060304Reguladores de atividade hormonal - inibidores da prolactina                                        201207
+060404Agonistas seletivos dos receptores beta 2 adrenérgicos                                              201207
+070104OPM oftalmológicas                                                                                  201207
+070204OPM em assistência cardiovascular                                                                   201207
+060405Alcalóides naturais do ópio                                                                         201207
+060305Antitrombóticos                                                                                     201207
+070205OPM comuns                                                                                          201207
+020205Exames de uroanálise                                                                                201207
+020405Exames radiológicos do abdomen e pelve                                                              201207
+020805Aparelho esquelético                                                                                201207
+021105Diagnóstico em neurologia                                                                           201207
+030105Atenção domiciliar                                                                                  201207
+030205Assistência fisioterapêutica nas disfunções musculo esqueleticas (todas as origens)                 201207
+030305Tratamento de doenças do aparelho da visão                                                          201207
+030405Quimioterapia adjuvante (profilática) - adulto                                                      201207
+030905Práticas integrativas e complementares                                                              201207
+040305Tratamento neurocirúrgico da dor funcional                                                          201207
+040505Conjuntiva, córnea, câmara anterior, íris, corpo ciliar e cristalino                                201207
+040605Eletrofisiologia                                                                                    201207
+040805Membros inferiores                                                                                  201207
+040905Pênis                                                                                               201207
+041205Pulmão                                                                                              201207
+041605Colo-proctologia                                                                                    201207
+050105Exames imunogenéticos/histocompatibilidade para identificação de receptor de orgãos                 201207
+060105Antiasmáticos                                                                                       201207
+070105OPM em gastroenterologia                                                                            201207
+060306Tensiolítico alveolar                                                                               201207
+060406Alimentos dietéticos isentos de fenilalanina                                                        201207
+070106OPM em urologia                                                                                     201207
+070206OPM em urologia                                                                                     201207
+020206Exames hormonais                                                                                    201207
+020406Exames radiológicos da cintura pélvica e dos membros inferiores                                     201207
+020806Aparelho nervoso                                                                                    201207
+021106Diagnóstico em oftalmologia                                                                         201207
+030106Consulta/Atendimento ás urgências (em geral)                                                        201207
+030206Assistência fisioterapêutica nas alterações em neurologia                                           201207
+030306Tratamento de doenças cardiovasculares                                                              201207
+030406Quimioterapia curativa - adulto                                                                     201207
+030906Acessos venosos                                                                                     201207
+040306Investigação e cirurgia da epilepsia                                                                201207
+040806Gerais                                                                                              201207
+040906Útero e anexos                                                                                      201207
+041606Ginecologia                                                                                         201207
+050106Exames gráficos ou por imagem para diagnóstico de morte encefálica                                  201207
+060106Antibióticos                                                                                        201207
+030207Assistência fisioterapêutica em queimados                                                           201207
+050107Outros exames complementares para doação de orgãos, tecidos e células                               201207
+030107Atendimento/acompanhamento em reabilitação física, mental, visual e múltiplas deficiências          201207
+030307Tratamento de doenças do aparelho digestivo                                                         201207
+070107OPM em odontologia                                                                                  201207
+021107Diagnóstico em otorrinolaringologia/fonoaudiologia                                                  201207
+030407Quimioterapia de tumores de crianca e adolescente                                                   201207
+041607Oftalmologia                                                                                        201207
+070207OPM em cirurgias oftálmicas                                                                         201207
+060407Aminas Terciárias                                                                                   201207
+040907Vagina, vulva e períneo                                                                             201207
+020207Exames toxicológicos ou de monitorização terapêutica                                                201207
+060307Hemoderivados                                                                                       201207
+040307Tratamento neuro-endovascular                                                                       201207
+020807Aparelho respiratório                                                                               201207
+060107Antiepiléticos                                                                                      201207
+030108Atendimento/Acompanhamento psicossocial                                                             201207
+021108Diagnóstico em pneumologia                                                                          201207
+020808Aparelho hematológico                                                                               201207
+020208Exames microbiológicos                                                                              201207
+070208OPM em cirurgia plástica/reparadora                                                                 201207
+070108OPM de anomalias buco-maxilo-facial                                                                 201207
+060408Aminoquinolinas                                                                                     201207
+060308Medicamentos para transplante                                                                       201207
+060108Antiinflamatórios                                                                                   201207
+050108Exames complementares para pacientes transplantados                                                 201207
+041608Pele e cirurgia plástica                                                                            201207
+040308Neurocirurgia funcional estereotáxica                                                               201207
+030408Quimioterapia - procedimentos especiais                                                             201207
+030308Tratamento de doenças da pele e do tecido  subcutâneo                                               201207
+020209Exames em outros líquidos biológicos                                                                201207
+060409Análogos da mostarda nitrogenada                                                                    201207
+070209OPM em cirurgia de otorrinolaringologia                                                             201207
+070109Substituição/Troca em órteses/próteses                                                              201207
+030409Medicina nuclear - terapêutica oncológica                                                           201207
+030109Atendimento/Acompanhamento em saúde do idoso                                                        201207
+020809Outros métodos de diagnóstico em medicina nuclear in vivo                                           201207
+030309Tratamento de doenças do sistema osteomuscular e do tecido conjuntivo                               201207
+060109Antiinflamatórios intestinais                                                                       201207
+021109Diagnóstico em urologia                                                                             201207
+041609Ossos e partes moles                                                                                201207
+030410Gerais em oncologia                                                                                 201207
+070110OPM em queimados                                                                                    201207
+030310Tratamento durante a gestação, parto e puerpério                                                    201207
+021110Diagnóstico em psicologia-psiquiatria                                                               201207
+041610Neurocirurgia                                                                                       201207
+060410Análogos da Vasopressina                                                                            201207
+030110Atendimentos de enfermagem (em geral)                                                               201207
+070210OPM em nefrologia                                                                                   201207
+060110Antiparkinsonianos                                                                                  201207
+020210Exames de genética                                                                                  201207
+030311Tratamento de malformações congênitas, deformidades e anomalias cromossômicas                       201207
+030111Atendimento/Acompanhamento queimados                                                                201207
+021111Diagnóstico em cardiologia intervencionista                                                         201207
+020211Exames para triagem neonatal                                                                        201207
+070211OPM em queimados                                                                                    201207
+060411Análogos do hormônio liberador de gonadotrofina                                                     201207
+060111Antipsicóticos                                                                                      201207
+041611Cirurgia torácica                                                                                   201207
+021112Diagnóstico em traumato-ortopedia                                                                   201207
+030112Atendimento/acompanhamento de diagnóstico de doenças endocrinas/metabolicas e nutricionais          201207
+070212OPM para transplantes                                                                               201207
+060412Antiandrogênios                                                                                     201207
+060112Antivirais                                                                                          201207
+020212Exames imunohematológicos                                                                           201207
+041612Mastologia                                                                                          201207
+030312Tratamentos por medicina nuclear in vivo                                                            201207
+030313Tratamento de pacientes sob cuidados prolongados                                                    201207
+041613Otorrinolaringologia                                                                                201207
+060113Bloqueadores neuromusculares                                                                        201207
+030113Acompanhamento em outras especialidades                                                             201207
+060413Anticolinesterases                                                                                  201207
+060114Ceratolíticos sistêmicos                                                                            201207
+060414Antigonadotrofinas e agentes similares                                                              201207
+030314Tratamento de doenças do ouvido/apófise mastóide e vias aéreas                                      201207
+030315Tratamento das doenças do aparelho geniturinário                                                    201207
+060115Complementos alimentares para fenilcetonúricos                                                      201207
+060415Barbitúricos e derivados                                                                            201207
+060116Fatores de crescimento mielóides                                                                    201207
+060416Bifosfonados                                                                                        201207
+030316Tratamento de algumas afecçõess originadas no período neonatal                                      201207
+060417Compostos de Alumínio                                                                               201207
+030317Tratamento dos transtornos mentais e comportamentais                                                201207
+060117Hipnoanalgésicos                                                                                    201207
+060418Derivados da benzodiazepina                                                                         201207
+030318Tratamento HIV/Aids                                                                                 201207
+060118Hipolipemiantes                                                                                     201207
+060419Derivados de ácidos graxos                                                                          201207
+030319Reabilitação                                                                                        201207
+060119Imunomoduladores                                                                                    201207
+060120Imunossupressores                                                                                   201207
+060420Derivados do adamanto                                                                               201207
+060121Imunoterapicos                                                                                      201207
+060421Derivados do indol                                                                                  201207
+060122Inibidores da acetilcolinesterase                                                                   201207
+060422Derivados da succinimida                                                                            201207
+060123Mucolíticos                                                                                         201207
+060423Diazepinas, oxazepinas e tiazepinas                                                                 201207
+060124Quelantes do ferro                                                                                  201207
+060424 Enzimas                                                                                            201207
+060125Outros quelantes                                                                                    201207
+060425Fatores de estimulação de colônias                                                                  201207
+060126Reguladores da atividade hormonal-agonistas da vasopressina                                         201207
+060426Ferro trivalente, preparações parenterais                                                           201207
+060127Reguladores da atividade hormonal-analogos do GNRH                                                  201207
+060427Fibratos                                                                                            201207
+060128Reguladores da atividade hormonal-antiandrogênicos                                                  201207
+060428Glicocorticóides                                                                                    201207
+060429Hormônio anticrescimento                                                                            201207
+060129Reguladores da atividade hormonal-inibidores das gonadotrofinas                                     201207
+060130Reguladores da atividade hormonal-inibidores do hormônio do crescimento                             201207
+060430 Imunoglobulinas específicas                                                                        201207
+060131Reguladores da atividade hormonal-inibidores de prolactina                                          201207
+060431Imunoglobulinas, humana normal                                                                      201207
+060132Reguladores da atividade hormonal-hormonios de crescimento                                          201207
+060432Imunossupressores seletivos                                                                         201207
+060433Inibidores da agregação plaquetária, excl. heparina                                                 201207
+060133Reguladores da atividade hormonal-hormonios tireoidianos                                            201207
+060134Reguladores da atividade hormonal-mineralocorticóides                                               201207
+060434Inibidores da calcineurina                                                                          201207
+060135Reguladores da homeostase do cálcio                                                                 201207
+060435Inibidores da fosfodiesterase                                                                       201207
+060136Repositores enzimáticos                                                                             201207
+060436Inibidores da HMG-CoA redutase                                                                      201207
+060437Inibidores da monoamino oxidase tipo b                                                              201207
+060438Inibidores do fator de necrose tumoral alfa (TNF-a)                                                 201207
+060439Interferons                                                                                         201207
+060440Medicamentos para tratamento da hipercalemia e hiperfosfatemia                                      201207
+060441Medicamentos utilizados na dependência de opióides                                                  201207
+060442Mineralocorticóides                                                                                 201207
+060443Modulador seletivo de receptor de estrogênio                                                        201207
+060444Mucolíticos                                                                                         201207
+060445Nucleosídeo e nucleotídeo (excl. inibidores da transcriptase reversa)                               201207
+060446Nucleosídeo e nucleotídeo, Inibidor da transcriptase reversa                                        201207
+060447Outras preparações antianêmicas                                                                     201207
+060448Outros agentes citotóxicos                                                                          201207
+060449Outros agentes dopaminérgicos                                                                       201207
+060450Outros antiepiléticos                                                                               201207
+060451Outros antipsicóticos                                                                               201207
+060452Outros imunoestimulantes                                                                            201207
+060453Outros imunossupressores                                                                            201207
+060454Outros medicamentos do sistema nervoso                                                              201207
+060455Outros relaxantes musculares de ação periférica                                                     201207
+060456Penicilamina e agentes similares                                                                    201207
+060457Preparações de calcitonina                                                                          201207
+060458Preparações de enzimas                                                                              201207
+060459Retinóides para tratamento da acne                                                                  201207
+060460Retinóides para tratamento da psoríase                                                              201207
+060461Somatropina e agonistas da somatropina                                                              201207
+060462Vitamina De análogos                                                                                201207
+060463Produtos diversos para o trato alimentar ou metabolismo                                             201207

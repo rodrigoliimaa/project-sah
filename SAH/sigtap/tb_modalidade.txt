@@ -1,0 +1,6 @@
+01Ambulatorial                                                                                        201207
+02Hospitalar                                                                                          201207
+03Hospital Dia                                                                                        201207
+04Internação Domiciliar                                                                               201207
+05Assistência Domiciliar                                                                              201207
+06Atenção Domiciliar                                                                                  201207

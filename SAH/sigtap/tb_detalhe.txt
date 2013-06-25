@@ -1,0 +1,30 @@
+001Inclui valor da anestesia                                                                           201207
+003Admite longa permanência                                                                            201207
+004Admite permanência à maior                                                                          201207
+005Admite liberação de quantidade na AIH                                                               201207
+006CNRAC                                                                                               201207
+007Permanência por dia                                                                                 201207
+008Não permite mudança de procedimento                                                                 201207
+009Exige CNS                                                                                           201207
+010Exige VDRL na AIH                                                                                   201207
+011Permite alta direta de UTI                                                                          201207
+012Exige idade no BPA (Consolidado)                                                                    201207
+013Verifica habilitação de terceiro                                                                    201207
+014Admite APAC de Continuidade                                                                         201207
+015Admitido apenas em Hosp.Espec/Psiquiatria                                                           201207
+017Exige Informação da OPM                                                                             201207
+019Projeto Olhar Brasil                                                                                201207
+020Monitoramento do CEO                                                                                201207
+021Não Exige CBO                                                                                       201207
+022Exige registro na APAC de dados complementares                                                      201207
+023Registro no SISCOLO                                                                                 201207
+024Registro no SISPRENATAL                                                                             201207
+025Registro no SISMAMA                                                                                 201207
+026Registro de Procedimentos Secundário Compativel                                                     201207
+027Identificação de  Cirg. Cardiovasculares Pediátricas                                                201207
+029Admite período maior para a apresentação                                                            201207
+030Cirurgias Eletivas - Componente I                                                                   201207
+031Cirurgias Eletivas - Componente II                                                                  201207
+032Cirurgias Eletivas - Componente III                                                                 201207
+033APAC com validade fixa de 03 competências                                                           201207
+034Não exige CNS                                                                                       201207

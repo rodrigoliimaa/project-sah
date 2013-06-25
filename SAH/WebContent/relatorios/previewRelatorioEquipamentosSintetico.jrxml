@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="55c90347-99bd-494f-827b-28aeec735736">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.callouts" value="##Fri Aug 24 14:46:35 GMT-03:00 2012"/>
+	<style name="zebrado" mode="Opaque" backcolor="#CCCCCC" pattern="">
+		<conditionalStyle>
+			<conditionExpression><![CDATA[new Boolean(($V{COLUMN_COUNT}.intValue() % 2) == 0)]]></conditionExpression>
+			<style/>
+		</conditionalStyle>
+	</style>
+	<parameter name="P_PATH_IMAGENS" class="java.lang.String"/>
+	<parameter name="P_SETOR" class="java.lang.String"/>
+	<parameter name="P_SITUACAO" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="observacao" class="java.lang.String">
+		<fieldDescription><![CDATA[observacao]]></fieldDescription>
+	</field>
+	<field name="apacBpi" class="java.lang.String">
+		<fieldDescription><![CDATA[apacBpi]]></fieldDescription>
+	</field>
+	<field name="quantidadePacientes" class="java.lang.Integer">
+		<fieldDescription><![CDATA[quantidadePacientes]]></fieldDescription>
+	</field>
+	<variable name="soma geral" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{quantidadePacientes}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="103" splitType="Stretch">
+			<rectangle>
+				<reportElement uuid="802434ae-227a-4af9-9fd8-b4b89484e7fe" x="102" y="3" width="700" height="39"/>
+			</rectangle>
+			<image scaleImage="FillFrame">
+				<reportElement uuid="21283039-a0cc-483a-b253-8d1bc3f49eb6" x="1" y="3" width="100" height="50"/>
+				<imageExpression><![CDATA[$P{P_PATH_IMAGENS}+"/images.jpg"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="5b16eb34-db82-49a4-a91b-985b45b97e59" x="101" y="42" width="702" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[RELATÓRIO DE EQUIPAMENTOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6efd9a5f-06aa-4513-868a-1deed86b6b91" x="101" y="22" width="702" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[CENTRO DE MEDICINA FÍSICA E REABILITAÇÃO GERONIMO CERQUEIRA ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="58386bd3-9d16-47e5-abe2-3de5eb63c8cb" x="101" y="3" width="702" height="19"/>
+				<textElement textAlignment="Center">
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[ASSOCIAÇÃO DOS DEFICIENTES FISICOS DE ALAGOAS ]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="7511f39e-9bcc-4a31-a85c-e60cabef032b" x="549" y="83" width="253" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_SETOR}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="78441683-4384-4bf3-a411-a4f4bb456dca" x="509" y="83" width="110" height="20"/>
+				<textElement/>
+				<text><![CDATA[Setor:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8e6cc209-305a-4d13-81fc-292d4d24d236" x="0" y="83" width="127" height="20"/>
+				<textElement/>
+				<text><![CDATA[Amostragem Sintética]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9fba3384-6d0c-41b6-8844-b74d3e73b565" x="213" y="83" width="48" height="20"/>
+				<textElement/>
+				<text><![CDATA[Situação:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="8e35cc9c-3116-417c-8bac-f9162d35a21b" x="261" y="83" width="237" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_SITUACAO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="21">
+			<staticText>
+				<reportElement uuid="2d86edef-3f8c-4da7-bc0f-aa1a95b33217" x="0" y="0" width="84" height="20"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cod. Proced.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2d86edef-3f8c-4da7-bc0f-aa1a95b33217" x="84" y="0" width="296" height="20"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome Procedimento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2d86edef-3f8c-4da7-bc0f-aa1a95b33217" x="742" y="1" width="60" height="20"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Quantidade]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement uuid="6e08f242-9d32-49c5-98b1-d26a9ab4ab9b" x="1" y="0" width="83" height="20"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{apacBpi}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="971e851e-1459-4cdb-b7ca-f8bbd6f0a9f6" x="84" y="0" width="658" height="20"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{observacao}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="bede1781-fefc-4763-9a05-bcf9403c7292" x="742" y="0" width="61" height="20"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$F{quantidadePacientes}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="d224d3d3-a1aa-4413-a16b-3c2c93659762" x="1" y="-1" width="801" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="066c4d26-792f-4087-bbf7-b9d0f722529f" x="0" y="20" width="802" height="1"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="a7527cf9-6601-458f-a306-fe15f8cd7e1e" x="287" y="25" width="283" height="20"/>
+				<textElement/>
+				<text><![CDATA[SAUTH - Sistema de Automação Hospitalar / www.infoliver.com.br]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="36a04937-3476-4d80-969f-8b5f4b3933e3" x="682" y="25" width="80" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="748cd0f3-8214-4d70-8975-deae62969deb" x="762" y="25" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="8c7aede9-556c-43bc-9cef-7c196caebd1e" x="0" y="25" width="61" height="20"/>
+				<textElement/>
+				<text><![CDATA[Total Geral]]></text>
+			</staticText>
+			<textField pattern="###0">
+				<reportElement uuid="5ca0b6d0-9d51-4a60-b184-db1c60ffa2a3" x="61" y="25" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{soma geral}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+</jasperReport>

@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tratamentoReabilitacao" columnCount="2" printOrder="Horizontal" pageWidth="606" pageHeight="842" columnWidth="268" leftMargin="36" rightMargin="33" topMargin="2" bottomMargin="2">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="arquivos" class="java.util.List">
+		<fieldDescription><![CDATA[arquivos]]></fieldDescription>
+	</field>
+	<field name="bairroLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[bairroLogradouro]]></fieldDescription>
+	</field>
+	<field name="cep" class="java.lang.String">
+		<fieldDescription><![CDATA[cep]]></fieldDescription>
+	</field>
+	<field name="class" class="java.lang.Class">
+		<fieldDescription><![CDATA[class]]></fieldDescription>
+	</field>
+	<field name="cns" class="java.lang.String">
+		<fieldDescription><![CDATA[cns]]></fieldDescription>
+	</field>
+	<field name="codigoIbgeMunicipioLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[codigoIbgeMunicipioLogradouro]]></fieldDescription>
+	</field>
+	<field name="codigoLivro" class="java.lang.String">
+		<fieldDescription><![CDATA[codigoLivro]]></fieldDescription>
+	</field>
+	<field name="complementoLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[complementoLogradouro]]></fieldDescription>
+	</field>
+	<field name="cpf" class="java.lang.String">
+		<fieldDescription><![CDATA[cpf]]></fieldDescription>
+	</field>
+	<field name="cpfResponsavel" class="java.lang.String">
+		<fieldDescription><![CDATA[cpfResponsavel]]></fieldDescription>
+	</field>
+	<field name="dataExpedicao" class="java.util.Date">
+		<fieldDescription><![CDATA[dataExpedicao]]></fieldDescription>
+	</field>
+	<field name="dataHoraCadastro" class="java.util.Date">
+		<fieldDescription><![CDATA[dataHoraCadastro]]></fieldDescription>
+	</field>
+	<field name="dataNascimento" class="java.util.Date">
+		<fieldDescription><![CDATA[dataNascimento]]></fieldDescription>
+	</field>
+	<field name="dataRegistroLivro" class="java.util.Date">
+		<fieldDescription><![CDATA[dataRegistroLivro]]></fieldDescription>
+	</field>
+	<field name="encaminhador" class="br.com.infoliver.sah.negocio.entity.Encaminhador">
+		<fieldDescription><![CDATA[encaminhador]]></fieldDescription>
+	</field>
+	<field name="enderecoEletronico" class="java.lang.String">
+		<fieldDescription><![CDATA[enderecoEletronico]]></fieldDescription>
+	</field>
+	<field name="escolaridade" class="br.com.infoliver.sah.negocio.entity.Escolaridade">
+		<fieldDescription><![CDATA[escolaridade]]></fieldDescription>
+	</field>
+	<field name="estadoCivil" class="java.lang.String">
+		<fieldDescription><![CDATA[estadoCivil]]></fieldDescription>
+	</field>
+	<field name="imagemDigital" class="java.lang.Object">
+		<fieldDescription><![CDATA[imagemDigital]]></fieldDescription>
+	</field>
+	<field name="imagemPaciente" class="java.lang.Object">
+		<fieldDescription><![CDATA[imagemPaciente]]></fieldDescription>
+	</field>
+	<field name="indicadorAssociado" class="java.lang.String">
+		<fieldDescription><![CDATA[indicadorAssociado]]></fieldDescription>
+	</field>
+	<field name="indicadorEstudo" class="java.lang.String">
+		<fieldDescription><![CDATA[indicadorEstudo]]></fieldDescription>
+	</field>
+	<field name="indicadorImagemDigital" class="java.lang.String">
+		<fieldDescription><![CDATA[indicadorImagemDigital]]></fieldDescription>
+	</field>
+	<field name="indicadorImagemPaciente" class="java.lang.String">
+		<fieldDescription><![CDATA[indicadorImagemPaciente]]></fieldDescription>
+	</field>
+	<field name="indicadorTrabalho" class="java.lang.String">
+		<fieldDescription><![CDATA[indicadorTrabalho]]></fieldDescription>
+	</field>
+	<field name="localEstudo" class="java.lang.String">
+		<fieldDescription><![CDATA[localEstudo]]></fieldDescription>
+	</field>
+	<field name="localTrabalho" class="java.lang.String">
+		<fieldDescription><![CDATA[localTrabalho]]></fieldDescription>
+	</field>
+	<field name="logradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[logradouro]]></fieldDescription>
+	</field>
+	<field name="municipioLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[municipioLogradouro]]></fieldDescription>
+	</field>
+	<field name="municipioNaturalidade" class="java.lang.String">
+		<fieldDescription><![CDATA[municipioNaturalidade]]></fieldDescription>
+	</field>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[nome]]></fieldDescription>
+	</field>
+	<field name="nomeCartorio" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeCartorio]]></fieldDescription>
+	</field>
+	<field name="nomeConjuge" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeConjuge]]></fieldDescription>
+	</field>
+	<field name="nomeMae" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeMae]]></fieldDescription>
+	</field>
+	<field name="nomePai" class="java.lang.String">
+		<fieldDescription><![CDATA[nomePai]]></fieldDescription>
+	</field>
+	<field name="nomeResponsavel" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeResponsavel]]></fieldDescription>
+	</field>
+	<field name="numeroFolhaLivro" class="java.lang.Integer">
+		<fieldDescription><![CDATA[numeroFolhaLivro]]></fieldDescription>
+	</field>
+	<field name="numeroLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[numeroLogradouro]]></fieldDescription>
+	</field>
+	<field name="numeroRegistro" class="java.lang.Integer">
+		<fieldDescription><![CDATA[numeroRegistro]]></fieldDescription>
+	</field>
+	<field name="ocupacao" class="br.com.infoliver.sah.negocio.entity.Ocupacao">
+		<fieldDescription><![CDATA[ocupacao]]></fieldDescription>
+	</field>
+	<field name="orgaoEmissor" class="java.lang.String">
+		<fieldDescription><![CDATA[orgaoEmissor]]></fieldDescription>
+	</field>
+	<field name="quantidadeArquivo" class="java.lang.Integer">
+		<fieldDescription><![CDATA[quantidadeArquivo]]></fieldDescription>
+	</field>
+	<field name="raca" class="br.com.infoliver.sah.negocio.entity.Raca">
+		<fieldDescription><![CDATA[raca]]></fieldDescription>
+	</field>
+	<field name="referenciaLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[referenciaLogradouro]]></fieldDescription>
+	</field>
+	<field name="rg" class="java.lang.String">
+		<fieldDescription><![CDATA[rg]]></fieldDescription>
+	</field>
+	<field name="rgResponsavel" class="java.lang.String">
+		<fieldDescription><![CDATA[rgResponsavel]]></fieldDescription>
+	</field>
+	<field name="sequencial" class="java.lang.Integer">
+		<fieldDescription><![CDATA[sequencial]]></fieldDescription>
+	</field>
+	<field name="sequencialPacienteAnterior" class="java.lang.Integer">
+		<fieldDescription><![CDATA[sequencialPacienteAnterior]]></fieldDescription>
+	</field>
+	<field name="sexo" class="java.lang.String">
+		<fieldDescription><![CDATA[sexo]]></fieldDescription>
+	</field>
+	<field name="telefone01" class="java.lang.String">
+		<fieldDescription><![CDATA[telefone01]]></fieldDescription>
+	</field>
+	<field name="telefone02" class="java.lang.String">
+		<fieldDescription><![CDATA[telefone02]]></fieldDescription>
+	</field>
+	<field name="telefone03" class="java.lang.String">
+		<fieldDescription><![CDATA[telefone03]]></fieldDescription>
+	</field>
+	<field name="telefoneMae" class="java.lang.String">
+		<fieldDescription><![CDATA[telefoneMae]]></fieldDescription>
+	</field>
+	<field name="telefoneResponsavel" class="java.lang.String">
+		<fieldDescription><![CDATA[telefoneResponsavel]]></fieldDescription>
+	</field>
+	<field name="tipoResponsavel" class="br.com.infoliver.sah.negocio.entity.TipoResponsavel">
+		<fieldDescription><![CDATA[tipoResponsavel]]></fieldDescription>
+	</field>
+	<field name="tipoSanguineo" class="java.lang.String">
+		<fieldDescription><![CDATA[tipoSanguineo]]></fieldDescription>
+	</field>
+	<field name="ufLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[ufLogradouro]]></fieldDescription>
+	</field>
+	<field name="ufNaturalidade" class="java.lang.String">
+		<fieldDescription><![CDATA[ufNaturalidade]]></fieldDescription>
+	</field>
+	<field name="ufOrgaoEmissor" class="java.lang.String">
+		<fieldDescription><![CDATA[ufOrgaoEmissor]]></fieldDescription>
+	</field>
+	<field name="usuarioCadastro" class="br.com.infoliver.sah.negocio.entity.Usuario">
+		<fieldDescription><![CDATA[usuarioCadastro]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="165" splitType="Stretch">
+			<staticText>
+				<reportElement x="15" y="8" width="250" height="16"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ADEFAL - Associação dos Deficientes Físicos de Alagoas]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="24" width="250" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[TRATAMENTO DE REABILITAÇÃO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="39" width="57" height="14"/>
+				<textElement verticalAlignment="Top">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[PRONTUÁRIO:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="73" y="39" width="40" height="14"/>
+				<textElement verticalAlignment="Top">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sequencial}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="15" y="52" width="28" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Nome:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="71" width="28" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[End:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="88" width="28" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Bairro:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="16" y="104" width="43" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Municipio:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="120" width="28" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[CPF:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="15" y="137" width="57" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Filiação: Mãe:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="43" y="53" width="223" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="42" y="71" width="223" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{logradouro}+", "+$F{numeroLogradouro}+", "+ (($F{complementoLogradouro} == null) ? "" : $F{complementoLogradouro})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="146" y="88" width="18" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Tel:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="175" y="89" width="91" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{telefone01}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="58" y="104" width="208" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{municipioLogradouro}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="42" y="120" width="72" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cpf}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="71" y="137" width="195" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomeMae}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="42" y="90" width="100" height="16"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{bairroLogradouro}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="114" y="120" width="50" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Dt. Nasc.]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="164" y="120" width="102" height="16"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{dataNascimento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="118" y="39" width="24" height="14"/>
+				<textElement/>
+				<text><![CDATA[CNS:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="146" y="39" width="119" height="14"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cns}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

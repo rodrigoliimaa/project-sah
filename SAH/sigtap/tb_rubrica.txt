@@ -1,0 +1,51 @@
+040001Coleta de material                                                                                  201207
+040002Diagnóstico em laboratório clínico                                                                  201207
+040003Coleta/exame anátomo-patológico colo uterino                                                        201207
+040004Diagnóstico em neurologia                                                                           201207
+040005Diagnóstico em otorrinolaringologia/fonoaudiologia                                                  201207
+040006Diagnóstico em psicologia/psiquiatria                                                               201207
+040007Consultas médicas/outros profissionais de nível superior                                            201207
+040008Atenção domiciliar                                                                                  201207
+040009Atendimento/acompanhamento em reabilitação física, mental, visual e múltiplas deficiências          201207
+040010Atendimento/acompanhamento psicossocial                                                             201207
+040011Atendimento/acompanhamento em saúde do idoso                                                        201207
+040012Atendimento/acompanhamento de queimados                                                             201207
+040013Atendimento/acompanhamento de diagnóstico de doenças endocrinas/metabólicas e nutricionais          201207
+040014Tratamento de doenças do sistema nervoso central e periférico                                       201207
+040015Tratamento de doenças do aparelho da visão                                                          201207
+040016Tratamento em oncologia                                                                             201207
+040017Nefrologia                                                                                          201207
+040018Tratamentos odontológicos                                                                           201207
+040019Cirurgia do sistema nervoso central e periférico                                                    201207
+040020Cirurgias de ouvido, nariz e garganta                                                               201207
+040021Deformidade labio-palatal e crânio-facial                                                           201207
+040022Cirurgia do aparelho da visão                                                                       201207
+040023Cirurgia do aparelho circulatório                                                                   201207
+040024Cirurgia do aparelho digestivo, orgãos anexos e parede abdominal                                    201207
+040025Cirurgia do aparelho geniturinário                                                                  201207
+040026Tratamento de queimados                                                                             201207
+040027Cirurgia reparadora para lipodistrofia                                                              201207
+040028Outras cirurgias plásticas/reparadoras                                                              201207
+040029Cirurgia orofacial                                                                                  201207
+040030Sequenciais                                                                                         201207
+040032Transplantes de orgãos, tecidos e células                                                           201207
+040033Medicamentos para transplante                                                                       201207
+040035OPM em odontologia                                                                                  201207
+040036OPM em queimados                                                                                    201207
+040038OPM para transplantes                                                                               201207
+040039Incentivos ao pré-natal e nascimento                                                                201207
+040040Incentivo ao registro cívil de nascimento                                                           201207
+040041Central Nacional de Regulação de Alta Complexidade (CNRAC)                                          201207
+040042Reguladores de Atividade hormonal - Inibidores de prolactina                                        201207
+040043Política Nacional de Cirurgias Eletivas                                                             201207
+040044Redesignação e Acompanhamento                                                                       201207
+040045Projeto Olhar Brasil                                                                                201207
+040046Mamografia para Rastreamento                                                                        201207
+040047Projeto Olhar Brasil - Consulta                                                                     201207
+040048Projeto Olhar Brasil - Óculos                                                                       201207
+040049Implementar Cirg. CV Pediátrica                                                                     201207
+040050Cirurgias Eletivas - Componente I                                                                   201207
+040051Cirurgias Eletivas - Componente II                                                                  201207
+040052Cirurgias Eletivas - Componente III                                                                 201207
+040053Prótese Mamária - Exames                                                                            201207
+040054Prótese Mamária - Cirurgia                                                                          201207

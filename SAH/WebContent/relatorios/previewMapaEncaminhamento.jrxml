@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="previewMapaEncaminhamento" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="c8cfd8e6-9bd2-40b6-932e-938413f7235f">
+	<property name="ireport.zoom" value="1.0980750000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_PATH_IMAGENS" class="java.lang.String"/>
+	<parameter name="P_DATA_INICIO" class="java.lang.String"/>
+	<parameter name="P_DATA_FINAL" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="P_NOME_FORNECEDOR" class="java.lang.String" isForPrompting="false"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="sequencialPaciente" class="java.lang.Integer">
+		<fieldDescription><![CDATA[sequencialPaciente]]></fieldDescription>
+	</field>
+	<field name="nomePaciente" class="java.lang.String">
+		<fieldDescription><![CDATA[nomePaciente]]></fieldDescription>
+	</field>
+	<field name="codigoProcedimento" class="java.lang.String">
+		<fieldDescription><![CDATA[codigoProcedimento]]></fieldDescription>
+	</field>
+	<field name="nomeProcedimento" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProcedimento]]></fieldDescription>
+	</field>
+	<field name="quantidade" class="java.lang.Integer">
+		<fieldDescription><![CDATA[quantidade]]></fieldDescription>
+	</field>
+	<field name="numValorServAmb" class="java.lang.Double">
+		<fieldDescription><![CDATA[numValorServAmb]]></fieldDescription>
+	</field>
+	<field name="numeroNota" class="java.lang.String">
+		<fieldDescription><![CDATA[numeroNota]]></fieldDescription>
+	</field>
+	<field name="nomeFantasia" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeFantasia]]></fieldDescription>
+	</field>
+	<field name="categoriaTipo" class="java.lang.String">
+		<fieldDescription><![CDATA[categoriaTipo]]></fieldDescription>
+	</field>
+	<variable name="soma" class="java.lang.Number" calculation="Sum">
+		<variableExpression><![CDATA[$F{numValorServAmb}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="105">
+			<image scaleImage="FillFrame">
+				<reportElement uuid="47c238c2-aa9b-4fdc-921e-333a799c3e16" x="0" y="1" width="168" height="69"/>
+				<imageExpression><![CDATA[$P{P_PATH_IMAGENS}+"/Logo_ADEFAL.gif"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="66fa4466-028d-4c31-806b-eeda93f9434c" x="168" y="8" width="634" height="22"/>
+				<textElement textAlignment="Center">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ASSOCIAÇÃO DOS DEFICIENTES FÍSICOS DE ALAGOAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="997e1785-0647-485e-a0e6-50c0bef19200" x="168" y="30" width="634" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[CENTRO DE MEDICINA FÍSICA E REABILITAÇÃO GERÔNIMO CIQUEIRA	]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1ba61c6f-2702-48e5-b32b-7236bf50e565" x="168" y="50" width="634" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[RELATÓRIO DE MOVIMENTAÇÕES ÓRTESE E PRÓTESE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1ab921e2-1726-4a47-9f15-2a5373ffe08d" x="0" y="83" width="62" height="20"/>
+				<textElement/>
+				<text><![CDATA[Fornecedor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="66328c72-4d53-4d39-9c1e-ea78d70c7cda" x="572" y="83" width="40" height="20"/>
+				<textElement/>
+				<text><![CDATA[Período]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="15dbd178-83e9-4054-a874-2b8517946af5" x="672" y="83" width="12" height="20"/>
+				<textElement/>
+				<text><![CDATA[a]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="1975fb5c-32d5-4819-9924-3ed17370dccd" x="612" y="83" width="60" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_DATA_INICIO}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="28586551-b3d3-4168-b277-f83cd7ee7e9e" x="684" y="83" width="97" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_DATA_FINAL}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="86c4036f-6950-4f07-834d-e06df6ac65b5" x="62" y="83" width="159" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_NOME_FORNECEDOR}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="20">
+			<staticText>
+				<reportElement uuid="c0d10455-02b0-4bb8-9e36-8634d7696ad9" x="0" y="0" width="40" height="20"/>
+				<textElement/>
+				<text><![CDATA[Pront.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="675d31a4-9fbf-4bae-a379-aae9a56ecca9" x="40" y="0" width="128" height="20"/>
+				<textElement/>
+				<text><![CDATA[Paciente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a966aa2c-c68d-41bd-925c-88478a4f4678" x="168" y="0" width="308" height="20"/>
+				<textElement/>
+				<text><![CDATA[Procedimento]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="25582cc6-18cf-4c61-b542-1b4292be3dbd" x="735" y="0" width="67" height="20"/>
+				<textElement/>
+				<text><![CDATA[Categoria:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5ee5e33f-875f-4994-bacd-832e7adaf881" x="552" y="0" width="40" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Qtd]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="27af40e9-334b-4ca7-a772-f047838417cc" x="476" y="0" width="76" height="20"/>
+				<textElement/>
+				<text><![CDATA[Valor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ce106cea-ddc7-4cc0-9b15-81fe2d530bf7" x="592" y="0" width="43" height="20"/>
+				<textElement/>
+				<text><![CDATA[Nota]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ba86cf6e-a365-4d3d-9243-10e60aac0faf" x="635" y="0" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Fornecedor]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="3a4b3436-563d-4da0-8998-7223a4f337e4" x="0" y="19" width="802" height="1"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<textField>
+				<reportElement uuid="f7bb74fd-e719-465f-bc5e-1b91f2138d4c" x="0" y="0" width="40" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{sequencialPaciente}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="653b2fad-367b-4ba5-a7c8-dcc6ca50029c" x="40" y="0" width="128" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomePaciente}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="e75e4977-ef62-4d40-9a7e-36318ff0dfe3" x="168" y="0" width="65" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{codigoProcedimento}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3e19d3be-18d4-4bf1-af7b-359f65877dce" x="233" y="0" width="243" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomeProcedimento}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ef0104f6-3cee-4318-8aa9-6a4bad5a8ea8" x="552" y="0" width="40" height="15"/>
+				<textElement textAlignment="Center">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quantidade}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00" isBlankWhenNull="true">
+				<reportElement uuid="c41a33a4-2289-490b-93e7-ccc10b2b9916" x="476" y="0" width="76" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numValorServAmb}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="bc4dd00e-c78d-4dbd-a77c-94ec3cf27d3d" x="592" y="0" width="43" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numeroNota}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="8d4e542f-c69f-4bc9-9b24-406ec3be0a92" x="635" y="0" width="100" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomeFantasia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6604c426-f604-460a-8efb-39cd1a835c43" x="735" y="0" width="67" height="15"/>
+				<textElement>
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{categoriaTipo}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="9aab2036-918b-457e-87a1-cb08d757ffcf" x="0" y="15" width="802" height="1"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="35">
+			<textField>
+				<reportElement uuid="9e479489-c229-4214-b08e-56d9acb904ce" x="684" y="15" width="80" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="21d0fcee-3507-4feb-81ff-61ff55be6c23" x="764" y="15" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band/>
+	</pageFooter>
+	<lastPageFooter>
+		<band/>
+	</lastPageFooter>
+	<summary>
+		<band height="34">
+			<staticText>
+				<reportElement uuid="feb2a330-e57b-4b38-ba23-99efc27d8d18" x="0" y="14" width="296" height="20"/>
+				<textElement/>
+				<text><![CDATA[SAUTH - Sistema de Automação Hospitalar / www.infoliver.com.br]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="258d7223-fc08-4e94-9184-ee9d00a84d88" x="595" y="14" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="cc23edee-1cba-46fc-ae5f-35229c92cc86" x="302" y="14" width="143" height="20"/>
+				<textElement/>
+				<text><![CDATA[Valor Total de Movimentações:]]></text>
+			</staticText>
+			<textField pattern="¤ #,##0.00">
+				<reportElement uuid="fe566d8e-aef3-40d1-9e00-b0b932a91e71" x="445" y="14" width="131" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$V{soma}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

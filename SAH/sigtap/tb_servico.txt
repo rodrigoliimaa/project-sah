@@ -1,0 +1,60 @@
+100Serviço de Atenção a Saúde no Sistema Penitenciário                                                                     201207
+101Estratégia de Saúde da Família                                                                                          201207
+102Estratégias de Agentes Comunitário de Saúde                                                                             201207
+103Serviço de Atendimento Móvel de Urgências                                                                               201207
+104Regulação Assistêncial dos Serviços de Saúde                                                                            201207
+105Serviço de Assistência de Alta Complexidade em Neurocirurgia                                                            201207
+106Serviço de Atenção a DST/HIV/AIDS                                                                                       201207
+107Serviço de Atenção a Saúde Auditiva                                                                                     201207
+108Serviço de Atenção a Aaúde do Trabalhador                                                                               201207
+109Serviço de Atenção a Saúde dos Adolecentes em Conflito com a Lei, em Regime de Internação e Internação Provisória       201207
+110Serviço de Atenção a Saúde Reprodutiva                                                                                  201207
+111Serviço de Atenção ao Paciente com Tuberculose                                                                          201207
+112Serviço de Atenção ao Pré-Natal, Parto e Nascimento                                                                     201207
+113Serviço de Atenção Domiciliar                                                                                           201207
+114Serviço de Atenção em Saúde Bucal                                                                                       201207
+115Serviço de Atenção Psicossocial                                                                                         201207
+116Serviço de Cirurgia Cardiovascular                                                                                      201207
+117Serviço de Cirurgia Reparadora                                                                                          201207
+118Serviço de Cirurgia Torácica                                                                                            201207
+119Serviço de Controle de Tabagismo                                                                                        201207
+120Serviço de Diagnóstico por Anatomia Patológica e/ou Citopatologia                                                       201207
+121Serviço de Diagnóstico por Imagem                                                                                       201207
+122Serviço de Diagnóstico por Métodos Gráficos/Dinâmicos                                                                   201207
+123Serviço de Dispensação de Órteses, Próteses e Materiais Especiais                                                       201207
+124Serviço de Endocrinologia                                                                                               201207
+125Serviço de Farmácia                                                                                                     201207
+126Serviço de Fisioterapia                                                                                                 201207
+127Serviço de Atenção à Obesidade Grave                                                                                    201207
+128Serviço de Hemoterapia                                                                                                  201207
+129Servico de Laboratório de Histocompatibilidade                                                                          201207
+130Serviço de Nefrologia/Urologia                                                                                          201207
+131Serviço de Oftalmologia                                                                                                 201207
+132Serviço de Oncologia                                                                                                    201207
+133Serviço de Pneumologia                                                                                                  201207
+134Serviço de Práticas Integrativas e Complementares                                                                       201207
+135Serviço de Reabilitação                                                                                                 201207
+136Serviço de Suporte Nutricional                                                                                          201207
+137Serviço de Telemedicina                                                                                                 201207
+138Serviço de Traumato-Ortopedia                                                                                           201207
+139Serviço de Triagem Neonatal                                                                                             201207
+140Serviço de Urgências                                                                                                    201207
+141Serviço de Vigilância em Saúde                                                                                          201207
+142Serviço de Endoscopia                                                                                                   201207
+143Serviço Móvel de Urgência (exceto SAMU)                                                                                 201207
+144Serviço Posto de Coleta de Materiais Biológicos                                                                         201207
+145Serviço de Diagnóstico por Laboratório Clínico                                                                          201207
+146Serviço de Videolaparoscopia                                                                                            201207
+147Serviço de Apoio a Saúde da Família                                                                                     201207
+148Hospital-Dia                                                                                                            201207
+149Transplante                                                                                                             201207
+150Cirurgia Vascular                                                                                                       201207
+151Medicina Nuclear                                                                                                        201207
+153Atenção Especializada                                                                                                   201207
+154Serviço de Banco de Tecidos                                                                                             201207
+155Serviço de Traumatologia  Ortopedia                                                                                     201207
+156Serviço de Atenção á Saúde das Pessoas Ostomizadas                                                                      201207
+157Serviço de Laboratorio de Protese Dentaria                                                                              201207
+158Serviço de Atenção Integral em Hanseniase                                                                               201207
+159Atenção Básica                                                                                                          201207
+160Teleconsultoria                                                                                                         201207

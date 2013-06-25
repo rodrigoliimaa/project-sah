@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="previewRelatorioEquipamentosAnalitico" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b72b3e54-aead-4de9-9ac5-284614709b3d">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.data.JRBeanArrayDataSource"/>
+	<import value="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="P_PATH_IMAGENS" class="java.lang.String"/>
+	<parameter name="P_SETOR" class="java.lang.String"/>
+	<parameter name="P_SITUACAO" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pacientes" class="java.util.Collection" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$F{pacientes}]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="observacao" class="java.lang.String">
+		<fieldDescription><![CDATA[observacao]]></fieldDescription>
+	</field>
+	<field name="apacBpi" class="java.lang.String">
+		<fieldDescription><![CDATA[apacBpi]]></fieldDescription>
+	</field>
+	<field name="pacientes" class="java.util.Collection">
+		<fieldDescription><![CDATA[pacientes]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="100" splitType="Stretch">
+			<image scaleImage="FillFrame">
+				<reportElement uuid="21283039-a0cc-483a-b253-8d1bc3f49eb6" x="0" y="0" width="100" height="50"/>
+				<imageExpression><![CDATA[$P{P_PATH_IMAGENS}+"/images.jpg"]]></imageExpression>
+			</image>
+			<rectangle>
+				<reportElement uuid="802434ae-227a-4af9-9fd8-b4b89484e7fe" x="100" y="0" width="702" height="39"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="58386bd3-9d16-47e5-abe2-3de5eb63c8cb" x="100" y="0" width="702" height="19"/>
+				<textElement textAlignment="Center">
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[ASSOCIAÇÃO DOS DEFICIENTES FISICOS DE ALAGOAS ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6efd9a5f-06aa-4513-868a-1deed86b6b91" x="100" y="19" width="702" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="13"/>
+				</textElement>
+				<text><![CDATA[CENTRO DE MEDICINA FÍSICA E REABILITAÇÃO GERONIMO CERQUEIRA ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5b16eb34-db82-49a4-a91b-985b45b97e59" x="100" y="39" width="702" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[RELATÓRIO DE EQUIPAMENTOS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9fba3384-6d0c-41b6-8844-b74d3e73b565" x="213" y="80" width="48" height="20"/>
+				<textElement/>
+				<text><![CDATA[Situação:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="78441683-4384-4bf3-a411-a4f4bb456dca" x="509" y="80" width="110" height="20"/>
+				<textElement/>
+				<text><![CDATA[Setor:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8e6cc209-305a-4d13-81fc-292d4d24d236" x="0" y="80" width="127" height="20"/>
+				<textElement/>
+				<text><![CDATA[Amostragem Analítica]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="7511f39e-9bcc-4a31-a85c-e60cabef032b" x="549" y="80" width="253" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_SETOR}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="8e35cc9c-3116-417c-8bac-f9162d35a21b" x="261" y="80" width="237" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_SITUACAO}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="123" splitType="Stretch">
+			<subreport>
+				<reportElement uuid="8b3a9602-bd05-4e28-a699-b0efee41777a" x="1" y="23" width="801" height="100"/>
+				<subreportParameter name="pacientes">
+					<subreportParameterExpression><![CDATA[$P{pacientes}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new JRBeanCollectionDataSource($F{pacientes})]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "previewRelatorioEquipamentosAnalitico_subReportPacientes.jasper"]]></subreportExpression>
+			</subreport>
+			<textField>
+				<reportElement uuid="971e851e-1459-4cdb-b7ca-f8bbd6f0a9f6" x="180" y="2" width="622" height="20"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{observacao}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="2d86edef-3f8c-4da7-bc0f-aa1a95b33217" x="1" y="2" width="73" height="20"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Procedimento]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="6e08f242-9d32-49c5-98b1-d26a9ab4ab9b" x="74" y="2" width="106" height="20"/>
+				<textElement>
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{apacBpi}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="bdc851ca-565d-4456-a07d-5f190674ce10" x="1" y="22" width="801" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="68a3ebe6-71ee-4cfc-992b-d14eb55c7a9a" x="1" y="1" width="801" height="1"/>
+			</line>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="21" splitType="Stretch">
+			<line>
+				<reportElement uuid="14d407d8-11e5-4a9f-9765-d2798ba47f8f" x="1" y="0" width="801" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="fceedf4f-e169-479d-8711-bbfe437ded2f" x="1" y="1" width="126" height="20"/>
+				<textElement/>
+				<text><![CDATA[Total deste Procedimento]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="967f3d46-f99e-4bb8-bc02-c0f78cefa126" x="1" y="20" width="801" height="1"/>
+			</line>
+		</band>
+	</pageFooter>
+</jasperReport>

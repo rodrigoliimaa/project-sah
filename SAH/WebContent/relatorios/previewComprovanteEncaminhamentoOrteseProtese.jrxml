@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="previewComprovanteEncaminhamentoOrteseProtese" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b1a7706b-961f-4621-9264-6190e1b46b9d">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="P_PATH_IMAGENS" class="java.lang.String"/>
+	<parameter name="P_CID1" class="java.lang.String"/>
+	<parameter name="P_CID2" class="java.lang.String"/>
+	<parameter name="P_CID3" class="java.lang.String"/>
+	<parameter name="P_PROCEDIMENTO1" class="java.lang.String"/>
+	<parameter name="P_PROCEDIMENTO2" class="java.lang.String"/>
+	<parameter name="P_PROCEDIMENTO3" class="java.lang.String"/>
+	<parameter name="P_TIPO1" class="java.lang.String"/>
+	<parameter name="P_TIPO2" class="java.lang.String"/>
+	<parameter name="P_TIPO3" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="bairroLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.bairroLogradouro]]></fieldDescription>
+	</field>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.nome]]></fieldDescription>
+	</field>
+	<field name="telefone01" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.telefone01]]></fieldDescription>
+	</field>
+	<field name="numeroLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.numeroLogradouro]]></fieldDescription>
+	</field>
+	<field name="municipioLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.municipioLogradouro]]></fieldDescription>
+	</field>
+	<field name="logradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.logradouro]]></fieldDescription>
+	</field>
+	<field name="nomeFantasia" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.nomeFantasia]]></fieldDescription>
+	</field>
+	<field name="telefone1" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.telefone1]]></fieldDescription>
+	</field>
+	<field name="telefone2" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.telefone2]]></fieldDescription>
+	</field>
+	<field name="telefone3" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.telefone3]]></fieldDescription>
+	</field>
+	<field name="cnpj" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.cnpj]]></fieldDescription>
+	</field>
+	<field name="numeroNota" class="java.lang.String">
+		<fieldDescription><![CDATA[numeroNota]]></fieldDescription>
+	</field>
+	<field name="observacao" class="java.lang.String">
+		<fieldDescription><![CDATA[observacao]]></fieldDescription>
+	</field>
+	<field name="bairro" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.bairro]]></fieldDescription>
+	</field>
+	<field name="complemento" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.complemento]]></fieldDescription>
+	</field>
+	<field name="logradouro_1" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.logradouro]]></fieldDescription>
+	</field>
+	<field name="municipio" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.municipio]]></fieldDescription>
+	</field>
+	<field name="nomeFantasia_1" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.nomeFantasia]]></fieldDescription>
+	</field>
+	<field name="situacao" class="java.lang.String">
+		<fieldDescription><![CDATA[situacao]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="802" splitType="Stretch">
+			<image scaleImage="FillFrame">
+				<reportElement uuid="8af9f0da-2ac6-4105-949e-7aa8dd6f3cfa" x="15" y="0" width="153" height="41"/>
+				<imageExpression><![CDATA[$P{P_PATH_IMAGENS}+"/Logo_ADEFAL.gif"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="a37c7008-053b-4da0-8c4d-a0852a7b0e42" x="168" y="0" width="387" height="41"/>
+				<textElement textAlignment="Center">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[ASSOCIAÇÃO DOS DEFICIENTES FISICOS DE ALAGOAS CENTRO DE MEDICINA FÍSICA E REABILITAÇÃO GERONIMO CERQUEIRA ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="02fe694f-b3cd-43c5-b1dd-d056fae6f188" x="15" y="42" width="540" height="72"/>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Fundada em 22 de Abril de 1981
+Utilidade Pública Municipal,Lei nº 4366/94 - Utilidade Pública Estadual, Lei nº 4570/84
+Utilidade Pública Federal, Lei nº 91 de 28 de Agosto de 1995,DEcreto nº 50.517 de 02 de Maio de 1961
+CNPJ: 08.427.999/0001-61 - CNSS:28973.00003494/51
+
+COMPROVANTE DE ENCAMINHAMENTO ÓRTESE/PRÓTESE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="aeb1e230-5811-495d-a661-e0bbc574a6a2" x="15" y="114" width="170" height="20"/>
+				<textElement/>
+				<text><![CDATA[Setor Emitente : Órtese e Prótese]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="7f06f5c0-70bb-46c4-87f0-d65d147a3332" x="15" y="135" width="86" height="20"/>
+				<textElement/>
+				<text><![CDATA[Nº do Protocolo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d7649241-a81b-4e02-84d3-1a51d48812c8" x="471" y="135" width="79" height="20"/>
+				<textElement/>
+				<text><![CDATA[via da adefal]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="fcb4b11a-963d-4b24-b449-6b64bab1f15e" x="368" y="135" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement uuid="c51ebe3d-edc6-4691-a8cd-0231f574c0c5" x="15" y="156" width="540" height="62"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="c4b3b5ef-5833-41a5-a3a3-3ca77bd5c090" x="16" y="157" width="56" height="20"/>
+				<textElement/>
+				<text><![CDATA[Paciente:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b5429b9a-bbf3-43f8-97f0-f24e2247d4f1" x="16" y="177" width="56" height="20"/>
+				<textElement/>
+				<text><![CDATA[Endereço:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c4e5b395-2434-4dcb-bd17-5ff055d7344e" x="16" y="198" width="56" height="20"/>
+				<textElement/>
+				<text><![CDATA[Telefone:]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="5c0fd840-a7a9-4b3e-8b83-687b055cf682" x="15" y="218" width="540" height="62"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="966b3065-3b8f-4e23-a67c-7de8a50236e8" x="16" y="220" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Nome da Empresa:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="46dcad74-c5a9-4047-a4d7-0ae9371714e9" x="16" y="240" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Endereço:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f63bfbcd-edbc-439a-9f74-ea2e180da1e3" x="16" y="260" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Telefone:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bdada9c6-331d-4ce1-beb9-a7ea57b982a0" x="397" y="220" width="55" height="20"/>
+				<textElement/>
+				<text><![CDATA[CGC/CNPJ:]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="cca16f3d-8fae-433d-a8dd-4beb657d2f63" x="15" y="280" width="540" height="83"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="68c70e74-a773-4946-bfc2-5c66434b1aae" x="24" y="363" width="44" height="20"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[Maceió]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="a2058d02-a9b5-4431-bc1f-c6efc0b29c87" x="338" y="372" width="195" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="f4957528-e79c-4d8d-a202-173500f91605" x="338" y="374" width="195" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Assinatura do Encaminhador]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="214b5647-594a-42cd-ad5c-9948352d0959" x="71" y="157" width="484" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c244066f-06df-4748-95a1-4e8e8b3f80d5" x="115" y="220" width="282" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{nomeFantasia}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="f2b04a06-3103-45ea-b149-c8c4360b38bd" x="71" y="177" width="178" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{logradouro}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="849b4135-dd58-4102-b3ed-96044ff88531" x="249" y="177" width="55" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{numeroLogradouro}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="2defb467-252e-459b-9c77-91afac608201" x="304" y="177" width="151" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{bairroLogradouro}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="cfcd50ff-90a1-4afb-8812-148e3d6f3871" x="455" y="177" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{municipioLogradouro}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="fe2f7c03-2b54-48f5-86d8-6a6fb65ef8db" x="71" y="198" width="178" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{telefone01}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="f72aed04-5009-4eea-98f4-cfe08d26a4a2" x="452" y="220" width="103" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cnpj}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d2aaf9e0-4171-43f0-9f86-e5644a6470ea" x="115" y="260" width="134" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[(($F{telefone1}== null)?"":$F{telefone1})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="6155413a-c0b1-4e1a-8823-924231be50c1" x="249" y="260" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[(($F{telefone2}== null)?"": $F{telefone2})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="e104f5da-13ed-4677-a946-03b9d0874d3e" x="352" y="260" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[(($F{telefone3}== null)?"": $F{telefone3})]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame">
+				<reportElement uuid="8c7c957c-ad4f-410a-8466-941fe7e5a6c9" x="15" y="394" width="153" height="41"/>
+				<imageExpression><![CDATA[$P{P_PATH_IMAGENS}+"/Logo_ADEFAL.gif"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="ede27aea-84b6-4e7c-af80-234cb24a5b57" x="168" y="394" width="387" height="41"/>
+				<textElement textAlignment="Center">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[ASSOCIAÇÃO DOS DEFICIENTES FISICOS DE ALAGOAS CENTRO DE MEDICINA FÍSICA E REABILITAÇÃO GERONIMO CERQUEIRA ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="e59e202e-9485-42cf-902e-5d772427b38a" x="15" y="436" width="540" height="72"/>
+				<textElement textAlignment="Center">
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Fundada em 22 de Abril de 1981
+Utilidade Pública Municipal,Lei nº 4366/94 - Utilidade Pública Estadual, Lei nº 4570/84
+Utilidade Pública Federal, Lei nº 91 de 28 de Agosto de 1995,DEcreto nº 50.517 de 02 de Maio de 1961
+CNPJ: 08.427.999/0001-61 - CNSS:28973.00003494/51
+
+COMPROVANTE DE ENCAMINHAMENTO ÓRTESE/PRÓTESE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ad030900-2247-458f-b4c0-87b9e9f8c8f7" x="15" y="508" width="170" height="20"/>
+				<textElement/>
+				<text><![CDATA[Setor Emitente : Órtese e Prótese]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="22a94faa-60cf-4a56-b079-d668d0c1fea2" x="15" y="529" width="86" height="20"/>
+				<textElement/>
+				<text><![CDATA[Nº do Protocolo:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="abc5f367-3e83-4109-b87d-af65125d2d42" x="471" y="529" width="79" height="20"/>
+				<textElement/>
+				<text><![CDATA[via do paciente]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="b9274720-1cd5-4f2a-97db-5838eaf0f896" x="368" y="529" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement uuid="476fcd07-cea9-48a3-924f-fe87701f03a1" x="15" y="550" width="540" height="70"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="ceeb9ee1-d954-473d-a972-027d8d3597b6" x="16" y="551" width="56" height="20"/>
+				<textElement/>
+				<text><![CDATA[Paciente:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="aa1eaed4-7bc4-41e4-9fed-39d7d96c3ebc" x="16" y="573" width="56" height="20"/>
+				<textElement/>
+				<text><![CDATA[Endereço:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="92402ddc-ba04-4a3f-b83a-fd949551620a" x="16" y="597" width="56" height="20"/>
+				<textElement/>
+				<text><![CDATA[Telefone:]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="d7a2d2aa-5b62-40c4-bcf2-47a0425fb183" x="15" y="622" width="540" height="62"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="ac7d769d-3c51-4a38-91da-9559329fd6a6" x="16" y="624" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Nome da Empresa:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="719b592e-9aa4-4c9b-acc2-dea29964aa38" x="16" y="643" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Endereço:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4d23369d-be83-499f-b3b5-495f3f1c4962" x="16" y="664" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Telefone:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ac5dded3-d902-4ecc-b8af-c92b4d866337" x="397" y="624" width="55" height="20"/>
+				<textElement/>
+				<text><![CDATA[CGC/CNPJ:]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement uuid="a8c805d3-1336-433e-9404-f9a488d43406" x="15" y="684" width="540" height="82"/>
+			</rectangle>
+			<staticText>
+				<reportElement uuid="bd69d00b-4953-47fe-93b3-5bcaa0109d47" x="16" y="686" width="71" height="20"/>
+				<textElement>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Cód. do Proc.:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="d56af3cf-31bf-403f-86aa-85163690d89f" x="87" y="686" width="365" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Descrição]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="058438ea-77fa-441b-9187-f3f7200fe7d1" x="455" y="686" width="100" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[TIPO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6369ff7f-1f5b-4225-a924-f9d8184ade6c" x="24" y="775" width="44" height="20"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[Maceió]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="86543b62-de6d-43f0-9d78-926fa8321499" x="338" y="781" width="195" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="4f990864-d249-44c6-a412-5ecb1b66b4f1" x="338" y="782" width="195" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Assinatura do Encaminhador]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="f1229550-992c-4dc9-b1b8-d3fda1a2f247" x="71" y="551" width="484" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="d184b0ea-0227-4afa-b12c-e3af56c241bc" x="115" y="624" width="282" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{nomeFantasia}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="c8ad9211-91cb-4833-a57a-aa7fc19bd575" x="71" y="573" width="178" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{logradouro}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7df955d4-1616-42d5-9a34-6a152580f495" x="304" y="573" width="151" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{bairroLogradouro}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="e5dd08b9-2802-4a28-b44d-782247f24f83" x="455" y="573" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{municipioLogradouro}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="0145a038-1ab9-417b-af8e-9280e7e1cc37" x="71" y="597" width="178" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{telefone01}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="28ef578a-edbb-4fb5-a92e-87c1050bbb5a" x="452" y="624" width="103" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cnpj}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="df743c25-e6c9-48e0-8988-6f7c8e276e34" x="115" y="664" width="134" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[(($F{telefone1}== null)? " ":$F{telefone1})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="f7f03ff6-0aeb-4c40-84f0-837fd91bfa7b" x="249" y="664" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[(($F{telefone2} == null) ? " ":$F{telefone2})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="f60aafa4-ecfc-491d-8a63-5746e58ee144" x="352" y="664" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[(($F{telefone3}== null)?"":$F{telefone3})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="b34a5ea4-f7ae-4cb2-8ac1-993ab1acb60f" x="-139" y="415" width="55" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{numeroLogradouro}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="7da88abb-9f86-4c3e-91e4-4ed5b3f7e85f" x="101" y="280" width="321" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Descrição]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9e32bc4b-0222-43d8-86f6-81f443074ca7" x="16" y="280" width="85" height="20"/>
+				<textElement>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Cód. do Proc:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="fba12d70-b7d9-484c-8fc8-967426ccc6cc" x="422" y="280" width="133" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[TIPO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="9bb1ba50-2626-47bc-a47c-731f46ce96aa" x="116" y="240" width="125" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{logradouro_1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="a9b71772-6d8b-457d-9663-94731692256d" x="241" y="240" width="136" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{bairro}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="470a3f4a-0751-424b-96ea-22ea51730509" x="377" y="240" width="73" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[(($F{complemento}==null)?"":$F{complemento})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="999d8a4f-3363-469e-99d7-b5befd8c0d7a" x="450" y="240" width="105" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{municipio}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="edc075ff-39eb-4ced-bbaf-2da969c4d401" x="68" y="363" width="160" height="20"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[____/____/____]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="30fda668-2d48-4e8f-b246-9de5c305c355" x="68" y="775" width="160" height="20"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[____/____/____]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="f996c5a8-4907-47ec-9b15-bc049564f12c" x="15" y="706" width="72" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_CID1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="fd3d271d-19da-414b-8bba-484f9b885ab2" x="15" y="726" width="72" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_CID2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="7b517adc-8e60-4ab1-86c4-88451f816473" x="15" y="746" width="72" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_CID3}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="934493ab-2688-4542-8f40-19daded160e0" x="87" y="706" width="368" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_PROCEDIMENTO1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="31e794e4-6312-4cc0-9c7b-22d7a32de167" x="87" y="726" width="365" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_PROCEDIMENTO2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="014c791d-056e-47b4-874f-b12c4304237e" x="87" y="746" width="368" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_PROCEDIMENTO3}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="9ce4e377-9b24-4887-b52e-4c3e6b05de33" x="455" y="706" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_TIPO1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="56a223f8-a8d7-4e22-9f3f-f0a219dc29e0" x="455" y="726" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_TIPO2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="e3abcddf-a4b1-4c8a-b318-8c9496d35cb3" x="455" y="746" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_TIPO3}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="76df13b8-b381-434d-8160-4e20e7185f61" x="241" y="643" width="136" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{bairro}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="3abe0916-8ffd-43d6-9118-4f908cb49724" x="379" y="644" width="73" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[(($F{complemento}==null)?"":$F{complemento})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="1f886433-73d1-47bc-a4f6-23028b3c9db6" x="455" y="643" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{municipio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="6104298a-da29-4267-922d-c362abf419b1" x="115" y="644" width="125" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{logradouro_1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b6d62ea4-e143-451a-8f33-69dba9a403a4" x="15" y="340" width="72" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_CID3}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="9fc72e0d-5d46-486e-bb57-ef7e1bf42906" x="15" y="320" width="72" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_CID2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3449833c-afc1-478d-b65d-67650e064259" x="455" y="320" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_TIPO2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="69aa4b32-bdc2-406e-8d9f-9aa190176a5d" x="87" y="320" width="365" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_PROCEDIMENTO2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="d53a1c7d-b2b3-4bb4-ac38-40a500822970" x="15" y="300" width="72" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_CID1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3f311d48-4f6c-430d-aa30-5efff68957e0" x="87" y="340" width="368" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_PROCEDIMENTO3}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="e33bd069-774e-4189-bd57-0a0f59436e61" x="87" y="300" width="368" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_PROCEDIMENTO1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="24f0e91f-4a7c-48d3-a51f-0024e6cb8fe4" x="455" y="300" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_TIPO1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="b9871df1-2740-45ad-b17f-48b45d812d42" x="455" y="340" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$P{P_TIPO3}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

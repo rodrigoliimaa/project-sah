@@ -1,0 +1,8 @@
+01BPA (Consolidado)                                 201207
+02BPA (Individualizado)                             201207
+03AIH (Proc. Principal)                             201207
+04AIH (Proc. Especial)                              201207
+05AIH (Proc. Secundário)                            201207
+06APAC (Proc. Principal)                            201207
+07APAC (Proc. Secundário)                           201207
+08RAAS (Atenção Domiciliar)                         201207

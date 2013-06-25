@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="sah" version="2.5">
+  
+  <display-name>SAUTH</display-name>
+  
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>/WEB-INF/config/*-config.xml</param-value>
+  </context-param>
+  
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  
+  <filter>
+    <filter-name>requestContext</filter-name>
+    <filter-class>org.springframework.web.filter.RequestContextFilter</filter-class>
+  </filter>
+  
+  <filter-mapping>
+    <filter-name>requestContext</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  <filter>
+    <filter-name>encoding-filter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+  
+  <filter-mapping>
+    <filter-name>encoding-filter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  
+  <servlet>
+    <servlet-name>spring</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>/WEB-INF/config/web-application-config.xml</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>spring</servlet-name>
+    <url-pattern>/messagebroker/*</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>  
+   	<servlet-name>spring</servlet-name>  
+   	<url-pattern>/*</url-pattern>  
+  </servlet-mapping>
+  
+  <servlet>
+    <description></description>
+    <display-name>PreviewArquivoServlet</display-name>
+    <servlet-name>PreviewArquivoServlet</servlet-name>
+    <servlet-class>br.com.infoliver.sah.apresentacao.servlet.PreviewArquivoServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>PreviewArquivoServlet</servlet-name>
+    <url-pattern>/preview</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <description></description>
+    <display-name>PreviewRelatorioProcedimentoMedico</display-name>
+    <servlet-name>PreviewRelatorioProcedimentoMedico</servlet-name>
+    <servlet-class>br.com.infoliver.sah.apresentacao.servlet.PreviewRelatorioProcedimentoMedico</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>PreviewRelatorioProcedimentoMedico</servlet-name>
+    <url-pattern>/previewRelatorioProcedimentoMedico</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <description></description>
+    <display-name>PreviewRelatorioControleFrequenciaIndividualDeficienciaFisica</display-name>
+    <servlet-name>PreviewRelatorioControleFrequenciaIndividualDeficienciaFisica</servlet-name>
+    <servlet-class>br.com.infoliver.sah.apresentacao.servlet.PreviewRelatorioControleFrequenciaIndividualDeficienciaFisica</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>PreviewRelatorioControleFrequenciaIndividualDeficienciaFisica</servlet-name>
+    <url-pattern>/previewRelatorioControleFrequenciaIndividualDeficienciaFisica</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <description></description>
+    <display-name>PreviewRelatorioEtiquetasPacientes</display-name>
+    <servlet-name>PreviewRelatorioEtiquetasPacientes</servlet-name>
+    <servlet-class>br.com.infoliver.sah.apresentacao.servlet.PreviewRelatorioEtiquetasPacientes</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>PreviewRelatorioEtiquetasPacientes</servlet-name>
+    <url-pattern>/previewRelatorioEtiquetasPacientes</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <description></description>
+    <display-name>TesteFacade</display-name>
+    <servlet-name>TesteFacade</servlet-name>
+    <servlet-class>br.com.infoliver.sah.apresentacao.servlet.TesteFacade</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>TesteFacade</servlet-name>
+    <url-pattern>/testeFacade</url-pattern>
+  </servlet-mapping>
+  
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+  
+  <servlet>
+    <description></description>
+    <display-name>PreviewEncaminhamentoExterno</display-name>
+    <servlet-name>PreviewEncaminhamentoExterno</servlet-name>
+    <servlet-class>br.com.infoliver.sah.apresentacao.servlet.PreviewEncaminhamentoExterno</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>PreviewEncaminhamentoExterno</servlet-name>
+    <url-pattern>/previewEncaminhamentoExterno</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <description></description>
+    <display-name>PreviewRelatorioAgendamentos</display-name>
+    <servlet-name>PreviewRelatorioAgendamentos</servlet-name>
+    <servlet-class>br.com.infoliver.sah.apresentacao.servlet.PreviewRelatorioAgendamentos</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>PreviewRelatorioAgendamentos</servlet-name>
+    <url-pattern>/previewRelatorioAgendamentos</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <description></description>
+    <display-name>PreviewRelatorioMapa</display-name>
+    <servlet-name>PreviewRelatorioMapa</servlet-name>
+    <servlet-class>br.com.infoliver.sah.apresentacao.servlet.PreviewRelatorioMapa</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>PreviewRelatorioMapa</servlet-name>
+    <url-pattern>/previewRelatorioMapa</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <description></description>
+    <display-name>PreviewComprovanteEncaminhamento</display-name>
+    <servlet-name>PreviewComprovanteEncaminhamento</servlet-name>
+    <servlet-class>br.com.infoliver.sah.apresentacao.servlet.PreviewComprovanteEncaminhamento</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>PreviewComprovanteEncaminhamento</servlet-name>
+    <url-pattern>/previewComprovanteEncaminhamento</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <description></description>
+    <display-name>PreviewTermoCompromisso</display-name>
+    <servlet-name>PreviewTermoCompromisso</servlet-name>
+    <servlet-class>br.com.infoliver.sah.apresentacao.servlet.PreviewTermoCompromisso</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>PreviewTermoCompromisso</servlet-name>
+    <url-pattern>/previewTermoCompromisso</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <description></description>
+    <display-name>PreviewEncaminhamentoOrteseProtese</display-name>
+    <servlet-name>PreviewEncaminhamentoOrteseProtese</servlet-name>
+    <servlet-class>br.com.infoliver.sah.apresentacao.servlet.PreviewEncaminhamentoOrteseProtese</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>PreviewEncaminhamentoOrteseProtese</servlet-name>
+    <url-pattern>/previewEncaminhamentoOrteseProtese</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <description></description>
+    <display-name>PreviewRelatorioMapaBpi</display-name>
+    <servlet-name>PreviewRelatorioMapaBpi</servlet-name>
+    <servlet-class>br.com.infoliver.sah.apresentacao.servlet.PreviewRelatorioMapaBpi</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>PreviewRelatorioMapaBpi</servlet-name>
+    <url-pattern>/previewRelatorioMapaBpi</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <description></description>
+    <display-name>PreviewRelatorioEquipamento</display-name>
+    <servlet-name>PreviewRelatorioEquipamento</servlet-name>
+    <servlet-class>br.com.infoliver.sah.apresentacao.servlet.PreviewRelatorioEquipamento</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>PreviewRelatorioEquipamento</servlet-name>
+    <url-pattern>/previewRelatorioEquipamento</url-pattern>
+  </servlet-mapping>
+
+ </web-app>

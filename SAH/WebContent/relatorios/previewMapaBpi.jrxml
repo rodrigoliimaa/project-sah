@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="previewMapaBpi" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="131"/>
+	<property name="ireport.y" value="0"/>
+	<import value="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<import value="net.sf.jasperreports.engine.JRDataSource"/>
+	<style name="table">
+		<box>
+			<topPen lineWidth="1.0" lineColor="#000000"/>
+			<bottomPen lineWidth="1.0" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<subDataset name="Table Dataset 1">
+		<field name="cns" class="java.lang.String">
+			<fieldDescription><![CDATA[paciente.cns]]></fieldDescription>
+		</field>
+		<field name="nome" class="java.lang.String">
+			<fieldDescription><![CDATA[paciente.nome]]></fieldDescription>
+		</field>
+		<field name="dataNascimento" class="java.util.Date">
+			<fieldDescription><![CDATA[paciente.dataNascimento]]></fieldDescription>
+		</field>
+		<field name="sexo" class="java.lang.String">
+			<fieldDescription><![CDATA[paciente.sexo]]></fieldDescription>
+		</field>
+		<field name="descricao" class="java.lang.String">
+			<fieldDescription><![CDATA[paciente.raca.descricao]]></fieldDescription>
+		</field>
+		<field name="municipioLogradouro" class="java.lang.String">
+			<fieldDescription><![CDATA[paciente.municipioLogradouro]]></fieldDescription>
+		</field>
+		<field name="observacao" class="java.lang.String">
+			<fieldDescription><![CDATA[observacao]]></fieldDescription>
+		</field>
+		<field name="numeroNota" class="java.lang.String">
+			<fieldDescription><![CDATA[numeroNota]]></fieldDescription>
+		</field>
+	</subDataset>
+	<subDataset name="dataset1"/>
+	<parameter name="P_PATH_IMAGENS" class="java.lang.String"/>
+	<parameter name="P_COMPETENCIA" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SubReportDataSource" class="net.sf.jasperreports.engine.JRDataSource" isForPrompting="false">
+		<defaultValueExpression><![CDATA[$P{REPORT_DATA_SOURCE}]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="cns" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.cns]]></fieldDescription>
+	</field>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.nome]]></fieldDescription>
+	</field>
+	<field name="dataNascimento" class="java.util.Date">
+		<fieldDescription><![CDATA[paciente.dataNascimento]]></fieldDescription>
+	</field>
+	<field name="sexo" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.sexo]]></fieldDescription>
+	</field>
+	<field name="descricao" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.raca.descricao]]></fieldDescription>
+	</field>
+	<field name="municipioLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.municipioLogradouro]]></fieldDescription>
+	</field>
+	<field name="observacao" class="java.lang.String">
+		<fieldDescription><![CDATA[observacao]]></fieldDescription>
+	</field>
+	<field name="numeroNota" class="java.lang.String">
+		<fieldDescription><![CDATA[numeroNota]]></fieldDescription>
+	</field>
+	<field name="codigoProcedimento" class="java.lang.String">
+		<fieldDescription><![CDATA[cidPrincipal.sigtap_co_cid]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band/>
+	</title>
+	<pageHeader>
+		<band height="154">
+			<rectangle>
+				<reportElement mode="Opaque" x="1" y="112" width="801" height="42"/>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Opaque" x="700" y="43" width="102" height="20"/>
+			</rectangle>
+			<rectangle>
+				<reportElement mode="Opaque" x="215" y="43" width="248" height="20"/>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Transparent" x="1" y="0" width="802" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[MAPA DE ENCAMINHAMENTO DE BPI PARA AUTORIZAÇÃO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="466" y="44" width="78" height="20"/>
+				<textElement/>
+				<text><![CDATA[COMPETÊNCIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="257" y="44" width="206" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[2006928]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="215" y="44" width="42" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[CNES]]></text>
+			</staticText>
+			<image scaleImage="FillFrame">
+				<reportElement mode="Transparent" x="0" y="20" width="100" height="44"/>
+				<imageExpression class="java.lang.String"><![CDATA[$P{P_PATH_IMAGENS}+"/images.jpg"]]></imageExpression>
+			</image>
+			<rectangle>
+				<reportElement mode="Opaque" x="215" y="24" width="587" height="20"/>
+			</rectangle>
+			<textField evaluationTime="Report">
+				<reportElement mode="Transparent" x="766" y="44" width="36" height="20"/>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement mode="Opaque" x="463" y="44" width="237" height="19"/>
+			</rectangle>
+			<staticText>
+				<reportElement mode="Transparent" x="219" y="23" width="411" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[UNIDADE EXECUTANTE : ADEFAL]]></text>
+			</staticText>
+			<textField>
+				<reportElement mode="Transparent" x="463" y="44" width="234" height="20"/>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$P{P_COMPETENCIA}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement mode="Transparent" x="700" y="44" width="66" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression class="java.lang.String"><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="115" y="21" width="100" height="43"/>
+				<textElement/>
+				<text><![CDATA[SECRETARIA MUNICIPAL DE SAUDE DE MACEIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="34" y="112" width="87" height="41"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[CARTÃO SUS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="121" y="112" width="197" height="41"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[NOME DO PACIENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="318" y="112" width="58" height="41"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[DATA   NASCIMENTO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="376" y="112" width="31" height="41"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[SEXO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="407" y="112" width="29" height="41"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[RAÇA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="437" y="113" width="83" height="41"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[MUNICÍPIO RESIDêNCIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="521" y="112" width="54" height="41"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[PROCED. PRINCIPAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="576" y="112" width="43" height="41"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[CID 10]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="620" y="112" width="46" height="41"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[CARAT ATEND]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="667" y="112" width="135" height="41"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[Nº AUTORIZAÇÃO]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="14">
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="1" y="0" width="33" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="125" y="0" width="193" height="13"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="321" y="0" width="56" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{dataNascimento}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="376" y="0" width="31" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sexo}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="407" y="0" width="29" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{descricao}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="438" y="1" width="82" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{municipioLogradouro}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="576" y="0" width="43" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{observacao}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement mode="Opaque" x="1" y="13" width="801" height="1"/>
+			</line>
+			<textField>
+				<reportElement mode="Transparent" x="521" y="0" width="54" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{codigoProcedimento}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="34" y="0" width="85" height="13"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{cns}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement mode="Opaque" x="1" y="0" width="1" height="13"/>
+			</line>
+			<line>
+				<reportElement mode="Opaque" x="34" y="0" width="1" height="13"/>
+			</line>
+			<line>
+				<reportElement mode="Opaque" x="121" y="0" width="1" height="13"/>
+			</line>
+			<line>
+				<reportElement mode="Opaque" x="318" y="0" width="1" height="13"/>
+			</line>
+			<line>
+				<reportElement mode="Opaque" x="376" y="0" width="1" height="13"/>
+			</line>
+			<line>
+				<reportElement mode="Opaque" x="406" y="0" width="1" height="13"/>
+			</line>
+			<line>
+				<reportElement mode="Opaque" x="436" y="0" width="1" height="13"/>
+			</line>
+			<line>
+				<reportElement mode="Opaque" x="520" y="0" width="1" height="13"/>
+			</line>
+			<line>
+				<reportElement mode="Opaque" x="575" y="0" width="1" height="13"/>
+			</line>
+			<line>
+				<reportElement mode="Opaque" x="619" y="0" width="1" height="13"/>
+			</line>
+			<line>
+				<reportElement mode="Opaque" x="666" y="0" width="1" height="13"/>
+			</line>
+			<line>
+				<reportElement mode="Opaque" x="801" y="0" width="1" height="13"/>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="111" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Transparent" x="654" y="57" width="78" height="20"/>
+				<textElement/>
+				<text><![CDATA[Data]]></text>
+			</staticText>
+			<line>
+				<reportElement mode="Opaque" x="51" y="58" width="194" height="1"/>
+			</line>
+			<staticText>
+				<reportElement mode="Transparent" x="436" y="60" width="194" height="20"/>
+				<textElement/>
+				<text><![CDATA[Responsável SMS (recebimento)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="654" y="38" width="100" height="20"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[____/____/____]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="51" y="60" width="194" height="20"/>
+				<textElement/>
+				<text><![CDATA[Responsável da Unidade Executante]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="271" y="58" width="78" height="20"/>
+				<textElement/>
+				<text><![CDATA[Data]]></text>
+			</staticText>
+			<line>
+				<reportElement mode="Opaque" x="436" y="58" width="194" height="1"/>
+			</line>
+			<staticText>
+				<reportElement mode="Transparent" x="271" y="39" width="100" height="20"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[____/____/____]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<summary>
+		<band/>
+	</summary>
+</jasperReport>

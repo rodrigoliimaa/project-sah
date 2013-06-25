@@ -1,0 +1,1523 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="laudo para solicitacao e autorizacao de procedimento ambulatorial" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7750b2ea-e0be-4171-8611-a14e8b6e5445">
+	<property name="ireport.zoom" value="1.366026910730141"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="101"/>
+	<import value="br.com.infoliver.sah.negocio.entity.Medico"/>
+	<import value="br.com.infoliver.sah.negocio.entity.ProcedimentoMedico"/>
+	<import value="br.com.infoliver.sah.negocio.entity.Paciente"/>
+	<subDataset name="dataset1" uuid="b1940cec-f132-426f-a222-9c1e416e2038"/>
+	<parameter name="P_PATH_IMAGENS" class="java.lang.String"/>
+	<parameter name="P_DESCRICAO_PROCEDIMENTO_PRINCIPAL" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="P_CODIGO_PROCEDIMENTO_PRINCIPAL" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="medico" class="br.com.infoliver.sah.negocio.entity.Medico">
+		<fieldDescription><![CDATA[medico]]></fieldDescription>
+	</field>
+	<field name="paciente" class="br.com.infoliver.sah.negocio.entity.Paciente">
+		<fieldDescription><![CDATA[paciente]]></fieldDescription>
+	</field>
+	<field name="procedimentoMedico" class="br.com.infoliver.sah.negocio.entity.ProcedimentoMedico">
+		<fieldDescription><![CDATA[procedimentoMedico]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<detail>
+		<band height="790" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="824c7a73-52f0-4243-81a7-21ffddcd98c6" positionType="Float" mode="Opaque" x="4" y="54" width="547" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IDENTIFICAÇÃO DO ESTABELECIMENTO DE SAÚDE (SOLICITANTE)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c199f5ed-74fa-4281-8b95-ae1b28a89b6d" x="451" y="78" width="99" height="17"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="14" isBold="true" isStrikeThrough="false"/>
+				</textElement>
+				<text><![CDATA[2006928]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="37305f56-dfd8-422a-acf6-7ec0433255db" positionType="Float" mode="Opaque" x="4" y="99" width="547" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[IDENTIFICAÇÃO DO PACIENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ea185623-d528-486d-81b7-5b1f6bf4f2b2" x="38" y="64" width="288" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[1 - NOME DO ESTABELECIMENTO E SAÚDE SOLICITANTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8e897ca1-3768-48e6-b620-8094af1a09a7" x="4" y="78" width="442" height="17"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Arial" size="14" isBold="true" isStrikeThrough="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Associação dos Deficientes Físicos de Alagoas - ADEFAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4f0e7cf5-1ae7-44bb-adce-4bf3ed64f341" x="479" y="64" width="39" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[2 - CNES]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="42ea2747-c4a8-4767-8e68-6c6a6ec78d34" positionType="Float" mode="Opaque" x="5" y="274" width="546" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DECLARAÇÃO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1b2e2490-91ee-4768-912e-992d1d61b644" x="27" y="731" width="98" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>15]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="cadf2eb1-64fa-464a-8997-511c4b5df06b" x="6" y="305" width="544" height="17"/>
+				<textElement/>
+				<text><![CDATA[relacionados, conforme assinatura(s) do paciente / responsável abaixo.]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="da5354c8-4b55-4dfb-a8ef-00497373c0fa" x="139" y="359" width="340" height="36"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_DESCRICAO_PROCEDIMENTO_PRINCIPAL} == null ? $F{procedimentoMedico}.getDescricaoPrincipal() : $P{P_DESCRICAO_PROCEDIMENTO_PRINCIPAL}
+
+
+]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="13836c8a-faf5-457b-8e77-43a8e7e38307" x="125" y="551" width="425" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>=8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="12fcfee3-eb5b-405a-9ad1-d23eaf8e79db" x="7" y="713" width="20" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>15]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[17]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="97de5a83-44c8-4142-881f-85309c42c06b" x="27" y="641" width="98" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8aefaf70-85fd-436e-82f0-05040729e0a4" x="7" y="731" width="20" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>15]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[18]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="85bd2b16-56ff-479a-817f-c106c887af17" x="125" y="677" width="425" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>=15]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9ad545f5-de62-4582-b21c-c04bc486b186" x="7" y="641" width="20" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[13]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f55d1414-c736-45c0-bb27-6156ea550583" x="7" y="515" width="20" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>5]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[06]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9b0e28e2-4238-486c-8845-ddd0cf134608" x="125" y="587" width="425" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8cecd771-343e-4ef8-a7fb-d983aa84761e" x="27" y="533" width="98" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>5]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1ca59015-c2f2-48e3-8601-57b0af5ef635" x="7" y="587" width="20" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[10]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b734b0be-1a54-40c2-b1d6-14a933a58d16" x="253" y="134" width="85" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[7 - DATA DE NASCIMENTO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="eda82be6-a76f-41a7-9ab4-78ca573b538d" x="5" y="149" width="239" height="17"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paciente}.getCns()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="3dcae7c0-af69-4654-ba29-74cbab318b08" mode="Opaque" x="5" y="34" width="545" height="17" forecolor="#FFFFFF" backcolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{procedimentoMedico}.getTipoProcedimento()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="9c8af3b8-a29d-4e74-99e3-995b6adab0ca" x="125" y="400" width="425" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ASSINATURA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="dfd3f09d-c8f8-4eef-a015-90a40d39c2ca" x="431" y="108" width="103" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[5 - Nº DO PRONTUÁRIO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4447dd7f-ca3d-406a-a6b2-fd4461f5c9ec" x="7" y="623" width="20" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[12]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c2028618-708e-4e7c-ba3f-e4cf730ad731" x="5" y="203" width="340" height="17"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paciente}.getNomeResponsavel()]]></textFieldExpression>
+			</textField>
+			<image scaleImage="FillFrame">
+				<reportElement uuid="defdef62-3112-4e99-915d-db199d524ada" x="454" y="0" width="100" height="30"/>
+				<imageExpression><![CDATA[$P{P_PATH_IMAGENS}+"/Logo_ADEFAL.gif"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="0cb4809b-87fb-46e4-b587-2740ce27300f" x="482" y="358" width="68" height="36"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none"/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b97065af-3b3c-4615-aff9-6ee8be9fc373" x="125" y="569" width="425" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="90c0154d-913d-4b84-804d-bd2164687758" x="7" y="479" width="20" height="18"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[04]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="00876309-376d-4e8f-90ec-404a22ba961a" x="27" y="587" width="98" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8fdadcd1-c785-4818-9047-dbe18b658cac" x="27" y="605" width="98" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2255840a-bc86-4ba5-86de-18951b83d94d" x="125" y="731" width="425" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>15]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<image scaleImage="FillFrame">
+				<reportElement uuid="8f64c8f8-c513-42d5-9bba-9164ff70b7b1" x="2" y="0" width="100" height="30"/>
+				<imageExpression><![CDATA[$P{P_PATH_IMAGENS}+"/Logo_SUS.gif"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="395e9a51-0d4b-4c67-bfa1-bde416fcb4f3" x="394" y="161" width="104" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[10 - TELEFONE DE CONTATO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="581b2987-6240-4c92-827b-7dc3546a92a5" x="125" y="443" width="425" height="18"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf24905b-67e8-490b-ada4-862bfa63d5f9" x="125" y="533" width="425" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>5]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ed87110b-9c6b-470f-8ab0-054f4b6c4d0c" x="27" y="623" width="98" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9fb633c2-17ed-457b-9b40-37decd8fe783" x="7" y="497" width="20" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>=5]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[05]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1c8a11c6-8180-4770-9678-3a6943d02b18" x="7" y="461" width="20" height="18"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[03]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ae885c9e-c8ea-4a30-84de-590ff52f5fe3" x="6" y="229" width="545" height="17"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paciente}.getLogradouro()+", "+$F{paciente}.getNumeroLogradouro() + ($F{paciente}.getComplementoLogradouro() == null ? "" : ", "+$F{paciente}.getComplementoLogradouro()) + ", "+$F{paciente}.getBairroLogradouro()]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement uuid="60ef642d-e23a-41a7-8dab-cb018b38f00b" x="249" y="149" width="96" height="17"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paciente}.getDataNascimento()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="3b747380-954f-4203-bebc-3b8cf82b1a62" x="305" y="332" width="224" height="17"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Assinatura / Carimbo do Diretor da Unidade]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="15c92a9f-b865-42f0-a4a4-ed2045c77f2a" x="38" y="161" width="171" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[9 - NOME DA MÃE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="73531260-2442-4645-a998-4e86a6c36482" x="7" y="551" width="20" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>=8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[08]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8611e1df-f9c2-4d9d-a45a-8a9bf8db3496" x="358" y="241" width="52" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[16 - UF]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="56defee8-ee92-4847-9bc7-4b01cf081133" x="27" y="749" width="98" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>15]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3eb21368-6b6b-49d9-93bf-b32a1615a726" x="7" y="605" width="20" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[11]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="3977f218-1de0-4ca3-8dc1-b292656234e0" x="143" y="344" width="130" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[19 - NOME DO PROCEDIMENTO PRINCIPAL]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="80214f37-2e73-44d5-9299-4914400d1857" x="350" y="176" width="201" height="17"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paciente}.getTelefoneMae()]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="4e380083-c0da-4120-86d5-7b2bd90ccbb7" x="350" y="149" width="76" height="17"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paciente}.getRaca().getDescricao()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c608c87d-7806-4d3b-a1e9-d7bfb2c32dd6" x="38" y="241" width="171" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[14 - MUNICÍPIO DE RESIDÊNCIA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5b606d12-4191-4f18-ac30-2b87c1f3ff5d" x="27" y="551" width="98" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>=8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="1997115f-16d2-4eb1-bf51-44339611972b" positionType="Float" mode="Opaque" x="4" y="396" width="547" height="15" forecolor="#FFFFFF" backcolor="#000000"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ATENÇÃO: ASSINAR APENAS UMA VEZ PARA PROCEDIMENTOS DE ÓRTESE, PRÓTESE E/OU MEIOS AUXILIARES DE LOCOMOÇÃO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5e68f6c9-1ab9-4aa6-aa09-9dea47c87631" x="125" y="497" width="425" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>=5]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="fd8d6181-0aeb-4662-9977-a209ce4f8e01" x="27" y="443" width="98" height="18"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ceb4ffbf-c7ef-4cfe-9f75-2a5bb993e17f" x="125" y="515" width="425" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>5]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c287a27d-e57a-4e8d-bf34-50173187c5c6" x="7" y="659" width="20" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[14]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="ce5df0e4-0312-41a2-92dc-4c85f924aefa" x="5" y="359" width="130" height="36"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{P_CODIGO_PROCEDIMENTO_PRINCIPAL} == null ? $F{procedimentoMedico}.getCodigoPrincipal() : $P{P_CODIGO_PROCEDIMENTO_PRINCIPAL}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="ac442935-2ea6-429d-b8ad-dd39302c747a" x="125" y="695" width="425" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>15]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c8e93678-ee9d-4080-b12c-e78ebcdffa87" x="5" y="122" width="324" height="17"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paciente}.getNome()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="58b418bb-0072-4738-845a-48b639dd2e7b" x="7" y="533" width="20" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>5]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[07]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0d6064bf-719e-4df8-bb63-629383bedeec" x="125" y="461" width="425" height="18"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="f60a731f-0b8a-47a3-842c-edc26267f262" x="27" y="425" width="98" height="18"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="936fa66d-2521-4833-94a4-8bc88e634982" x="125" y="749" width="425" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>15]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="9b3fb0f8-e2c4-4750-a9bb-4ffdbdcbb32e" x="115" y="0" width="326" height="30"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true" isItalic="true"/>
+				</textElement>
+				<text><![CDATA[CONTROLE DE FREQUÊNCIA INDIVIDUAL DEFICIÊNCIA FÍSICA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="123edfc5-7e06-43f2-941f-4a25382374d2" x="7" y="425" width="20" height="18"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[01]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="26e8151d-81da-40fd-83f6-a2a62739de6f" x="426" y="255" width="125" height="17"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paciente}.getCep()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d3392adb-fa3b-4faf-82ff-353b577c915f" x="27" y="695" width="98" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>15]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4e05ad89-6aa3-41c9-a035-d7d7d37c5001" x="463" y="241" width="46" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[17 - CEP]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bcc34acc-8d16-4062-b040-813f59f9d32d" x="249" y="241" width="85" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[15 - CÓD. IBGE MUNICÍPIO]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="0b87c741-27ec-46ae-9b06-d771d9dcee24" x="244" y="255" width="101" height="17"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paciente}.getCodigoIbgeMunicipioLogradouro()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="15274839-e8a5-4d75-b7cc-d6e47cb2e2e0" x="125" y="713" width="425" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>15]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="76cd3d1a-69ed-4f2a-8776-007acc31db52" x="125" y="623" width="425" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0762dc75-33ef-44b9-bb59-ce55dfcad8a5" x="358" y="134" width="52" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[8 - RAÇA/COR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8913d1ad-ec9b-4060-b503-5c063032ae44" x="431" y="149" width="120" height="17"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement markup="none"/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="8352ba5f-d73d-40c2-8b69-90ba44f81b21" x="37" y="322" width="232" height="17"/>
+				<textElement/>
+				<text><![CDATA[Maceió,_______de_______________de 20______]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="122938f0-4cdb-4350-89bf-1a77167ea6db" x="125" y="641" width="425" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="22a031c0-75df-42b1-867d-78054a2d79cc" x="334" y="122" width="83" height="17"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["F".equals($F{paciente}.getSexo())?"FEMININO":"MASCULINO"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="11240460-3767-40b6-ba5c-a4b644ac22f5" x="7" y="677" width="20" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>=15]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[15]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0924c4b8-a657-4974-9138-268b11a89f9c" x="27" y="497" width="98" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>=5]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="ca7b5030-be38-4c85-9039-c5d63d287fdd" x="354" y="108" width="36" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[4 - SEXO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="322668fd-a4b9-424a-9eee-4b5849489e85" x="125" y="425" width="425" height="18"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="98d31048-ea2c-4fd1-95a6-84cd12fa4345" x="27" y="713" width="98" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>15]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="abf93ab9-851e-4fde-88c3-c1981f37fb65" x="38" y="108" width="112" height="20"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[3 - NOME DO PACIENTE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="98c16513-ef71-4fe6-8453-694b1051be90" x="7" y="443" width="20" height="18"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[02]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5cb45167-e8c7-4f75-a465-0b0029ee778e" x="7" y="695" width="20" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>15]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[16]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="abab23ec-fa07-4786-92e7-41fef1e47191" x="350" y="255" width="72" height="17"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paciente}.getUfLogradouro()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="569d09be-f916-4c6f-90ae-09e6e52e6db4" x="27" y="569" width="98" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a86a5575-6a1f-44f5-9e06-968254703df3" x="27" y="400" width="98" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[DATA]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="10152cae-a9f6-4b02-a79d-fc0ec4af3e29" x="39" y="212" width="171" height="24"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[13 - ENDEREÇO (RUA, Nº, BAIRRO)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="91b235d9-9d89-4936-b2f4-447387a00a84" x="27" y="515" width="98" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>5]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2a50ccb9-6ef7-4bbc-945c-d76c4c43cbed" x="465" y="344" width="68" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[20 - QTDE]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="5023cf0b-d74a-4c8c-abfd-f66bf9110ae1" x="350" y="203" width="201" height="17"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paciente}.getTelefoneResponsavel()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d64ec213-08a3-4337-ab9b-28d71d861946" x="4" y="345" width="136" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[18 - CÓDIGO DO PROCEDIMENTO PRINCIPAL]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="90a99939-109d-433f-ae92-898ca1fb8749" x="5" y="255" width="234" height="17"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paciente}.getMunicipioLogradouro()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="c561eb6e-3134-418b-94b1-022dfae0ef01" x="38" y="188" width="171" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[11 - NOME DO RESPONSÁVEL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c13e1030-7745-4a15-b995-9264d53fb5d7" x="6" y="289" width="544" height="17"/>
+				<textElement/>
+				<text><![CDATA[Declaro que no mês de _____________________, o paciente indicado acima, foi submetído aos procedimentos abaixo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="154ecc7a-9418-481a-bd64-4f5c0162fb39" x="38" y="134" width="171" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[6 - CARTÃO NACIONAL DE SAÚDE (CNS)]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="c1dc3dc4-99bd-43c4-a011-9031ab33da9e" x="304" y="332" width="224" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="f62d0d7a-0042-4480-b449-8839f204d07c" x="7" y="749" width="20" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>15]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[19]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2b1e4c69-99ba-456b-aea7-0e52a581155e" x="27" y="659" width="98" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4c5bf8e9-1708-4761-ab20-7dc44c11c358" x="7" y="569" width="20" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[09]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="6d883947-a7b3-490c-be2d-3b7074a0b45c" x="394" y="188" width="104" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[12 - TELEFONE DE CONTATO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="2e206a94-49eb-4659-8a0b-a8f1aee3f3f4" x="27" y="479" width="98" height="18"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="98ec091a-0345-435b-b36e-13dc84c3148d" x="125" y="659" width="425" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="490a00bb-a28b-48f6-bed2-a94ad1ef1de1" x="125" y="605" width="425" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>8]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="7214c14e-d263-4953-9e8a-7a308ac998a0" x="422" y="122" width="129" height="17"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paciente}.getSequencial()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="ac67f4e2-3b71-4c6c-88e2-101d7c725903" x="27" y="461" width="98" height="18"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5148b85e-57e0-445f-b573-4b89f1a04fe3" x="27" y="677" width="98" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>=15]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="13679102-8ab2-4fc3-be99-e1ab8315e769" x="463" y="134" width="46" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[8.1 - ETNIA]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="c74d62d6-7b19-46ce-9d6e-f4bfb3631ea9" x="5" y="176" width="340" height="17"/>
+				<box leftPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle" markup="none">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paciente}.getNomeMae()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="92862b22-fc59-42e6-beb8-f82e88482a61" x="125" y="479" width="425" height="18"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="4368fa5b-4f2b-4e86-80d3-d04ee5d8aa07" x="27" y="767" width="98" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>15]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="5d375cf9-3727-4ea7-9429-422e87903ac2" x="7" y="767" width="20" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>15]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[20]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="083ecb88-83d7-4c65-a022-58e2a2438822" x="125" y="767" width="425" height="18">
+					<printWhenExpression><![CDATA[$F{procedimentoMedico}.getQuantidadeLinha()>15]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+</jasperReport>

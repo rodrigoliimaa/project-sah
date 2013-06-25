@@ -1,0 +1,263 @@
+100001Atendimento em presídio até 100 presos                                                                                                                201207
+160001Teleconsultoria Assíncrona                                                                                                                            201207
+102001Estratégia de Agentes Comunitários de Saúde - EACS                                                                                                    201207
+103001Ambulância de transporte                                                                                                                              201207
+104001Central de Regulação de Internações Hospitalares                                                                                                      201207
+105001Neurocirurgia do trauma e anomalias do desenvolvimento                                                                                                201207
+106001Testagem e aconselhamento                                                                                                                             201207
+107001Serviço de Atenção à Saúde Auditiva na Média Complexidade                                                                                             201207
+108001Atendimento/acompanhamento em saúde do trabalhador                                                                                                    201207
+109001Unidade sócio-educativa com até 40 adolecentes                                                                                                        201207
+110001Atenção à infertilidade                                                                                                                               201207
+111001Diagnóstico e tratamento                                                                                                                              201207
+112001Acompanhamento do pré-natal de baixo risco                                                                                                            201207
+113001Assitência Domiciliar                                                                                                                                 201207
+114001Dentística                                                                                                                                            201207
+115001Residência terapêutica em saúde mental                                                                                                                201207
+116001Eletrofisiologia                                                                                                                                      201207
+117001Tratamento da lipodistrofia do portador de HIV / AIDS                                                                                                 201207
+118001Cirurgia torácica                                                                                                                                     201207
+119001Abordagem e tratamento do fumante                                                                                                                     201207
+120001Exames anatomopatológicos                                                                                                                             201207
+121001Radiologia                                                                                                                                            201207
+122001Teste Ergométrico                                                                                                                                     201207
+123001OPM auxiliares de locomoção                                                                                                                           201207
+124001Diagnóstico/Tratamento das doenças endócrinas, metabólicas e nutricionais                                                                             201207
+125001Dispensação de Medicamentos do Componente Especializado da Assistência Farmaceutica.                                                                  201207
+126001Assistência fisioterapêutica em alterações obstétricas, neonatais e uroginecológicas                                                                  201207
+127001Tratamento clínico, reparador e acompanhamento ao paciente                                                                                            201207
+128001Procedimentos destinados à obtenção do sangue para fins de assitência hemoterápica                                                                    201207
+129001Exames de histocompatibilidade por meio de sorologia                                                                                                  201207
+130001Tratamento dialítico                                                                                                                                  201207
+131001Diagnóstico em oftalmologia                                                                                                                           201207
+132001Oncologia pediátrica                                                                                                                                  201207
+133001Tratamento de Doenças das Vias Aéreas Inferiores                                                                                                      201207
+134001Acupuntura                                                                                                                                            201207
+135001Reabilitação visual                                                                                                                                   201207
+136001Enteral                                                                                                                                               201207
+137001Exame eletrocardiográfico por telemedicina                                                                                                            201207
+138001Diagnóstico e tratamento em cintura escapular                                                                                                         201207
+139001Tratamento de recém-nascido com hipotireoidismo e fenilcetonuria                                                                                      201207
+140001Pronto Socorro Geral                                                                                                                                  201207
+141001Vigilância epidemiológica                                                                                                                             201207
+142001Do aparelho digestivo                                                                                                                                 201207
+143001Transporte terrestre                                                                                                                                  201207
+144001Coleta realizada fora das estrutura laboratorial                                                                                                      201207
+145001Exames bioquímicos                                                                                                                                    201207
+146001Diagnóstica                                                                                                                                           201207
+147001NASF 1                                                                                                                                                201207
+148001Saúde mental                                                                                                                                          201207
+149001Rim                                                                                                                                                   201207
+150001Fístula arteriovenosa sem enxerto                                                                                                                     201207
+151001Medicina nuclear in vivo                                                                                                                              201207
+153001Serviço de assistência aos individuos que possuem indicação para realização do processo transexualizador                                              201207
+154001Banco de valvula cardiaca humana                                                                                                                      201207
+155001Serviço de Traumatologia e Ortopedia                                                                                                                  201207
+156001Atenção as Pessoas Ostomizadas I                                                                                                                      201207
+157001Laboratorio Regional de Protese Dentaria                                                                                                              201207
+158001Serviço de Atenção Integral em Hanseniase Tipo I                                                                                                      201207
+159001Atenção Básica                                                                                                                                        201207
+101001Saúde da família                                                                                                                                      201207
+100002Atendimento em manicômio até 100 presos                                                                                                               201207
+160002Teleconsultoria Síncrona                                                                                                                              201207
+102002Estratégia de Agentes Comunitários de Saúde com Saúde Bucal - (modalidade I)                                                                          201207
+103002Ambulância de suporte básico de vida                                                                                                                  201207
+104002Cental de Regulação de Consultas e Exames                                                                                                             201207
+105002Coluna e nervos periféricos                                                                                                                           201207
+106002Diagnóstico e tratamento                                                                                                                              201207
+107002Serviço de Atenção à Saúde Auditiva na Alta Complexidade                                                                                              201207
+108002Centro de referência em saúde do trabalhador CEREST estadual                                                                                          201207
+109002Unidade sócio-educativa com de 41 a 100 adolecentes                                                                                                   201207
+110002Contracepção clínica                                                                                                                                  201207
+111002Tratamento multidrogas resistentes                                                                                                                    201207
+112002Acompanhamento do pré-natal de alto risco                                                                                                             201207
+113002Internação Domiciliar                                                                                                                                 201207
+114002Endodontia                                                                                                                                            201207
+115002Atendimento psicossocial                                                                                                                              201207
+116002Cirurgia cardiovascular (adulto)                                                                                                                      201207
+117002Tratamento em queimados                                                                                                                               201207
+120002Exames citopatológicos                                                                                                                                201207
+121002Ultra-sonografia                                                                                                                                      201207
+122002Teste de Holter                                                                                                                                       201207
+123002OPM ortopédicas                                                                                                                                       201207
+124002Cirurgia de glândulas endócrinas                                                                                                                      201207
+125002Farmácia Popular                                                                                                                                      201207
+126002Assistência fisioterapêutica em alterações oncológicas                                                                                                201207
+128002Diagnóstico em hemoterapia                                                                                                                            201207
+129002Exames de histocompatibilidade por sorologia e biologia                                                                                               201207
+130002Litotripsia                                                                                                                                           201207
+131002Tratamento clínico do aparelho da visão                                                                                                               201207
+132002Hematologia                                                                                                                                           201207
+133002Diagnóstico em Pneumologia                                                                                                                            201207
+134002Fitoterapia                                                                                                                                           201207
+135002Reabilitação mental/autismo                                                                                                                           201207
+136002Enteral/Parenteral                                                                                                                                    201207
+138002Diagnóstico e tratamento em membros superiores                                                                                                        201207
+139002Tratamento de recém-nascido com doenças falciformes                                                                                                   201207
+140002Pronto Socorro Especializado                                                                                                                          201207
+141002Vigilância sanitária                                                                                                                                  201207
+142002Do aparelho respiratório                                                                                                                              201207
+143002Transporte aéreo                                                                                                                                      201207
+145002Exames hematológicos e hemostasia                                                                                                                     201207
+146002Cirúrgica                                                                                                                                             201207
+147002NASF 2                                                                                                                                                201207
+148002AIDS                                                                                                                                                  201207
+149002Medula óssea                                                                                                                                          201207
+150002Fístula arteriovenosa com enxerto                                                                                                                     201207
+151002Medicina nuclear in vitro                                                                                                                             201207
+154002Banco de tecido musculo esqueletico                                                                                                                   201207
+155002Serviço de Traumatologia e Ortopedia Pediátrica (até 21 anos de idade)                                                                                201207
+156002Atenção as Pessoas Ostomizadas II                                                                                                                     201207
+158002Serviço de Atenção Integral em Hanseniase Tipo II                                                                                                     201207
+159002Atenção Básica com Saúde Bucal                                                                                                                        201207
+101002Saúde bucal MI                                                                                                                                        201207
+100003Atendimento em presídio acima de 100 presos                                                                                                           201207
+101003Saúde bucal MII                                                                                                                                       201207
+102003Estratégia de Agentes Comunitários de Saúde com Saúde Bucal - (modalidade II)                                                                         201207
+103003Ambulância de suporte avançado de vida                                                                                                                201207
+104003Central de Regulação de Urgências                                                                                                                     201207
+105003Tumores do sistema nervoso                                                                                                                            201207
+106003Diagnóstico, tratamento e capacitação técnica                                                                                                         201207
+107003Terapia fonoaudiológica                                                                                                                               201207
+109003Unidade sócio-educativa com de 101 a 180 adolecentes                                                                                                  201207
+110003Laqueadura                                                                                                                                            201207
+112003Parto em gestação de baixo risco                                                                                                                      201207
+113003Equipe Multidisciplinar de Atenção Domiciliar - EMAD                                                                                                  201207
+114003Periodontia clínica                                                                                                                                   201207
+116003Cirurgia cardiovascular (criança)                                                                                                                     201207
+117003Tratamento da lipoatrofia facial do portador de HIV / AIDS                                                                                            201207
+121003Tomografia computadorizada                                                                                                                            201207
+122003Exame Eletrocardiográfico                                                                                                                             201207
+123003OPM auditivas                                                                                                                                         201207
+125003Farmácia com manipulação homeopática                                                                                                                  201207
+126003Assistência fisioterapêutica em oftalmologia                                                                                                          201207
+128003Procedimentos especiais em hemoterapia                                                                                                                201207
+130003Confeccção/Intervenção de acessos para diálise                                                                                                        201207
+131003Tratamento cirúrgico do aparelho da visão                                                                                                             201207
+132003Oncologia clínica                                                                                                                                     201207
+133003Diagnóstico em Pneumologia por Telemedicina                                                                                                           201207
+134003Outras técnicas em medicina tradicional chinesa                                                                                                       201207
+135003Reabilitação física                                                                                                                                   201207
+136003Enteral/Parenteral, com manipulação/fabricação                                                                                                        201207
+138003Diagnóstico e tratamento em coluna vertebral e caixa torácica                                                                                         201207
+139003Tratamento de recém-nascido com fibrose cística                                                                                                       201207
+140003Pronto Atendimento                                                                                                                                    201207
+141003Vigilância ambiental                                                                                                                                  201207
+142003Do aparelho urinário                                                                                                                                  201207
+143003Transporte marítimo                                                                                                                                   201207
+145003Exames sorológicos e imunológicos                                                                                                                     201207
+148003Geriátrico                                                                                                                                            201207
+149003Coração                                                                                                                                               201207
+151003Medicina nuclear in vivo por telemedicina                                                                                                             201207
+155003Serviço de Traumatologia e Ortopedia de Urgência                                                                                                      201207
+158003Serviço de Atenção Integral em Hanseniase Tipo III                                                                                                    201207
+160003Segunda Opinião Formativa                                                                                                                             201207
+135004Reabilitação visual/mental/múltiplas deficiências                                                                                                     201207
+134004Práticas corporais/Atividade física                                                                                                                   201207
+139004Tratamento de recém-nascido com outras doenças congênitas                                                                                             201207
+141004Núcleo de vigilância hospitalar                                                                                                                       201207
+142004Do aparelho ginecológico                                                                                                                              201207
+145004Exames coprológicos                                                                                                                                   201207
+148004Fibrose cística                                                                                                                                       201207
+149004Pulmão                                                                                                                                                201207
+100004Atendimento em manicômio acima de 100 presos                                                                                                          201207
+103004Aeronave de transporte médico                                                                                                                         201207
+104004Unidade de autorizações de TFD intermunicipais                                                                                                        201207
+105004Neurocirurgia vascular                                                                                                                                201207
+107004Diagnóstico em audiologia/otologia                                                                                                                    201207
+109004Unidade sócio-educativa com mais de 180 adolecentes                                                                                                   201207
+110004Vasectomia                                                                                                                                            201207
+112004Parto em gestação de alto risco                                                                                                                       201207
+113004Equipe Multidisciplinar de Apoio - EMAP                                                                                                               201207
+114004Moldagem/Manutenção                                                                                                                                   201207
+116004Cirurgia vascular                                                                                                                                     201207
+121004Ressonância magnética                                                                                                                                 201207
+122004Exame Eletroencefalográfico                                                                                                                           201207
+123004OPM oftalmológicas                                                                                                                                    201207
+125004Dispensação de medicamentos estratégicos                                                                                                              201207
+126004Assistência fisioterapêutica cardiovasculares e pneumo-funcionais                                                                                     201207
+128004Medicina transfusional                                                                                                                                201207
+130004Tratamento em nefrologia em geral                                                                                                                     201207
+131004Projeto Olhar Brasil                                                                                                                                  201207
+132004Radioterapia                                                                                                                                          201207
+138004Diagnóstico e tratamento em cintura pélvica                                                                                                           201207
+138005Diagnóstico e tratamento em membros inferiores                                                                                                        201207
+145005Exames de uroanálise                                                                                                                                  201207
+148005Cirúrgico / Diagnóstico                                                                                                                               201207
+149005Córnea / Esclera                                                                                                                                      201207
+103005Embarcação de transporte médico                                                                                                                       201207
+104005Unidade de autorizações de TFD interestaduais                                                                                                         201207
+105005Tratamento neurocirúrgico da dor funcional                                                                                                            201207
+107005Implante Coclear                                                                                                                                      201207
+112005Centro de parto normal                                                                                                                                201207
+114005Cirurgia oral                                                                                                                                         201207
+116005Cardiologia intervencionista (hemodinâmica)                                                                                                           201207
+122005Teste Ergométrico por Telemedicina                                                                                                                    201207
+123005OPM em gastroenterologia                                                                                                                              201207
+125005Dispensação de medicamentos básicos                                                                                                                   201207
+126005Assistência fisioterapêutica nas disfunções músculo-esqueléticas (todas as origens)                                                                   201207
+131005Diagnóstico em Oftalmologia por Telemedicina                                                                                                          201207
+132005Oncologia cirúrgica                                                                                                                                   201207
+134005Homeopatia                                                                                                                                            201207
+107006Triagem Auditiva Neonatal                                                                                                                             201207
+114006Cirurgia buco-maxilo-facial                                                                                                                           201207
+105006Investigação e cirurgia de epilepsia                                                                                                                  201207
+104006Central Estadual de Regulação da Alta Complexidade                                                                                                    201207
+125006Farmácia Hospitalar                                                                                                                                   201207
+123006OPM em urologia                                                                                                                                       201207
+148006Acompanhamento pós-transplante de medula óssea                                                                                                        201207
+149006Fígado                                                                                                                                                201207
+126006Assistência fisioterapêutica em queimados                                                                                                             201207
+122006Teste Holter por Telemedicina                                                                                                                         201207
+121006Radiologia intervencionista                                                                                                                           201207
+103006Veículos de intervenção rápida                                                                                                                        201207
+145006Exames hormonais                                                                                                                                      201207
+116006Endovascular extracardíaca                                                                                                                            201207
+134006Termalismo/Crenoterapia                                                                                                                               201207
+105007Tratamento endovascular                                                                                                                               201207
+103007Outros veículos                                                                                                                                       201207
+149007Pâncreas                                                                                                                                              201207
+145007Exames de  vigilância epidemiológica e  ambiental                                                                                                     201207
+134007Medicina antroposófica                                                                                                                                201207
+126007Assistência fisioterapêutica nas alterações em neurologia                                                                                             201207
+123007OPM em odontologia                                                                                                                                    201207
+122007Exame Eletrocardiografico por Telemedicina                                                                                                            201207
+121007Radiologia por telemedicina                                                                                                                           201207
+107007Diagnóstico em Audiologia/Otologia po Telemedicina                                                                                                    201207
+121008Ultra-sonografia por telemedicina                                                                                                                     201207
+105008Neurocirurgia funcional estereotáxica                                                                                                                 201207
+123008OPM buco-maxilo-facial                                                                                                                                201207
+103008Ambulância de resgate                                                                                                                                 201207
+126008Diagnóstico cinético funcional                                                                                                                        201207
+122008Exame Eletroencefalografico por Telemedicina                                                                                                          201207
+145008Exames toxicológicos ou de monitorização terapêutica                                                                                                  201207
+149008Retirada de orgãos                                                                                                                                    201207
+122009Exame Eletroneuromiografia                                                                                                                            201207
+149009Pele                                                                                                                                                  201207
+103009Aeronave de asa fixa de transporte médico                                                                                                             201207
+145009Exames microbiológicos                                                                                                                                201207
+121009Tomografia computadorizada por telemedicina                                                                                                           201207
+105009Polissonografia                                                                                                                                       201207
+123009Substituição/Troca em órteses/próteses                                                                                                                201207
+122010Exame videoeletroencefalografia                                                                                                                       201207
+123010OPM em queimados                                                                                                                                      201207
+121010Ressonância magnética por telemedicina                                                                                                                201207
+149010Válvulas cardíacas                                                                                                                                    201207
+103010Moto de intervenção rápida                                                                                                                            201207
+145010Exames em outros líquidos biológicos                                                                                                                  201207
+149011Osteocondroligamentos                                                                                                                                 201207
+122011Potenciais Evocados                                                                                                                                   201207
+123011OPM em nefrologia                                                                                                                                     201207
+145011Exames de genética                                                                                                                                    201207
+121011Radiologia intervencionista por telemedicina                                                                                                          201207
+145012Exames para triagem neonatal                                                                                                                          201207
+122012Potenciais Evocados por Telemedicina                                                                                                                  201207
+121012Mamografia                                                                                                                                            201207
+123012OPM - Projeto Olhar Brasil                                                                                                                            201207
+149012Separação, avaliação biomicroscópica e conservação da córnea/esclera                                                                                  201207
+121013Mamografia por Telemedicina                                                                                                                           201207
+149013Contagem endotelial corneana                                                                                                                          201207
+145013Exames imunohematológicos                                                                                                                             201207
+149014Acompanhamento de paciente transplantado                                                                                                              201207
+149015Ações para doação e captação de órgãos e tecidos                                                                                                      201207
+149016Retirada de globo ocular humano para transplante                                                                                                      201207

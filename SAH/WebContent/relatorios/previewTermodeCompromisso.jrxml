@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="previewTermodeCompromisso" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="280d948a-e46f-45b2-82a1-7c7d49ed7d59">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="196"/>
+	<parameter name="P_PATH_IMAGENS" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="nomeFantasia" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.nomeFantasia]]></fieldDescription>
+	</field>
+	<field name="telefone1" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.telefone1]]></fieldDescription>
+	</field>
+	<field name="telefone2" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.telefone2]]></fieldDescription>
+	</field>
+	<field name="inscricaoEstadual" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.inscricaoEstadual]]></fieldDescription>
+	</field>
+	<field name="tecnicoResponsavel" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.tecnicoResponsavel]]></fieldDescription>
+	</field>
+	<field name="cnpj" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.cnpj]]></fieldDescription>
+	</field>
+	<field name="cpf" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.cpf]]></fieldDescription>
+	</field>
+	<field name="complementoLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.complementoLogradouro]]></fieldDescription>
+	</field>
+	<field name="logradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.logradouro]]></fieldDescription>
+	</field>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.nome]]></fieldDescription>
+	</field>
+	<field name="nomeMae" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.nomeMae]]></fieldDescription>
+	</field>
+	<field name="nomePai" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.nomePai]]></fieldDescription>
+	</field>
+	<field name="nomeResponsavel" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.nomeResponsavel]]></fieldDescription>
+	</field>
+	<field name="orgaoEmissor" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.orgaoEmissor]]></fieldDescription>
+	</field>
+	<field name="rg" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.rg]]></fieldDescription>
+	</field>
+	<field name="sequencial" class="java.lang.Integer">
+		<fieldDescription><![CDATA[paciente.sequencial]]></fieldDescription>
+	</field>
+	<field name="ufLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.ufLogradouro]]></fieldDescription>
+	</field>
+	<field name="ufOrgaoEmissor" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.ufOrgaoEmissor]]></fieldDescription>
+	</field>
+	<field name="descricao" class="java.lang.String">
+		<fieldDescription><![CDATA[programa.descricao]]></fieldDescription>
+	</field>
+	<field name="nome_1" class="java.lang.String">
+		<fieldDescription><![CDATA[medico.nome]]></fieldDescription>
+	</field>
+	<field name="observacao" class="java.lang.String">
+		<fieldDescription><![CDATA[observacao]]></fieldDescription>
+	</field>
+	<field name="numeroNota" class="java.lang.String">
+		<fieldDescription><![CDATA[numeroNota]]></fieldDescription>
+	</field>
+	<field name="codigoIbgeMunicipioLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.codigoIbgeMunicipioLogradouro]]></fieldDescription>
+	</field>
+	<field name="municipioLogradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[paciente.municipioLogradouro]]></fieldDescription>
+	</field>
+	<field name="fornecedor" class="java.lang.Object">
+		<fieldDescription><![CDATA[fornecedor]]></fieldDescription>
+	</field>
+	<field name="bairro" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.bairro]]></fieldDescription>
+	</field>
+	<field name="complemento" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.complemento]]></fieldDescription>
+	</field>
+	<field name="logradouro_1" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.logradouro]]></fieldDescription>
+	</field>
+	<field name="municipio" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.municipio]]></fieldDescription>
+	</field>
+	<field name="numero" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.numero]]></fieldDescription>
+	</field>
+	<field name="referencia" class="java.lang.String">
+		<fieldDescription><![CDATA[fornecedor.referencia]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="752" splitType="Stretch">
+			<image scaleImage="FillFrame">
+				<reportElement uuid="ea00ceb3-f655-44cc-90c6-58ceb3b56a14" x="15" y="0" width="153" height="41"/>
+				<imageExpression><![CDATA[$P{P_PATH_IMAGENS}+"/Logo_ADEFAL.gif"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement uuid="8d6cf8ce-a98d-4c30-88bf-fb6180df1c74" x="168" y="10" width="387" height="20"/>
+				<textElement textAlignment="Center">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[TERMO DE COMPROMISSO GARANTIA E RESPONSABILIDADE ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b2437a3f-3c36-4a3a-b934-38a5b5a1440a" x="0" y="44" width="555" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[RECEBIMENTO DE ÓRTESES,PRÓTESES OU DISPOSITIVOS AUXILIARES DE LOCOMOÇÃO]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="25af6704-c4bd-44d4-9c9b-7812c94fd451" x="0" y="73" width="555" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="460c8952-1d43-4418-b306-ab24b3a8921b" x="15" y="74" width="45" height="20"/>
+				<textElement/>
+				<text><![CDATA[Usuário:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="87c5f72b-a14b-4ee4-838c-e7181f12a605" x="160" y="74" width="395" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="a0b2bb22-b4a7-47ac-a5be-c22b100a3861" x="60" y="74" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{sequencial}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="ba799d6f-4c2c-4472-94dc-00adc2c65771" x="15" y="94" width="45" height="20"/>
+				<textElement/>
+				<text><![CDATA[CPF:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="6afa7db8-dc1c-4279-8044-91e178776ab3" x="60" y="94" width="150" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[(($F{cpf}==null)?"":$F{cpf})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="11163993-ecf1-4002-b63b-4130edacb162" x="210" y="94" width="25" height="20"/>
+				<textElement/>
+				<text><![CDATA[RG:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="58e4b06b-f4c1-4973-ad7e-799326b12e0a" x="235" y="94" width="151" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{rg}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7493d7fd-4d3c-4e2a-a808-74e47688c91b" x="386" y="94" width="93" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[(($F{orgaoEmissor}==null)?"":$F{orgaoEmissor})]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="bd63ccf1-3266-4c80-9bbf-0d6b66af75a1" x="479" y="94" width="76" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[(($F{ufOrgaoEmissor}==null)?"":$F{ufOrgaoEmissor})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e08a4be7-1484-4f4b-8ae9-c7c40e205a8d" x="15" y="114" width="66" height="20"/>
+				<textElement/>
+				<text><![CDATA[Regional:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c38c231c-a424-47b1-8558-a2be606a1774" x="235" y="114" width="70" height="20"/>
+				<textElement/>
+				<text><![CDATA[Responsável:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="a842c044-072e-4cf1-9f2b-6454fd9dc34c" x="305" y="114" width="250" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[(($F{nomeResponsavel}==null)?"":$F{nomeResponsavel})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="51e6ed4a-9307-486e-aae3-80e11ee89782" x="15" y="135" width="71" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Especificação:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="59f43574-fcad-475c-967a-a49c174a3d73" x="15" y="155" width="167" height="20"/>
+				<textElement/>
+				<text><![CDATA[Intituição/Empresa Fornecedora:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="f8c47ec1-85ec-468b-8abf-7ab9ccd1ceb9" x="182" y="155" width="373" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{nomeFantasia}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f54248d9-d0cf-49e0-a7c0-cccd0f74844a" x="15" y="175" width="56" height="20"/>
+				<textElement/>
+				<text><![CDATA[Endereço:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="667c570f-09bc-4eb5-bb37-5b15fa18f32f" x="15" y="195" width="56" height="20"/>
+				<textElement/>
+				<text><![CDATA[Telefone:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="5185dc3a-6034-4bd2-a6fc-12178aeca206" x="71" y="195" width="156" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[(($F{telefone1}==null)?"":$F{telefone1})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d155c3f3-3731-403c-a04f-a0a1331d307e" x="228" y="195" width="61" height="20"/>
+				<textElement/>
+				<text><![CDATA[Telefone:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="17b09068-7814-48d1-ac06-830f1c0e16f7" x="290" y="195" width="143" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[(($F{telefone2}==null)?"":$F{telefone2})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="4c409883-4872-4cb3-83e0-4ea402d23378" x="15" y="215" width="100" height="20"/>
+				<textElement/>
+				<text><![CDATA[Inscrição Estadual:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="9957d864-984c-4111-a1f2-20a437b42e4e" x="115" y="215" width="120" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{inscricaoEstadual}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f16e8610-f9f0-4cd2-b387-d42c9e9c8b0b" x="235" y="216" width="42" height="20"/>
+				<textElement/>
+				<text><![CDATA[CNPJ:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="474265d1-f59d-42c1-b73a-65ec4892183d" x="277" y="216" width="162" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{cnpj}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="62d0f1d6-43b0-43f5-8bbe-128b44b6e03e" x="15" y="235" width="71" height="20"/>
+				<textElement/>
+				<text><![CDATA[Responsável:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="ae846b7b-5e0d-41e3-bf00-147d086ad2b3" x="86" y="236" width="469" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{tecnicoResponsavel}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="1330e79d-be13-4bd8-9c8d-e1e8fca6e7eb" x="15" y="256" width="45" height="16"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[Rúbrica:]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="b8ec4275-f228-4936-ae61-e7177de7ebc9" x="60" y="271" width="495" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="6a6dcda1-49c5-496f-a9bf-de480c444453" x="15" y="283" width="195" height="20"/>
+				<textElement/>
+				<text><![CDATA[Responsável pela Empresa / Instituição:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0da8640d-83bb-457a-9136-50edb703a908" x="15" y="297" width="45" height="20"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[Rúbrica:]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="c552438e-b282-4769-9b1b-63d3a087e516" x="60" y="316" width="495" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="2d51c6d7-777d-42fc-967a-235f262d3e38" x="15" y="320" width="540" height="20"/>
+				<textElement/>
+				<text><![CDATA[Garantia dos Componentes  18 meses Garantia da mão-de-obra  12 meses]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b0361c81-1352-419f-8594-67da5fb5f895" x="15" y="341" width="540" height="20"/>
+				<textElement/>
+				<text><![CDATA[Data das revisões ___/___/___ (06 meses) ___/___/____(12 meses) ___/____/___(18 meses)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="c61a628d-f720-4e52-ad6a-6935b8c189f0" x="15" y="362" width="540" height="20"/>
+				<textElement/>
+				<text><![CDATA[Origem da Prescrição: ADEFAL - ASSOCIAÇÃO DOS DEFICIENTES FÍSICOS DE ALAGOAS]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="b45d1296-1fe0-4598-b896-bacfe9c40aba" x="16" y="382" width="153" height="20"/>
+				<textElement/>
+				<text><![CDATA[Responsável pela solicitação:]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="c544adbf-f83a-4b5f-9bbc-ccd587ee13ff" x="169" y="382" width="386" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{nome_1}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="e3208501-67e0-43b7-8544-424f50a759fe" x="16" y="402" width="166" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Data da Prescrição: ___/___/___]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="bf6f8587-74d9-4434-9576-2065eecab5e2" x="197" y="403" width="166" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Data da Entrega: ___/___/___]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="a38e3112-a6e8-4992-84a7-e7a038f59849" x="16" y="423" width="539" height="20"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[Declaração : O equipamemento acima descrito foi por mim examinado e está de acordo com a solicitação]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="aacdb24e-c62d-435f-be4c-0c3fee8fde65" x="16" y="458" width="539" height="20"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom"/>
+				<text><![CDATA[Responsável pela solicitação]]></text>
+			</staticText>
+			<line>
+				<reportElement uuid="03430c9c-457b-4f7d-80d6-cd2096b1dc76" x="60" y="464" width="448" height="1"/>
+			</line>
+			<line>
+				<reportElement uuid="0156a263-6344-4e45-ab77-73f60dd84330" x="0" y="484" width="555" height="1"/>
+			</line>
+			<staticText>
+				<reportElement uuid="9efd698a-3b2b-446d-80b1-cc89dc877d96" x="1" y="485" width="554" height="218"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<text><![CDATA[Observações:
+
+1 - Os componentes do equipamento só devem ser manuseados por um técnico especializado. O usuário não deve efeturar qualquer tipo de manutenção ou alteração no equipamento que possa prejudicar a estrutura ou funcionamento básico do mesmo,com exceção dos casos em que não houver outra alternativa que seja viável para retorná-lo a condição ou parâmetros iniciais. Ao mudar o calçado,cuidar para que o mesmo tenha o salto da mesma altura original.
+
+2 - Observar rigorosamente os prazos de manutenção e/ou revisão de acordo com cada tipo de componente. Estes prazos estão determinados acima.
+
+3 - Comunicar os problemas ocorridos ao profissional do serviço, que acionará o fornecedor responsável para realizar o reparo.
+
+Ao aceitar e testar sua satisfação com o equipamento destinado a melhorar sua audição, o Sr(a)
+
+
+Compromete-se a zelar pelo referido equipamento,preservando-o por,no mínimo 2 (dois) anos. Para isso contará com o apoio da Empresa/Instituição fornecedora (acima) e da Instituição responsável pela prescrição,adequação e treinamento do equipamento ao paciente.]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="f01fb618-248b-42c6-8b6d-b7686d76f60e" x="3" y="643" width="547" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement uuid="efe32d11-ebf4-4d99-b06c-2324df15b19a" x="195" y="725" width="342" height="1"/>
+			</line>
+			<textField>
+				<reportElement uuid="6e38ee58-8438-43ad-bfe6-9bd879a7a655" x="197" y="726" width="258" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="fa9e3f9b-fe1e-4329-928b-7c36cea0d652" x="455" y="726" width="82" height="20"/>
+				<textElement/>
+				<text><![CDATA[ou Responsável]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="b16cb3c1-4c29-4bb5-a857-e390b5c057fa" x="86" y="135" width="361" height="20"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{observacao}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="b202ad67-5d80-4aca-9416-7c72491a4f7d" x="447" y="135" width="47" height="20"/>
+				<textElement/>
+				<text><![CDATA[Cód. SUS]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="96772986-d526-4d2c-a0ac-138376996b1b" x="495" y="135" width="59" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA[$F{numeroNota}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="00f644f5-4d09-42d0-9b06-f71baeff23e6" x="210" y="283" width="324" height="20"/>
+				<textElement verticalAlignment="Top"/>
+				<text><![CDATA[LUIZ CARLOS DE OLIVEIRA SANTANA]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="e3c83af5-1dd8-4888-8953-2e92bc0c11c3" x="81" y="114" width="153" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{municipioLogradouro}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f03e4992-622d-4ab5-badf-7319638b6d7a" x="3" y="725" width="166" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Data : ___/___/___]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="0b4f0cc4-03fe-4661-9200-cf529331914d" x="71" y="175" width="483" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[$F{logradouro_1}+" "+(($F{numero}==null)?"":$F{numero})+" "+(($F{complemento}== null)?"":$F{complemento})+" "+$F{bairro}+" "+$F{municipio}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="50">
+			<staticText>
+				<reportElement uuid="c9902abf-85f1-48ef-8da9-155de6bf3a3d" x="1" y="30" width="331" height="20"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[SAUTH - Sistema de Automação Hospitalar / www.infoliver.com.br]]></text>
+			</staticText>
+			<textField>
+				<reportElement uuid="dce388ab-eca5-4a48-9a40-77f0997d39a2" x="433" y="30" width="80" height="20"/>
+				<textElement textAlignment="Right"/>
+				<textFieldExpression><![CDATA["Página "+$V{PAGE_NUMBER}+" de"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement uuid="121746a6-cc2e-492c-a980-db56828d16f7" x="513" y="30" width="40" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement uuid="43fea21b-7fbe-4289-b3ca-12d3e537a002" x="333" y="30" width="100" height="20"/>
+				<textElement/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>

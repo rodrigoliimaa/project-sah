@@ -1,0 +1,59 @@
+0301Consultas / Atendimentos / Acompanhamentos                                                          201207
+0801Ações relacionadas ao estabelecimento                                                               201207
+0201Coleta de material                                                                                  201207
+0101Ações coletivas/individuais em saúde                                                                201207
+0701Órteses, próteses e materiais especiais não relacionados ao ato cirúrgico                           201207
+0601Medicamentos de dispensação excepcional                                                             201207
+0501Coleta e exames para fins de doação de orgãos, tecidos e células e de transplante                   201207
+0401Pequenas cirurgias e cirurgias de pele, tecido subcutâneo e mucosa                                  201207
+0202Diagnóstico em laboratório clínico                                                                  201207
+0102Vigilância em saúde                                                                                 201207
+0802Ações relacionadas ao atendimento                                                                   201207
+0702Órteses, próteses e materiais especiais relacionados ao ato cirúrgico                               201207
+0602Medicamentos estratégicos                                                                           201207
+0502Avaliação de morte encefálica                                                                       201207
+0402Cirurgia de glândulas endócrinas                                                                    201207
+0302Fisioterapia                                                                                        201207
+0203Diagnóstico por anatomia patológica e citopatologia                                                 201207
+0803Autorização / Regulação                                                                             201207
+0603Medicamentos de âmbito hospitalar                                                                   201207
+0403Cirurgia do sistema nervoso central e periférico                                                    201207
+0303Tratamentos clínicos (outras especialidades)                                                        201207
+0503Ações relacionadas à doação de orgãos e tecidos para transplante                                    201207
+0504Processamento de tecidos para transplante                                                           201207
+0404Cirurgia das vias aéreas superiores, da face, da cabeça e do pescoço                                201207
+0204Diagnóstico por radiologia                                                                          201207
+0604Componente Especializado da Assitencia Farmaceutica                                                 201207
+0304Tratamento em oncologia                                                                             201207
+0305Tratamento em nefrologia                                                                            201207
+0405Cirurgia do aparelho da visão                                                                       201207
+0205Diagnóstico por ultra-sonografia                                                                    201207
+0505Transplante de orgãos, tecidos e células                                                            201207
+0506Acompanhamento e intercorrências no pré e pós-transplante                                           201207
+0206Diagnóstico por tomografia                                                                          201207
+0406Cirurgia do aparelho circulatório                                                                   201207
+0306Hemoterapia                                                                                         201207
+0307Tratamentos odontológicos                                                                           201207
+0207Diagnóstico por ressonância magnética                                                               201207
+0407Cirurgia do aparelho digestivo, orgãos anexos e parede abdominal                                    201207
+0208Diagnóstico por medicina nuclear in vivo                                                            201207
+0308Tratamento de lesões, envenenamentos e outros, decorrentes de causas externas                       201207
+0408Cirurgia do sistema osteomuscular                                                                   201207
+0409Cirurgia do aparelho geniturinário                                                                  201207
+0309Terapias especializadas                                                                             201207
+0209Diagnóstico por endoscopia                                                                          201207
+0410Cirurgia de mama                                                                                    201207
+0310Parto e nascimento                                                                                  201207
+0210Diagnóstico por radiologia intervencionista                                                         201207
+0411Cirurgia obstétrica                                                                                 201207
+0211Métodos diagnósticos em especialidades                                                              201207
+0412Cirurgia torácica                                                                                   201207
+0212Diagnóstico e procedimentos especiais em hemoterapia                                                201207
+0213Diagnóstico em vigilância epidemiológica e ambiental                                                201207
+0413Cirurgia reparadora                                                                                 201207
+0414Bucomaxilofacial                                                                                    201207
+0214Diagnóstico por teste rápido                                                                        201207
+0415Outras cirurgias                                                                                    201207
+0416Cirurgia em oncologia                                                                               201207
+0417Anestesiologia                                                                                      201207
+0418Cirurgia em nefrologia                                                                              201207
