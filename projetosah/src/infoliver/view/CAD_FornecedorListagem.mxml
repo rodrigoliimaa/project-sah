@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		 xmlns:componentes="infoliver.view.componentes.*"
+		 width="100%" height="100%" initialize="init()">
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.Fornecedor;
+			import infoliver.model.events.FornecedorEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			import infoliver.util.RoleSistema;
+			
+			import leonelcasado.componentes.Alerta;
+			import leonelcasado.componentes.CustomViewHelper;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.utils.StringUtil;
+			
+			public const NOME_FANTASIA:String = "NOME FANTASIA";
+			public const RAZAO_SOCIAL:String = "RAZÃO SOCIAL";
+			public const CNPJ:String = "CNPJ";
+			public const INSCRICAO_ESTADUAL:String = "INSC EST";
+			public const INSCRICAO_MUNICIPAL:String = "INSC MUN";
+			public const LISTA_TIPO_PESQUISA:Array = [
+				NOME_FANTASIA, RAZAO_SOCIAL, CNPJ, INSCRICAO_ESTADUAL, INSCRICAO_MUNICIPAL
+			];
+			
+			private var fornecedores:ArrayCollection;
+			
+			private var appModel:ModelLocator = ModelLocator.getInstance();
+			
+			private function init():void{
+				criarColunas();
+				validarPermissoesDaTela();
+			}
+			
+			public function criarColunas():void{
+				dtg.addColunaCentralizada("COD","sequencial", null, 30);
+				dtg.addColunaCentralizada("NOME FANTASIA","nomeFantasia", null, 300);
+				dtg.addColunaCentralizada("RAZÃO SOCIAL","razaoSocial", null, 300);
+				//				dtg.addColunaCentralizada("CPF","cpf");
+				dtg.addColunaCentralizada("CNPJ","cnpj",CustomViewHelper.dataGridMascararCnpj);
+				dtg.addColunaCentralizada("INSC EST","inscricaoEstadual");
+				dtg.addColunaCentralizada("INSC MUN","inscricaoMunicipal");
+				dtg.addColunaCentralizada("TEC RESP","tecnicoResponsavel");
+//				dtg.addColunaCentralizada("VAL MAX PED","valorMaximoPedidos");
+				dtg.addColunaCentralizada("VAL MAX PED","valorMaximoPedidosAsString");
+//				dtg.addColunaCentralizada("RG","rg");
+				//				dtg.addColunaCentralizada("ORGÃO EMISSOR","orgaoEmissor", null, 60);
+				dtg.addColunaCentralizada("TEL 1","telefone1");
+				dtg.addColunaCentralizada("TEL 2","telefone2");
+				dtg.addColunaCentralizada("TEL 3","telefone2");
+				dtg.addColunaCentralizada("EMAIL","email");
+//				dtg.addColunaCentralizada("CNS","cns");
+//				dtg.addColunaNumero("COD","ocupacao.sequencial", null, "right", 0, false);
+//				dtg.addColunaCentralizada("CBO","ocupacao.codigoOcupacao", null, 0, false);
+//				dtg.addColunaCentralizada("OCUPACAO","ocupacao.descricao", null, 300);
+//				dtg.addColunaCentralizada("ATIVO","indicadorAtivo", null, 30);
+				dtg.addColunaCentralizada("END","endereco");
+				dtg.addColunaData("DATA DE CADASTRO","dataCadastro", null, 90);
+			}
+			
+			private function validarPermissoesDaTela():void{
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_ALTERAR_FORNECEDOR)) {
+					dtg.includeInLayoutBtnAlterarRegistro=true;
+					dtg.doubleClickEnabled = true;
+				} else {
+					dtg.includeInLayoutBtnAlterarRegistro=false;
+					dtg.doubleClickEnabled = false;
+				}
+				
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_EXCLUIR_FORNECEDOR)) {
+					dtg.includeInLayoutBtnExcluirRegistro=true;
+				} else {
+					dtg.includeInLayoutBtnExcluirRegistro=false;
+				}
+				
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_INSERIR_FORNECEDOR)) {
+					controles.includeInLayoutBtnNovo=true;
+				} else {
+					controles.includeInLayoutBtnNovo=false;
+				}
+			}
+			
+			public function novo():void{
+				FlexGlobals.topLevelApplication.principal.fornecedor.novoFornecedor();
+			}
+			
+			public function listar():void{
+				var fornecedor:Fornecedor = new Fornecedor();
+				
+				if ( StringUtil.trim(txtValorBusca.text) != "") {
+					var tipoPesquisa:String = cmbTipoPesquisa.selectedItem.toString();
+					if (tipoPesquisa == NOME_FANTASIA) {
+						fornecedor.nomeFantasia = StringUtil.trim(txtValorBusca.text);
+					} else if (tipoPesquisa == RAZAO_SOCIAL) {
+						fornecedor.razaoSocial = StringUtil.trim(txtValorBusca.text);
+					} else if (tipoPesquisa == CNPJ) {
+						fornecedor.cnpj = StringUtil.trim(txtValorBusca.text);
+					} else if (tipoPesquisa == INSCRICAO_ESTADUAL) {
+						fornecedor.inscricaoEstadual = StringUtil.trim(txtValorBusca.text);
+					} else if (tipoPesquisa == INSCRICAO_MUNICIPAL) {
+						fornecedor.inscricaoMunicipal = StringUtil.trim(txtValorBusca.text);
+					}
+				}
+				
+				var paginacaoVO:PaginacaoVO = new PaginacaoVO();
+				paginacaoVO.entidade = fornecedor;
+				paginacaoVO.quantidadePaginacao = dtg.maximo;
+				paginacaoVO.inicioPaginacao = dtg.indice;
+				
+				new FornecedorEvent(FornecedorEvent.LISTA_PAGINADO, this, paginacaoVO).dispatch();
+				
+				txtValorBusca.setFocus();
+			}
+			
+			public function result(data:Object,event:Event):void{
+				if (event.type == FornecedorEvent.LISTA_PAGINADO) {
+					fornecedores = data.result.entidade;
+					
+					dtg.inicializarTotalizadores();
+					dtg.setDataGridPaginado(data.result.totalRegistros,fornecedores);
+				}
+			}
+			
+			public function alterar():void{
+				if(dtg.dtgCustom.selectedItem!=null){
+					//					if(appModel.isPermissaoValida(RoleSistema.ROLE_ALTERAR_MEDICO)){
+					var fornecedor:Fornecedor = dtg.dtgCustom.selectedItem as Fornecedor;
+					
+//					medico.ocupacao.sequencial = "" + (dtg.dtgCustom.selectedItem as Medico).ocupacao.sequencial;
+					
+					FlexGlobals.topLevelApplication.principal.fornecedor.novoFornecedor(fornecedor);
+					//					}
+				}
+			}
+			
+			private function excluir():void{
+				if(dtg.dtgCustom.selectedItem!=null)
+					Alerta.confirm("Deseja excluir o registro selecionado?",confirmarExclusao);
+			}
+			
+			private function confirmarExclusao(event:CloseEvent):void{
+				if(event.detail==Alert.YES) {
+					var fornecedor:Fornecedor = dtg.dtgCustom.selectedItem as Fornecedor;
+					fornecedor.indicadorAtivo = "N";
+					new FornecedorEvent(FornecedorEvent.ALTERAR,this,fornecedor).dispatch();
+				}
+			}
+			
+			private function fechar():void{
+				FlexGlobals.topLevelApplication.fecharTela();
+			}
+			
+			private function inicio_Click():void{
+				dtg.inicio();
+				listar();
+			}
+			
+			private function retroceder_Click():void{
+				dtg.retroceder();
+				listar();
+			}
+			
+			private function avancar_Click():void{
+				dtg.avancar();
+				listar();
+			}
+			
+			private function fim_Click():void{
+				dtg.fim();
+				listar();
+			}
+			
+			public function onCmbTipoPesquisaChange():void{
+				var tipoPesquisa:String = cmbTipoPesquisa.selectedItem.toString();
+				if(tipoPesquisa == NOME_FANTASIA || tipoPesquisa == RAZAO_SOCIAL) {
+					txtValorBusca.restrict = "A-Z/a-z/ /";
+				} else {
+					txtValorBusca.restrict = "0-9";
+				}
+			}
+		]]>
+	</fx:Script>
+	<leonelcasado:CustomFieldSet title="Dados de Pesquisa" width="100%" height="10%">
+		<mx:Form width="100%">
+			<mx:FormItem label="Tipo:" width="100%" direction="horizontal">
+				<leonelcasado:CustomComboBox id="cmbTipoPesquisa" change="onCmbTipoPesquisaChange()">
+					<s:ArrayList source="{LISTA_TIPO_PESQUISA}" />
+				</leonelcasado:CustomComboBox>
+				<leonelcasado:CustomTextInput id="txtValorBusca" width="100%" />
+				<!-- restrict="A-Z/a-z/ /" -->
+			</mx:FormItem>
+			<mx:FormItem>
+				<componentes:BarraControles id="controles" styleButtons="menuButton"
+											includeInLayoutBtnNovo="true" includeInLayoutBtnConsultar="true"
+											includeInLayoutBtnFechar="true" 
+											consultar="listar()"
+											fechar="fechar()"
+											novo="novo()"/>
+			</mx:FormItem>
+		</mx:Form>
+	</leonelcasado:CustomFieldSet>
+	<leonelcasado:CustomDataGrid id="dtg" width="100%" height="100%"
+								 horizontalScrollCustomDataGrid="on"
+								 primeiroRegistro="inicio_Click()" registroAlterior="retroceder_Click()" 
+								 proximoRegistro="avancar_Click()" ultimoRegistro="fim_Click()"
+								 includeInLayoutBtnAlterarRegistro="true"
+								 alterarRegistro="alterar()"
+								 />
+								 <!-- includeInLayoutBtnExcluirRegistro="false"
+								 excluirRegistro="excluir()"
+								 selecionarItem="alterar()" -->
+</mx:VBox>

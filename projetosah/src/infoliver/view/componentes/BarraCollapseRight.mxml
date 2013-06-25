@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 width="100%" creationComplete="init()">
+	<s:layout>
+		<s:VerticalLayout verticalAlign="top" gap="0"/>  
+	</s:layout>	
+	<fx:Script>
+		<![CDATA[
+			import leonelcasado.componentes.Imagens;
+			
+			[Bindable] public var titulo:String;
+			[Bindable] public var componenteCollapse:*;
+			[Bindable] public var isCollapse:Boolean=false;
+			
+			public function init():void{
+				btn.setStyle("disabledIcon",Imagens.iconDown);
+				btn.setStyle("downIcon",Imagens.iconDown);
+				btn.setStyle("overIcon",Imagens.iconDown);
+				btn.setStyle("upIcon",Imagens.iconDown);
+				//-------------------------------------------------
+				btn.setStyle("selectedDisabledIcon",Imagens.iconUp);
+				btn.setStyle("selectedDownIcon",Imagens.iconUp);
+				btn.setStyle("selectedOverIcon",Imagens.iconUp);
+				btn.setStyle("selectedUpIcon",Imagens.iconUp);
+				
+				collapse();
+			}
+			
+			public function collapse():void{
+				if (!componenteCollapse.includeInLayout){
+					componenteCollapse.visible=true;
+					componenteCollapse.includeInLayout=true;
+				}else{
+					componenteCollapse.visible=false;
+					componenteCollapse.includeInLayout=false;
+				}
+			}
+		]]>
+	</fx:Script>
+	<mx:HBox width="100%">
+		<mx:Label text="{titulo}" fontSize="14" width="100%" color="#333333"/>
+		<mx:Spacer width="100%"/>
+		<mx:Button id="btn" click="collapse()" useHandCursor="true" buttonMode="true" toggle="true"
+		   width="20" height="20" cornerRadius="50" includeInLayout="{isCollapse}" visible="{isCollapse}"/>
+	</mx:HBox>
+	<mx:HRule width="100%"/>
+</s:Group>

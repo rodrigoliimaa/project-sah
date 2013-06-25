@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<fxpProperties abbreviated="false" authoringTool="Flex Builder" compiles="true" parentProject="7dfddb57-5bde-4a80-93ee-c8c24af7e4bf" projectUUID="7dfddb57-5bde-4a80-93ee-c8c24af7e4bf" pureCatalystProject="false" sdkVersion="4.6.0" uuid="86703c92-3b36-4b7e-8f59-f329b2725d2d" version="15">
+  <projects/>
+  <src/>
+  <swc>
+    <linked location="sdkPlaceHolder" path="sdkPlaceHolder" position="0" uuid="86703c92-3b36-4b7e-8f59-f329b2725d2d"/>
+    <linked location="C:/sauth2/tags/modulo_flex_desktop/libs" path="/libs" position="1" uuid="d4f80401-76ab-4831-8339-d3eee212fd80"/>
+    <linked location="D:/Desenvolvimento/Infoliver/projeto/modulo_flex_desktop/libs/Cairngorm_2_2_1.swc" path="/libs/Cairngorm_2_2_1.swc" position="2" uuid="86703c92-3b36-4b7e-8f59-f329b2725d2d"/>
+    <linked location="D:/Desenvolvimento/Infoliver/projeto/modulo_flex_desktop/libs/UtilLibrary_4.1.swc" path="/libs/UtilLibrary_4.1.swc" position="3" uuid="86703c92-3b36-4b7e-8f59-f329b2725d2d"/>
+  </swc>
+  <misc/>
+  <theme/>
+  <mxmlFormattingPrefs groupAttributesByState="true" maxLineWidth="100" mxmlAlignAttributes="true" mxmlAttributeOrder="id,userLabel,includeIn,excludeFrom,visible,x,y,z,left,right,top,bottom,width,height,minWidth,minHeight,maxWidth,maxHeight,label" mxmlKeepAttributeValuesOrganized="true"/>
+</fxpProperties>

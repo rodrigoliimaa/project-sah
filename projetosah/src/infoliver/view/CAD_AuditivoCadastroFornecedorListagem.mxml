@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+				xmlns:componentes="infoliver.view.componentes.*"
+				layout="vertical"
+				initialize="init()"
+				showCloseButton="true"
+				title="Pesquisa de Fornecedor"
+				height="400" width="800">
+	
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.entity.Fornecedor;
+			import infoliver.model.events.FornecedorEvent;
+			
+			import leonelcasado.componentes.CustomViewHelper;
+			
+			import mx.core.Container;
+			import mx.managers.PopUpManager;
+			import mx.utils.StringUtil;
+			
+			public function init():void{
+				addEventListener(Event.CLOSE, fechar);
+				dtg.inicializarTotalizadores();
+				criarColunas();
+			}
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.DataGrid;
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.Medico;
+			import infoliver.model.entity.Ocupacao;
+			import infoliver.model.events.MedicoEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			import infoliver.util.RoleSistema;
+			
+			import leonelcasado.com.adobe.cairngorm.componentes.Alerta;
+			import leonelcasado.componentes.Alerta;
+			
+			import mx.core.FlexGlobals;
+			
+			public const NOME_FANTASIA:String = "NOME FANTASIA";
+			public const RAZAO_SOCIAL:String = "RAZÃO SOCIAL";
+			public const CNPJ:String = "CNPJ";
+			public const INSCRICAO_ESTADUAL:String = "INSC EST";
+			public const INSCRICAO_MUNICIPAL:String = "INSC MUN";
+			public const LISTA_TIPO_PESQUISA:Array = [
+				NOME_FANTASIA, RAZAO_SOCIAL, CNPJ, INSCRICAO_ESTADUAL, INSCRICAO_MUNICIPAL
+			];
+			
+			//			public var medicos:ArrayCollection;
+			//			public var agendamentoCadastro:CAD_AgendamentoCadastro;
+			public var cadastro:Container;
+			
+			private var appModel:ModelLocator = ModelLocator.getInstance();
+			
+			public function criarColunas():void{
+				dtg.addColunaCentralizada("COD","sequencial", null, 30);
+				dtg.addColunaCentralizada("NOME FANTASIA","nomeFantasia", null, 300);
+				dtg.addColunaCentralizada("RAZÃO SOCIAL","razaoSocial", null, 300);
+				dtg.addColunaCentralizada("CNPJ","cnpj",CustomViewHelper.dataGridMascararCnpj);
+				dtg.addColunaCentralizada("INSC EST","incricaoEstadual");
+				dtg.addColunaCentralizada("INSC MUN","inscricaoMunicipal");
+				dtg.addColunaCentralizada("TEC RESP","tecnicoResponsavel");
+				dtg.addColunaCentralizada("VAL MAX PED","valorMaximoPedidosAsString");
+				dtg.addColunaCentralizada("TEL 1","telefone1");
+				dtg.addColunaCentralizada("TEL 2","telefone2");
+				dtg.addColunaCentralizada("TEL 3","telefone2");
+				dtg.addColunaCentralizada("EMAIL","email");
+				dtg.addColunaCentralizada("END","endereco");
+				dtg.addColunaData("DATA DE CADASTRO","dataCadastro", null, 90);
+			}
+			
+			public function listar():void{
+				var fornecedor:Fornecedor = new Fornecedor();
+				
+				if ( StringUtil.trim(txtValorBusca.text) != "") {
+					var tipoPesquisa:String = cmbTipoPesquisa.selectedItem.toString();
+					if (tipoPesquisa == NOME_FANTASIA) {
+						fornecedor.nomeFantasia = StringUtil.trim(txtValorBusca.text);
+					} else if (tipoPesquisa == RAZAO_SOCIAL) {
+						fornecedor.razaoSocial = StringUtil.trim(txtValorBusca.text);
+					} else if (tipoPesquisa == CNPJ) {
+						fornecedor.cnpj = StringUtil.trim(txtValorBusca.text);
+					} else if (tipoPesquisa == INSCRICAO_ESTADUAL) {
+						fornecedor.inscricaoEstadual = StringUtil.trim(txtValorBusca.text);
+					} else if (tipoPesquisa == INSCRICAO_MUNICIPAL) {
+						fornecedor.inscricaoMunicipal = StringUtil.trim(txtValorBusca.text);
+					}
+				}
+				
+				var paginacaoVO:PaginacaoVO = new PaginacaoVO();
+				paginacaoVO.entidade = fornecedor;
+				paginacaoVO.quantidadePaginacao = dtg.maximo;
+				paginacaoVO.inicioPaginacao = dtg.indice;
+				
+				new FornecedorEvent(FornecedorEvent.LISTA_PAGINADO, this, paginacaoVO).dispatch();
+				
+				txtValorBusca.setFocus();
+			}
+			
+			public function result(data:Object,event:Event):void{
+				if (event.type == FornecedorEvent.LISTA_PAGINADO) {
+					dtg.inicializarTotalizadores();
+					dtg.setDataGridPaginado(data.result.totalRegistros,data.result.entidade);
+				}
+			}
+			
+			public function alterar():void{
+				if(dtg.dtgCustom.selectedItem!=null){
+					cadastro["setarFornecedor"](dtg.dtgCustom.selectedItem as Fornecedor);
+					fechar(null);
+				}
+			}
+			
+			public function fechar(event:Event):void{
+				PopUpManager.removePopUp(this);
+			}
+			
+			private function inicio_Click():void{
+				dtg.inicio();
+				listar();
+			}
+			
+			private function retroceder_Click():void{
+				dtg.retroceder();
+				listar();
+			}
+			
+			private function avancar_Click():void{
+				dtg.avancar();
+				listar();
+			}
+			
+			private function fim_Click():void{
+				dtg.fim();
+				listar();
+			}
+			
+			public function onCmbTipoPesquisaChange():void{
+				var tipoPesquisa:String = cmbTipoPesquisa.selectedItem.toString();
+				if(tipoPesquisa == NOME_FANTASIA || tipoPesquisa == RAZAO_SOCIAL) {
+					txtValorBusca.restrict = "A-Z/a-z/ /";
+				} else {
+					txtValorBusca.restrict = "0-9";
+				}
+			}
+		]]>
+	</fx:Script>
+	<mx:Panel width="100%" height="100%" title="">
+		<leonelcasado:CustomFieldSet title="Dados de Pesquisa" width="100%" height="10%">
+			<mx:Form width="100%">
+				<mx:FormItem label="Tipo:" width="100%" direction="horizontal">
+					<leonelcasado:CustomComboBox id="cmbTipoPesquisa" change="onCmbTipoPesquisaChange()">
+						<s:ArrayList source="{LISTA_TIPO_PESQUISA}" />
+					</leonelcasado:CustomComboBox>
+					<leonelcasado:CustomTextInput id="txtValorBusca" width="100%" />
+					<!-- restrict="A-Z/a-z/ /" -->
+				</mx:FormItem>
+				<mx:FormItem>
+					<componentes:BarraControles id="controles" styleButtons="menuButton"
+												includeInLayoutBtnConsultar="true"
+												consultar="listar()"/>
+				</mx:FormItem>
+			</mx:Form>
+		</leonelcasado:CustomFieldSet>
+		<leonelcasado:CustomDataGrid id="dtg" width="100%" height="100%"
+									 horizontalScrollCustomDataGrid="on"
+									 includeInLayoutBtnExcluirRegistro="false"
+									 primeiroRegistro="inicio_Click()" registroAlterior="retroceder_Click()" 
+									 proximoRegistro="avancar_Click()" ultimoRegistro="fim_Click()"
+									 selecionarItem="alterar()"
+									 />
+	</mx:Panel>
+	
+</mx:TitleWindow>
+

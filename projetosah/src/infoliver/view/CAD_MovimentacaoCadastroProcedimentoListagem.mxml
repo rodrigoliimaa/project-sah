@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+				xmlns:componentes="infoliver.view.componentes.*"
+				layout="vertical"
+				initialize="init()"
+				showCloseButton="true"
+				title="Pesquisa de Procedimento"
+				height="400" width="800">
+	
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.entity.Paciente;
+			import infoliver.model.entity.SigtapOcupacao;
+			import infoliver.model.entity.SigtapProcedimento;
+			import infoliver.model.events.SigtapEvent;
+			import infoliver.util.DateUtils;
+			
+			import leonelcasado.componentes.Data;
+			
+			import mx.core.Container;
+			import mx.managers.PopUpManager;
+			import mx.utils.StringUtil;
+			
+			public var categoriaCid:String;
+			
+			public function init():void{
+				addEventListener(Event.CLOSE, fechar);
+				dtg.inicializarTotalizadores();
+				criarColunas();
+			}
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.DataGrid;
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.Medico;
+			import infoliver.model.entity.Ocupacao;
+			import infoliver.model.events.MedicoEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			import infoliver.util.RoleSistema;
+			
+			import leonelcasado.com.adobe.cairngorm.componentes.Alerta;
+			import leonelcasado.componentes.Alerta;
+			
+			import mx.core.FlexGlobals;
+			
+			public const CO_PROCEDIMENTO:String = "CÓDIGO DO PROCEDIMENTO";
+			public const NO_PROCEDIMENTO:String = "NOME DO PROCEDIMENTO";
+			public const LISTA_TIPO_PESQUISA:Array = [
+				CO_PROCEDIMENTO, NO_PROCEDIMENTO
+			];
+			
+			//			public var medicos:ArrayCollection;
+			//			public var agendamentoCadastro:CAD_AgendamentoCadastro;
+			public var cadastro:Container;
+			public var cids:ArrayCollection;
+			public var ocupacao:SigtapOcupacao;
+			public var paciente:Paciente;
+			
+			private var appModel:ModelLocator = ModelLocator.getInstance();
+			
+			public function criarColunas():void{
+				dtg.addColunaCentralizada("CÓD. PROCEDIMENTO","co_procedimento", null, 30);
+				dtg.addColunaCentralizada("PROCEDIMENTO","no_procedimento", null, 300);
+				dtg.addColunaCentralizada("COMPLEXIDADE","tp_complexidade", null, 30);
+				dtg.addColunaCentralizada("SEXO","tp_sexo");
+				dtg.addColunaCentralizada("QTD MAX. EXECUCAO","qt_maxima_execucao", null, 30);
+				dtg.addColunaCentralizada("QTD DIAS PERMANENCIA","qt_dias_permanencia", null, 30);
+				dtg.addColunaCentralizada("QTD PONTOS","qt_pontos", null, 30);
+				dtg.addColunaCentralizada("IDADE MINIMA","vl_idade_minima", null, 30);
+				dtg.addColunaCentralizada("IDADE MAXIMA","vl_idade_maxima", null, 30);
+				dtg.addColunaCentralizada("SERV. HOSPITALAR","vl_sh", null, 30);
+				dtg.addColunaCentralizada("SERV. AMB.","vl_sa", null, 30);
+				dtg.addColunaCentralizada("SERV. PROF.","vl_sp", null, 30);
+				dtg.addColunaCentralizada("FINANCIAMENTO","co_financiamento", null, 30);
+				dtg.addColunaCentralizada("RUBRICA","co_rubrica", null, 30);
+				dtg.addColunaCentralizada("DT COMPETENCIA","dt_competencia", null, 30);
+			}
+			
+			public function listar():void{
+				var sigtapProcedimento:SigtapProcedimento = new SigtapProcedimento();
+				
+				if ( StringUtil.trim(txtValorBusca.text) != "") {
+					var tipoPesquisa:String = cmbTipoPesquisa.selectedItem.toString();
+					if (tipoPesquisa == CO_PROCEDIMENTO) {
+						sigtapProcedimento.co_procedimento = StringUtil.trim(txtValorBusca.text);
+					} else if (tipoPesquisa == NO_PROCEDIMENTO) {
+						sigtapProcedimento.no_procedimento = StringUtil.trim(txtValorBusca.text);
+					}
+				}
+				
+				var idade:int = DateUtils.calcularIdadeCompleta(paciente.dataNascimento, new Date());
+				if (idade >= 0) {
+					sigtapProcedimento.vl_idade_minima = idade;
+				}
+				
+				sigtapProcedimento.tp_sexo = paciente.sexo;
+				sigtapProcedimento.sigtapCIDs = cids;
+				sigtapProcedimento.sigtapOcupacoes = new ArrayCollection();
+				sigtapProcedimento.sigtapOcupacoes.addItem(ocupacao);
+				
+				var paginacaoVO:PaginacaoVO = new PaginacaoVO();
+				paginacaoVO.entidade = sigtapProcedimento;
+				paginacaoVO.quantidadePaginacao = dtg.maximo;
+				paginacaoVO.inicioPaginacao = dtg.indice;
+				
+				new SigtapEvent(SigtapEvent.LISTA_SIGTAP_PROCEDIMENTO_PAGINADO, this, paginacaoVO).dispatch();
+				
+				txtValorBusca.setFocus();
+			}
+			
+			public function result(data:Object,event:Event):void{
+				if (event.type == SigtapEvent.LISTA_SIGTAP_PROCEDIMENTO_PAGINADO) {
+					dtg.inicializarTotalizadores();
+					dtg.setDataGridPaginado(data.result.totalRegistros,data.result.entidade);
+				}
+			}
+			
+			public function alterar():void{
+				if(dtg.dtgCustom.selectedItem!=null){
+					cadastro["adicionarProcedimento"](categoriaCid, dtg.dtgCustom.selectedItem as SigtapProcedimento);
+					fechar(null);
+				}
+			}
+			
+			public function fechar(event:Event):void{
+				PopUpManager.removePopUp(this);
+			}
+			
+			private function inicio_Click():void{
+				dtg.inicio();
+				listar();
+			}
+			
+			private function retroceder_Click():void{
+				dtg.retroceder();
+				listar();
+			}
+			
+			private function avancar_Click():void{
+				dtg.avancar();
+				listar();
+			}
+			
+			private function fim_Click():void{
+				dtg.fim();
+				listar();
+			}
+			
+			public function onCmbTipoPesquisaChange():void{
+				var tipoPesquisa:String = cmbTipoPesquisa.selectedItem.toString();
+				if(tipoPesquisa == NO_PROCEDIMENTO) {
+					txtValorBusca.restrict = "A-Z/a-z/ /";
+				} else {
+					txtValorBusca.restrict = "0-9";
+				}
+			}
+		]]>
+	</fx:Script>
+	<mx:Panel width="100%" height="100%" title="">
+		<leonelcasado:CustomFieldSet title="Dados de Pesquisa" width="100%" height="10%">
+			<mx:Form width="100%">
+				<mx:FormItem label="Tipo:" width="100%" direction="horizontal">
+					<leonelcasado:CustomComboBox id="cmbTipoPesquisa" change="onCmbTipoPesquisaChange()">
+						<s:ArrayList source="{LISTA_TIPO_PESQUISA}" />
+					</leonelcasado:CustomComboBox>
+					<leonelcasado:CustomTextInput id="txtValorBusca" width="100%" />
+					<!-- restrict="A-Z/a-z/ /" -->
+				</mx:FormItem>
+				<mx:FormItem>
+					<componentes:BarraControles id="controles" styleButtons="menuButton"
+												includeInLayoutBtnConsultar="true"
+												consultar="listar()"/>
+				</mx:FormItem>
+			</mx:Form>
+		</leonelcasado:CustomFieldSet>
+		<leonelcasado:CustomDataGrid id="dtg" width="100%" height="100%"
+									 horizontalScrollCustomDataGrid="on"
+									 includeInLayoutBtnExcluirRegistro="false"
+									 primeiroRegistro="inicio_Click()" registroAlterior="retroceder_Click()" 
+									 proximoRegistro="avancar_Click()" ultimoRegistro="fim_Click()"
+									 selecionarItem="alterar()"
+									 />
+	</mx:Panel>
+	
+</mx:TitleWindow>
+

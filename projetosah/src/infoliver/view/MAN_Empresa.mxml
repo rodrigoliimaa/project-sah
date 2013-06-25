@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+	xmlns:componentes="infoliver.view.componentes.*"
+	title="Cadastro da Empresa" width="100%" height="100%"
+	paddingLeft="5" paddingRight="5" verticalAlign="top"
+	show="show()">
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.entity.Empresa;
+			import infoliver.model.events.EmpresaEvent;
+			import leonelcasado.com.adobe.cairngorm.componentes.Alerta;
+			import leonelcasado.componentes.CustomViewHelper;
+			import leonelcasado.componentes.Imagens;
+			import mx.core.FlexGlobals;
+			
+			private var isInserirNovoRegistro:Boolean=true;
+			private var openFile:File = new File;
+			private var bytes:ByteArray;
+			private var fileStream:FileStream;
+			[Bindable]private var empresa:Empresa;
+			
+			private function show():void{
+				consultar();
+			}
+
+			private function novo():void{
+				CustomViewHelper.limparCamposFormulario(this);
+				txtRazaoSocial.setFocus();
+				isInserirNovoRegistro=true;
+				controles.labelBtnSalvar="Salvar";
+				empresa=new Empresa;
+			}
+			
+			private function consultar():void{
+				new EmpresaEvent(EmpresaEvent.CONSULTAR,this).dispatch();
+			}
+			
+			private function setEntidade(empresa:Empresa=null):Empresa{
+				if(empresa==null)empresa=new Empresa;
+				empresa.razaoSocial=txtRazaoSocial.texto;
+				empresa.nomeFantasia=txtNomeFantasia.texto;
+				empresa.cnpj=txtCnpj.textoSemMascara();
+				empresa.cnss=txtCnss.texto;
+				empresa.ie=txtIe.textoSemMascara();
+				empresa.endereco=txtEndereco.texto;
+				empresa.telefone=txtTelefone.textoSemMascara();
+				empresa.nomePresidente=txtNomePresidente.texto;
+				empresa.rgPresidente=txtRgPresidente.texto;
+				empresa.cpfPresidente=txtCpfPresidente.textoSemMascara();
+
+				if(txtCaminhoImagem.length>0 && bytes.length>0)
+					empresa.imagemLogo=CustomViewHelper.retorneNuloSeVazio(bytes);
+				else
+					empresa.imagemLogo=imgLogo.source as ByteArray;
+				
+				return empresa;
+			}
+			
+			private function salvarAlterar():void{
+				if(isInserirNovoRegistro)
+					new EmpresaEvent(EmpresaEvent.INSERIR,this,setEntidade()).dispatch();
+				else
+					new EmpresaEvent(EmpresaEvent.ALTERAR,this,setEntidade(empresa)).dispatch();
+			}
+
+			public function result(data:Object,event:Event):void{
+				if(event.type==EmpresaEvent.CONSULTAR){
+					if(data.result==null){
+						novo();
+					}else{
+						empresa=data.result;
+						lblSequencial.text=empresa.sequencial.toString();
+						txtRazaoSocial.text=empresa.razaoSocial;
+						txtNomeFantasia.text=empresa.nomeFantasia;
+						txtCnpj.textoComMascara(empresa.cnpj);
+						txtCnss.text=empresa.cnss;
+						txtIe.textoComMascara(empresa.ie);
+						txtEndereco.text=empresa.endereco;
+						txtTelefone.textoComMascara(empresa.telefone);
+						txtNomePresidente.text=empresa.nomePresidente;
+						txtRgPresidente.text=empresa.rgPresidente;
+						txtCpfPresidente.textoComMascara(empresa.cpfPresidente);
+						imgLogo.source=empresa.imagemLogo;
+						txtRazaoSocial.setFocus();
+						isInserirNovoRegistro=false;
+						controles.labelBtnSalvar="Alterar";
+					}
+				}else if(event.type==EmpresaEvent.INSERIR || event.type==EmpresaEvent.ALTERAR){
+					Alerta.success(data.result.msg);
+					consultar();
+					isInserirNovoRegistro=false;
+				}
+			}
+
+			private function openBrowseWindow():void{
+				openFile.addEventListener(Event.SELECT, onOpenFileComplete);
+				openFile.browse();
+			}
+			
+			private function onOpenFileComplete(event:Event):void{
+				if(event.target.extension=="gif" || event.target.extension=="jpg" ||
+					event.target.extension=="png"){
+					txtCaminhoImagem.text=event.target.nativePath;
+					bytes = new ByteArray();
+					fileStream = new FileStream();
+					fileStream.open(new File(event.target.nativePath), FileMode.READ);
+					fileStream.readBytes(bytes,0,fileStream.bytesAvailable);
+					fileStream.close();
+					imgLogo.source=bytes;
+				}
+			}
+
+			private function fechar():void{
+				FlexGlobals.topLevelApplication.fecharTela();
+			}
+		]]>
+	</fx:Script>
+	<leonelcasado:CustomFieldSet id="frm" title="Dados da Empresa" width="100%" height="10%">
+		<mx:Form width="100%">
+			<mx:FormItem label="Logomarca:" width="100%">
+				<mx:Image id="imgLogo"/>
+			</mx:FormItem>
+			<mx:FormItem label="Caminho Logomarca:" width="100%" direction="horizontal">
+				<leonelcasado:CustomTextInput id="txtCaminhoImagem" enabled="false" width="50%"/>
+				<leonelcasado:CustomButton label="Localizar" icon="{Imagens.iconPesquisa}"
+					click="openBrowseWindow()" enter="openBrowseWindow()" height="{txtCaminhoImagem.height}"/>
+			</mx:FormItem>
+			<mx:FormItem label="Código:" width="100%">
+				<leonelcasado:CustomLabel id="lblSequencial"/>
+			</mx:FormItem>
+			<mx:FormItem label="Razão Social:" width="100%" required="true">
+				<leonelcasado:CustomTextInput id="txtRazaoSocial" width="100%"/>
+			</mx:FormItem>
+			<mx:FormItem label="Nome Fantasia:" width="100%" direction="horizontal">
+				<leonelcasado:CustomTextInput id="txtNomeFantasia" width="100%"/>
+			</mx:FormItem>
+			<mx:FormItem label="CNPJ:" width="100%" direction="horizontal">
+				<leonelcasado:Cnpj id="txtCnpj" width="100%"/>
+				<leonelcasado:CustomLabel text="CNSS:"/>
+				<leonelcasado:Numero id="txtCnss" width="100%"/>
+				<leonelcasado:CustomLabel text="IE:"/>
+				<leonelcasado:Ie id="txtIe" width="100%"/>
+			</mx:FormItem>
+			<mx:FormItem label="Endereço:" width="100%" direction="horizontal">
+				<leonelcasado:CustomTextInput id="txtEndereco" width="100%"/>
+				<leonelcasado:CustomLabel text="Telefone:"/>
+				<leonelcasado:Telefone id="txtTelefone" width="100%"/>
+			</mx:FormItem>
+			<mx:FormItem label="Presidente:" width="100%" direction="horizontal">
+				<leonelcasado:CustomTextInput id="txtNomePresidente" width="100%"/>
+				<leonelcasado:CustomLabel text="RG:"/>
+				<leonelcasado:Numero id="txtRgPresidente"/>
+				<leonelcasado:CustomLabel text="CPF:"/>
+				<leonelcasado:Cpf id="txtCpfPresidente"/>
+			</mx:FormItem>
+			<mx:FormItem>
+				<componentes:BarraControles id="controles" styleButtons="menuButton"
+					includeInLayoutBtnSalvar="true" includeInLayoutBtnFechar="true"
+					salvar="salvarAlterar()" fechar="fechar()"/>
+			</mx:FormItem>			
+		</mx:Form>
+	</leonelcasado:CustomFieldSet>
+</mx:Panel>

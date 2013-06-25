@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx" 
+		  xmlns:componentes="infoliver.view.componentes.*"
+		  xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		  layout="horizontal"	title="Visualizador de Etiquetas" width="100%" height="100%" creationComplete="init()">
+		 
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.entity.Paciente;
+			import infoliver.model.events.PacienteEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			
+			import leonelcasado.com.adobe.cairngorm.componentes.Alerta;
+			import leonelcasado.componentes.CustomViewHelper;
+			
+			import mx.core.FlexGlobals;
+			import mx.managers.PopUpManager;
+			import mx.resources.ResourceManager;
+			
+			public function init():void{
+				if(FlexGlobals.topLevelApplication.principal.pacienteGerenciador.pacienteCadastro.sequencialPaciente>0){
+				var paciente:Paciente=new Paciente();
+				var paginacaoVO:PaginacaoVO=new PaginacaoVO;
+				paciente.sequencial= FlexGlobals.topLevelApplication.principal.pacienteGerenciador.pacienteCadastro.sequencialPaciente;
+				paginacaoVO.quantidadePaginacao=0;
+				paginacaoVO.inicioPaginacao=0;
+				paginacaoVO.entidade=paciente;
+				new PacienteEvent(PacienteEvent.LISTAR_PAGINADO_RELATORIO,this,paginacaoVO).dispatch();		
+				}
+			}	
+			
+			public function result(data:Object,event:Event):void{				
+				dtgPacientes.dataProvider = data.result;
+			}
+			
+			public function fechar():void{
+				PopUpManager.removePopUp(this);
+			}
+			
+			public function gerarEtiquetas():void{
+				if(txtQtdEtiquetas.text != null){					
+				var url:String=ResourceManager.getInstance().getString('strings','url')+"previewRelatorioEtiquetasPacientes";				
+				var request:URLRequest = new URLRequest(url);
+				var listaSequencial:Array=[];
+				listaSequencial.push(FlexGlobals.topLevelApplication.principal.pacienteGerenciador.pacienteCadastro.sequencialPaciente);
+				preview.initStateProgress();				
+				//--------------------------------------------------------------------------						
+				url=url+"?seqPaciente="+FlexGlobals.topLevelApplication.principal.pacienteGerenciador.pacienteCadastro.sequencialPaciente+
+					"&qtdEtiquetas="+CustomViewHelper.trim(txtQtdEtiquetas.text)+"&array="+listaSequencial;					
+				preview.html.location=url;
+				}else{
+					Alerta.error("Insira o número de Etiquetas a serem impressas");
+				}
+				
+				
+			}
+		]]>
+	</fx:Script>
+		
+		
+	<mx:HDividedBox width="100%" height="100%" paddingBottom="3" paddingLeft="3">
+		<leonelcasado:CustomFieldSet width="100%" height="100%">									 
+		<mx:DataGrid id="dtgPacientes" width="100%" height="60%">
+			<mx:columns>
+				<mx:DataGridColumn headerText="Prontuário" dataField="sequencial" width="100"/>
+				<mx:DataGridColumn headerText="Nome" dataField="nome"/>
+				</mx:columns>
+			</mx:DataGrid>
+			
+	<mx:FormItem label="Quantidade de Etiquetas:" direction="horizontal">
+		<leonelcasado:CustomTextInput id="txtQtdEtiquetas" enter="gerarEtiquetas()" width="100%"/>				
+		<componentes:BarraControles id="controles" styleButtons="menuButton"
+									includeInLayoutBtnConsultar="true" labelBtnConsultar="Gerar"
+									includeInLayoutBtnFechar="true" consultar="gerarEtiquetas()"
+									fechar="fechar()"/>
+	</mx:FormItem>	
+</leonelcasado:CustomFieldSet>
+	<componentes:Preview id="preview" width="100%" height="100%"/>	
+	</mx:HDividedBox>		
+</mx:Panel>

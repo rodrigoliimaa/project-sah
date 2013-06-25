@@ -1,0 +1,1333 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		 xmlns:componentes="infoliver.view.componentes.*"
+		 width="100%" height="100%" initialize="init()" show="show()">
+	
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.entity.Equipamento;
+			import infoliver.model.entity.Fornecedor;
+			import infoliver.model.entity.Medico;
+			import infoliver.model.entity.Movimentacao;
+			import infoliver.model.entity.MovimentacaoCID;
+			import infoliver.model.entity.MovimentacaoProcedimento;
+			import infoliver.model.entity.Paciente;
+			import infoliver.model.entity.Programa;
+			import infoliver.model.entity.SigtapCID;
+			import infoliver.model.entity.SigtapOcupacao;
+			import infoliver.model.entity.SigtapProcedimento;
+			import infoliver.model.events.FornecedorEvent;
+			import infoliver.model.events.MedicoEvent;
+			import infoliver.model.events.MovimentacaoEvent;
+			import infoliver.model.events.PacienteEvent;
+			import infoliver.model.events.SigtapEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			import infoliver.util.DateUtils;
+			import infoliver.util.DecimalFormatter;
+			
+			import leonelcasado.componentes.Alerta;
+			import leonelcasado.componentes.CustomViewHelper;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.managers.PopUpManager;
+			import mx.resources.ResourceManager;
+			import mx.utils.StringUtil;
+			
+			public static const CID_PRINCIPAL:String = "PRINCIPAL";
+			public static const CID_SECUNDARIO:String = "SECUNDARIO";
+			public static const CID_CAUSAS_ASSOCIADAS:String = "CAUSAS ASSOCIADAS";
+			public static const LISTA_CATEGORIAS_CID:Array = [CID_PRINCIPAL, CID_SECUNDARIO, CID_CAUSAS_ASSOCIADAS];
+			public static const SITUACAO_ENTRADA:String = "ENTRADA";
+			public static const SITUACAO_ENCAMINHADO:String = "ENCAMINHADO";
+			public static const SITUACAO_ENTREGUE:String = "ENTREGUE";
+			public static const STR_ENTRADA_INVALIDA:String = "ENTRADA INVÁLIDA";
+			
+			[Bindable]public var isInserirNovoRegistro:Boolean = true;
+			
+			private var cidPrincipal:MovimentacaoCID;
+			private var cidSecundario:MovimentacaoCID;
+			private var cidCausasAssociadas:MovimentacaoCID;
+			private var equipamentos:ArrayCollection;
+			private var fornecedor:Fornecedor;
+			private var medico:Medico;
+			private var movimentacao:Movimentacao;
+			private var paciente:Paciente;
+			private var fornecedorSequencial:Object;
+//			private var procedimentos:ArrayCollection;
+
+			
+			// salvar com cids
+			// salvar com procedimentos
+			
+			public function adicionarCID(categoriaCid:String, sigtapCid:SigtapCID):void{
+				var cid:MovimentacaoCID = MovimentacaoCID.fromSigtapCID(sigtapCid);
+				if (categoriaCid == CID_PRINCIPAL) {
+					if (cidPrincipal != null && cidPrincipal.sigtap_co_cid == cid.sigtap_co_cid) {
+						return ;
+					}
+					if ((cidSecundario != null && cidSecundario.sigtap_co_cid == cid.sigtap_co_cid) ||
+						(cidCausasAssociadas != null && cidCausasAssociadas.sigtap_co_cid == cid.sigtap_co_cid)) {
+						Alerta.info("O CID PRINCIPAL NÃO DEVE SER IGUAL AOS CIDS SECUNDÁRIO OU CAUSAS ASSOCIADAS",STR_ENTRADA_INVALIDA);
+						return ;
+					}
+					cidPrincipal = cid;
+					cidPrincipal.procedimentos = new ArrayCollection();
+//					dtgCidPrincipal.dataProvider = cidPrincipal;
+//					dtgProcedimentosPrincipal.dataProvider = null;
+				} else if(categoriaCid == CID_SECUNDARIO) {
+					if (cidSecundario != null && cidSecundario.sigtap_co_cid == cid.sigtap_co_cid) {
+						return ;
+					}
+					if ((cidPrincipal != null && cidPrincipal.sigtap_co_cid == cid.sigtap_co_cid) ||
+						(cidCausasAssociadas != null && cidCausasAssociadas.sigtap_co_cid == cid.sigtap_co_cid)) {
+						Alerta.info("O CID SECUNDÁRIO NÃO DEVE SER IGUAL AOS CIDS PRINCIPAL OU CAUSAS ASSOCIADAS",STR_ENTRADA_INVALIDA);
+						return ;
+					}
+					cidSecundario = cid;
+					cidSecundario.procedimentos = new ArrayCollection();
+//					dtgCidSecundario.dataProvider = cidSecundario;
+//					dtgProcedimentosSecundario.dataProvider = null;
+				} else if(categoriaCid == CID_CAUSAS_ASSOCIADAS) {
+					if (cidCausasAssociadas != null && cidCausasAssociadas.sigtap_co_cid == cid.sigtap_co_cid) {
+						return ;
+					}					
+					if ((cidPrincipal != null && cidPrincipal.sigtap_co_cid == cid.sigtap_co_cid) ||
+						(cidSecundario != null && cidSecundario.sigtap_co_cid == cid.sigtap_co_cid)) {
+						Alerta.info("O CID CAUSAS ASSOCIADAS NÃO DEVE SER IGUAL AOS CIDS PRINCIPAL OU SECUNDÁRIO",STR_ENTRADA_INVALIDA);
+						return ;
+					}
+					cidCausasAssociadas = cid;
+					cidCausasAssociadas.procedimentos = new ArrayCollection();
+//					dtgCidCausasAssociadas.dataProvider = cidCausasAssociadas;
+//					dtgProcedimentosCausasAssociadas.dataProvider = null;
+				}
+				exibirCid();
+				atualizarValor();
+			}
+			
+			public function adicionarProcedimento(categoriaCid:String, sigtapProcedimento:SigtapProcedimento):void{
+				var procedimento:MovimentacaoProcedimento = MovimentacaoProcedimento.fromSigtapProcedimento(sigtapProcedimento);
+				procedimento.quantidade = 1;
+				if (FlexGlobals.topLevelApplication.principal.movimentacao.getPrograma().sequencial == 1) { // ortese e protese
+					procedimento.categoriaTipo = MovimentacaoProcedimento.LISTA_TIPO[1];
+				} else {
+					procedimento.categoriaTipo = MovimentacaoProcedimento.LISTA_CATEGORIA[1];
+				}
+				procedimento.equipamento = equipamentos.getItemAt(1) as Equipamento;
+				
+				// verificar se procedimento já foi adicionado
+				if (cidPrincipal != null && cidPrincipal.procedimentos != null) {
+					for each(var procedimentoAdicionado: MovimentacaoProcedimento in cidPrincipal.procedimentos) {
+						if (procedimentoAdicionado.sigtap_co_procedimento == procedimento.sigtap_co_procedimento) {
+							Alerta.info("ESSE PROCEDIMENTO JÁ FOI ADICIONADO AO CID PRINCIPAL",STR_ENTRADA_INVALIDA);
+							return ;
+						}
+					}
+				}
+				
+				if (cidSecundario != null && cidSecundario.procedimentos != null) {
+					for each(var procedimentoAdicionado: MovimentacaoProcedimento in cidSecundario.procedimentos) {
+						if (procedimentoAdicionado.sigtap_co_procedimento == procedimento.sigtap_co_procedimento) {
+							Alerta.info("ESSE PROCEDIMENTO JÁ FOI ADICIONADO AO CID SECUNDÁRIO",STR_ENTRADA_INVALIDA);
+							return ;
+						}
+					}
+				}
+				
+				if (cidCausasAssociadas != null && cidCausasAssociadas.procedimentos != null) {
+					for each(var procedimentoAdicionado: MovimentacaoProcedimento in cidCausasAssociadas.procedimentos) {
+						if (procedimentoAdicionado.sigtap_co_procedimento == procedimento.sigtap_co_procedimento) {
+							Alerta.info("ESSE PROCEDIMENTO JÁ FOI ADICIONADO AO CID CAUSAS ASSOCIADAS",STR_ENTRADA_INVALIDA);
+							return ;
+						}
+					}
+				}
+				
+				if (categoriaCid == CID_PRINCIPAL) {
+					if (cidPrincipal.procedimentos == null) {
+						cidPrincipal.procedimentos = new ArrayCollection();
+					}
+					cidPrincipal.procedimentos.addItem(procedimento);
+//					dtgProcedimentosPrincipal.dataProvider = cidPrincipal.procedimentos;
+				} else if(categoriaCid == CID_SECUNDARIO) {
+					if (cidSecundario.procedimentos == null) {
+						cidSecundario.procedimentos = new ArrayCollection();
+					}
+					cidSecundario.procedimentos.addItem(procedimento);
+//					dtgProcedimentosSecundario.dataProvider = cidSecundario.procedimentos;
+				} else if(categoriaCid == CID_CAUSAS_ASSOCIADAS) {
+					if (cidCausasAssociadas.procedimentos == null) {
+						cidCausasAssociadas.procedimentos = new ArrayCollection();
+					}
+					cidCausasAssociadas.procedimentos.addItem(procedimento);
+//					dtgProcedimentosCausasAssociadas.dataProvider = cidCausasAssociadas.procedimentos;
+				}
+	
+				exibirCid();
+				atualizarValor();
+			}
+			
+			public function atualizarValor():void{
+				var valor:Number = 0;
+				
+				if (cidPrincipal != null) {
+					for each (var procedimento:MovimentacaoProcedimento in cidPrincipal.procedimentos) {
+						valor = valor + (procedimento.valorTotal * procedimento.quantidade);
+					}
+				}
+				
+				if (cidSecundario != null) {
+					for each (var procedimento:MovimentacaoProcedimento in cidSecundario.procedimentos) {
+						valor = valor + (procedimento.valorTotal * procedimento.quantidade);
+					}
+				}
+				
+				if (cidCausasAssociadas != null) {
+					for each (var procedimento:MovimentacaoProcedimento in cidCausasAssociadas.procedimentos) {
+						valor = valor + (procedimento.valorTotal * procedimento.quantidade);
+					}
+				}
+				
+				txtValor.text = DecimalFormatter.instance.format(valor);
+			}
+			
+			public function exibirMensagemValidacao(mensagem:String):void{
+				Alerta.info(mensagem, STR_ENTRADA_INVALIDA);
+			}
+			
+			public function habilitarCamposEdicao():void{
+				if (isInserirNovoRegistro == false) {
+					btnPequisarFornecedor.enabled = true;
+					txtCodigoFornecedor.enabled = true;
+//					btnPesquisarCid.enabled = false;
+
+//					btnPesquisarCidCausasAssociadas.enabled = false;
+//					btnPesquisarCidPrincipal.enabled = false;
+//					btnPesquisarCidSecundario.enabled = false;
+					btnPesquisarMedico.enabled = false;
+					txtCodigoMedico.enabled = false;
+					btnPesquisarPaciente.enabled = false;
+					txtProntuarioPaciente.enabled = false;
+//					btnPesquisarProcedimento.enabled = false;
+
+//					btnPesquisarProcedimentoCausasAssociadas.enabled = false;
+//					btnPesquisarProcedimentoPrincipal.enabled = false;
+//					btnPesquisarProcedimentoSecundario.enabled = false;
+//					btnRemoverCid.enabled = false;
+
+//					btnRemoverCidCausasAssociadas.enabled = false;
+//					btnRemoverCidPrincipal.enabled = false;
+//					btnRemoverCidSecundario.enabled = false;
+//					btnRemoverProcedimento.enabled = false;
+
+//					btnRemoverProcedimentoCausasAssociadas.enabled = false;
+//					btnRemoverProcedimentoPrincipal.enabled = false;
+//					btnRemoverProcedimentoSecundario.enabled = false;
+					btnPesquisarCid.enabled = false;
+					btnRemoverCid.enabled = false;
+					txtCodigoCid.enabled = false;
+					btnPesquisarProcedimento.enabled = false;
+					btnRemoverProcedimento.enabled = false;
+					txtCodigoProcedimento.enabled = false;
+					
+//					cmbEquipamento.enabled = false;
+//					customComboBoxCategoriaTipo.enabled = false;
+//					txtQuantidadeProcedimento.enabled = false;
+
+
+
+					
+					dthSolicitacaoMovimentacao.enabled = false;
+//					txtAPACBPIMovimentacao.enabled = true;
+
+					txtNumeroNota.enabled = true;
+					
+					dthAutorizacaoMovimentacao.enabled = true;
+					
+					radioEntrada.enabled = true;
+					if (FlexGlobals.topLevelApplication.principal.movimentacao.getPrograma().sequencial == 1) { // ORTESE E PROTESE
+						radioEncaminhado.enabled = true;
+					} else { // AUDITIVO
+						radioEncaminhado.enabled = false;
+					}
+					radioEntregue.enabled = true;
+					
+					dthEntradaMovimentacao.enabled = false;
+					dthEncaminhadoMovimentacao.enabled = false;
+					dthEntregueMovimentacao.enabled = false;
+					
+					if (movimentacao.dataEntrega != null) {
+						radioEntregue.selected = true;
+						onRadioSituacaoSelected(SITUACAO_ENTREGUE);
+					} else if (movimentacao.dataEncaminhamento != null) {
+						radioEncaminhado.selected = true;
+						onRadioSituacaoSelected(SITUACAO_ENCAMINHADO);
+					} else if (movimentacao.dataEntrada != null) {
+						radioEntrada.selected = true;
+						onRadioSituacaoSelected(SITUACAO_ENTRADA);
+					}
+				}
+			}
+			
+			public function habilitarCamposNovo():void{
+				if (isInserirNovoRegistro) {
+					dthSolicitacaoMovimentacao.enabled = true;
+					dthSolicitacaoMovimentacao.selectedDate = new Date();
+					
+					btnPequisarFornecedor.enabled = true;
+					txtCodigoFornecedor.enabled = true;
+//					btnPesquisarCid.enabled = true;
+
+//					btnPesquisarCidCausasAssociadas.enabled = true;
+//					btnPesquisarCidPrincipal.enabled = true;
+//					btnPesquisarCidSecundario.enabled = true;
+					btnPesquisarMedico.enabled = true;
+					txtCodigoMedico.enabled = true;
+					btnPesquisarPaciente.enabled = true;
+					txtProntuarioPaciente.enabled = true;
+//					btnPesquisarProcedimento.enabled = true;
+
+//					btnPesquisarProcedimentoCausasAssociadas.enabled = true;
+//					btnPesquisarProcedimentoPrincipal.enabled = true;
+//					btnPesquisarProcedimentoSecundario.enabled = true;
+//					btnRemoverCid.enabled = true;
+
+//					btnRemoverCidCausasAssociadas.enabled = true;
+//					btnRemoverCidPrincipal.enabled = true;
+//					btnRemoverCidSecundario.enabled = true;
+//					btnRemoverProcedimento.enabled = true;
+
+//					btnRemoverProcedimentoCausasAssociadas.enabled = true;
+//					btnRemoverProcedimentoPrincipal.enabled = true;
+//					btnRemoverProcedimentoSecundario.enabled = true;
+					btnPesquisarCid.enabled = true;
+					btnRemoverCid.enabled = true;
+					txtCodigoCid.enabled = true;
+					btnPesquisarProcedimento.enabled = true;
+					btnRemoverProcedimento.enabled = true;
+					txtCodigoProcedimento.enabled = true;
+					
+//					txtAPACBPIMovimentacao.enabled = false;
+
+					txtNumeroNota.enabled = false;
+
+					radioEntrada.enabled = true;
+
+
+					radioEncaminhado.enabled = false;
+					radioEntregue.enabled = false;
+					radioEntrada.selected = false;
+					radioEncaminhado.selected = false;
+					radioEntregue.selected = false;
+					dthEntradaMovimentacao.enabled = false;
+					dthEncaminhadoMovimentacao.enabled = false;
+					dthEntregueMovimentacao.enabled = false;
+					dthAutorizacaoMovimentacao.enabled = false;
+				}
+			}
+			
+			public function init():void {
+				movimentacao = new Movimentacao();
+			}
+			
+			public function limpar():void{
+				CustomViewHelper.limparCamposFormulario(this);
+				
+				dthSolicitacaoMovimentacao.selectedDate = null;
+//				txtAPACBPIMovimentacao.enabled = false;
+
+				txtNumeroNota.enabled = false;
+				
+//				cids = null;
+
+				cidCausasAssociadas = null;
+				cidPrincipal = null;
+				cidSecundario = null;
+				fornecedor = null;
+				medico = null;
+				paciente = null;
+//				procedimentos = null;
+//				sigtapCids = null;
+
+
+				
+//				dtgCids.dataProvider = null;
+
+//				dtgCidCausasAssociadas.dataProvider = null;
+//				dtgCidPrincipal.dataProvider = null;
+//				dtgCidSecundario.dataProvider = null;
+				dtgFornecedor.dataProvider = null;
+				dtgMedico.dataProvider = null;
+				dtgPaciente.dataProvider = null;
+//				dtgMedico.dataProvider = null;
+//				dtgPaciente.dataProvider = null;
+//				dtgProcedimentos.dataProvider = null;
+
+//				dtgProcedimentosCausasAssociadas.dataProvider = null;
+//				dtgProcedimentosPrincipal.dataProvider = null;
+//				dtgProcedimentosSecundario.dataProvider = null;
+				dtgCid.dataProvider = null;
+				dtgProcedimentos.dataProvider = null;
+				
+				dthAutorizacaoMovimentacao.selectedDate = null;
+				dthEncaminhadoMovimentacao.selectedDate = null;
+				dthEntradaMovimentacao.selectedDate = null;
+				dthEntregueMovimentacao.selectedDate = null;
+				dthVencimentoMovimentacao.selectedDate = null;
+				
+				FlexGlobals.topLevelApplication.principal.movimentacao.movimentacaoListagem.dtg.inicializarTotalizadores();
+				FlexGlobals.topLevelApplication.principal.movimentacao.movimentacaoListagem.txtValorBusca.text = "";
+				FlexGlobals.topLevelApplication.principal.movimentacao.init();
+			}
+			
+			public function listar():void{
+				var paginacaoVO:PaginacaoVO = new PaginacaoVO();
+				paginacaoVO.entidade = new Movimentacao();
+				paginacaoVO.inicioPaginacao = 0;
+				paginacaoVO.quantidadePaginacao = 10;
+				
+				new MovimentacaoEvent(MovimentacaoEvent.LISTA_PAGINADO,
+					FlexGlobals.topLevelApplication.principal.movimentacao.movimentacaoListagem,
+					paginacaoVO).dispatch();
+				
+				FlexGlobals.topLevelApplication.principal.movimentacao.init();
+			}
+			
+			public function onDthAutorizacaoMovimentacaoChange():void{
+				dthVencimentoMovimentacao.selectedDate =
+					calcularDataVencimento(dthAutorizacaoMovimentacao.selectedDate);
+			}
+			
+			public function calcularDataVencimento(dataAutorizacao:Date):Date{
+				if (dataAutorizacao != null) {
+//					if (FlexGlobals.topLevelApplication.principal.movimentacao.getPrograma().sequencial == 1) { // ortese e protese
+//						dataSolicitacao.month = dataSolicitacao.month + 3;
+//					} else if (FlexGlobals.topLevelApplication.principal.movimentacao.getPrograma().sequencial == 2) { // auditivo
+//						dataSolicitacao.month = dataSolicitacao.month + 1;
+//					}
+					dataAutorizacao.month = dataAutorizacao.month + 1;
+				}
+				return dataAutorizacao;
+			}
+			
+			public function onRadioSituacaoSelected(situacao:String):void{
+				if (situacao == SITUACAO_ENTRADA) {
+					dthEntradaMovimentacao.enabled = true;
+					dthEncaminhadoMovimentacao.enabled = false;
+					dthEntregueMovimentacao.enabled = false;
+				}
+				
+				if (situacao == SITUACAO_ENCAMINHADO) {
+					dthEntradaMovimentacao.enabled = false;
+					dthEncaminhadoMovimentacao.enabled = true;
+					dthEntregueMovimentacao.enabled = false;
+				}
+				
+				if (situacao == SITUACAO_ENTREGUE) {
+					dthEntradaMovimentacao.enabled = false;
+					dthEncaminhadoMovimentacao.enabled = false;
+					dthEntregueMovimentacao.enabled = true;
+				}
+			}
+			
+			public function consultarCid():void{
+				var codigoCid:String = StringUtil.trim(txtCodigoCid.text);
+				if (codigoCid == "") {
+//					pesquisarCID(cmbCategoriaCid.selectedLabel);
+					pesquisarCID();
+				} else {
+					var c:SigtapCID = new SigtapCID();
+					c.co_cid = codigoCid;
+					new SigtapEvent(SigtapEvent.OBTER_SIGTAP_CID, this, c).dispatch();
+				}
+			}
+			
+			public function onCmbCategoriaCidChange():void{
+				exibirCid();
+			}
+			
+			public function exibirCid():void{
+				if (cmbCategoriaCid.selectedLabel == CID_PRINCIPAL) {
+					dtgCid.dataProvider = cidPrincipal != null ? cidPrincipal : null;
+					txtCodigoCid.text = cidPrincipal != null ? cidPrincipal.sigtap_co_cid : "";
+					dtgProcedimentos.dataProvider = cidPrincipal != null ? cidPrincipal.procedimentos : null;
+				} else if(cmbCategoriaCid.selectedLabel == CID_SECUNDARIO) {
+					dtgCid.dataProvider = cidSecundario != null ? cidSecundario : null;
+					txtCodigoCid.text = cidSecundario != null ? cidSecundario.sigtap_co_cid : "";
+					dtgProcedimentos.dataProvider = cidSecundario!= null ? cidSecundario.procedimentos : null;
+				} else {
+					dtgCid.dataProvider = cidCausasAssociadas != null ? cidCausasAssociadas : null;
+					txtCodigoCid.text = cidCausasAssociadas != null ? cidCausasAssociadas.sigtap_co_cid : "";
+					dtgProcedimentos.dataProvider = cidCausasAssociadas != null ? cidCausasAssociadas.procedimentos : null;
+				}
+				verificarExibicaoDetalhesProcedimentos();
+			}
+			
+			public function pesquisarCID():void{
+				var categoriaCid:String = cmbCategoriaCid.selectedLabel;
+				
+				var win : CAD_MovimentacaoCadastroCIDListagem = new CAD_MovimentacaoCadastroCIDListagem();
+				
+				win.cadastro = this;
+				win.categoriaCid = categoriaCid;
+				
+				win.showCloseButton = true;
+				
+				PopUpManager.addPopUp(win,this,true);
+				PopUpManager.centerPopUp(win);
+			}
+			
+			public function consultarFornecedor():void{
+				
+				var codigoFornecedor:String = StringUtil.trim(txtCodigoFornecedor.text);
+				if (codigoFornecedor == "") {
+					pesquisarFornecedor();
+				} else {
+					var f:Fornecedor = new Fornecedor();
+					f.sequencial = Number(codigoFornecedor);
+					new FornecedorEvent(FornecedorEvent.OBTER, this, f).dispatch();
+				}
+			}
+			
+			public function pesquisarFornecedor():void{
+				var win : CAD_MovimentacaoCadastroFornecedorListagem = new CAD_MovimentacaoCadastroFornecedorListagem();
+				
+				win.cadastro = this;
+				
+				win.showCloseButton = true;
+				
+				PopUpManager.addPopUp(win,this,true);
+				PopUpManager.centerPopUp(win);
+			}
+			
+			public function consultarMedico():void{
+				var codigoMedico:String = StringUtil.trim(txtCodigoMedico.text);
+				if (codigoMedico == "") {
+					pesquisarMedico();
+				} else {
+					var m:Medico = new Medico();
+					m.sequencial = Number(codigoMedico);
+					new MedicoEvent(MedicoEvent.OBTER, this, m).dispatch();
+				}
+			}
+			
+			public function pesquisarMedico():void{
+				var win : CAD_AgendamentoCadastroMedicoListagem = new CAD_AgendamentoCadastroMedicoListagem();
+				
+				win.agendamentoCadastro = this;
+				
+				win.showCloseButton = true;
+				
+				PopUpManager.addPopUp(win,this,true);
+				PopUpManager.centerPopUp(win);
+			}
+			
+			public function consultarPaciente():void{
+				var prontuarioPaciente:String = StringUtil.trim(txtProntuarioPaciente.text);
+				if (prontuarioPaciente == "") {
+					pesquisarPaciente();
+				} else {
+					var p:Paciente = new Paciente();
+					p.sequencial = Number(prontuarioPaciente);
+					new PacienteEvent(PacienteEvent.OBTER, this, p).dispatch();
+				}
+			}
+			
+			public function pesquisarPaciente():void{
+				var win : CAD_AgendamentoCadastroPacienteListagem = new CAD_AgendamentoCadastroPacienteListagem();
+				
+				win.agendamentoCadastro = this;
+				
+				win.showCloseButton = true;
+				
+				PopUpManager.addPopUp(win,this,true);
+				PopUpManager.centerPopUp(win);
+			}
+			
+			public function consultarProcedimento():void{
+				var codigoProcedimento:String = StringUtil.trim(txtCodigoProcedimento.text);
+				if (codigoProcedimento == "") {
+					pesquisarProcedimento();
+				} else {
+					var p:SigtapProcedimento = new SigtapProcedimento();
+					p.co_procedimento = codigoProcedimento;
+					
+					var idade:int = DateUtils.calcularIdadeCompleta(paciente.dataNascimento, new Date());
+					if (idade >= 0) {
+						p.vl_idade_minima = idade;
+					}
+					
+					p.tp_sexo = paciente.sexo;
+					p.sigtapCIDs = getSigtapCids();
+					p.sigtapOcupacoes = new ArrayCollection();
+					p.sigtapOcupacoes.addItem(SigtapOcupacao.fromOcupacao(medico.ocupacao));
+					
+					new SigtapEvent(SigtapEvent.OBTER_SIGTAP_PROCEDIMENTO, this, p).dispatch();
+				}
+			}
+			
+			public function getSigtapCids():ArrayCollection{
+				var sigtapCIDs:ArrayCollection = new ArrayCollection();
+				if (cmbCategoriaCid.selectedLabel == CID_PRINCIPAL) {
+					sigtapCIDs.addItem(SigtapCID.fromMovimentacaoCID(cidPrincipal));
+				} else if (cmbCategoriaCid.selectedLabel == CID_SECUNDARIO) {
+					sigtapCIDs.addItem(SigtapCID.fromMovimentacaoCID(cidSecundario));
+				} else {
+					sigtapCIDs.addItem(SigtapCID.fromMovimentacaoCID(cidCausasAssociadas));
+				}
+				return sigtapCIDs;
+			}
+			
+			public function pesquisarProcedimento():void{
+				var categoriaCid:String = cmbCategoriaCid.selectedLabel;
+				
+				if (medico == null) {
+					exibirMensagemValidacao("Por favor, selecione um MÉDICO para a pesquisa de procedimentos");
+					return ;
+				}
+				
+				if (paciente == null) {
+					exibirMensagemValidacao("Por favor, selecione um PACIENTE para a pesquisa de procedimentos");
+					return ;
+				}
+				
+				if(
+					(categoriaCid == CID_PRINCIPAL && cidPrincipal == null) ||
+					(categoriaCid == CID_SECUNDARIO && cidSecundario == null) ||
+					(categoriaCid == CID_CAUSAS_ASSOCIADAS && cidCausasAssociadas == null)
+				){
+					exibirMensagemValidacao("Por favor, selecione um CID para a pesquisa de procedimentos");
+					return ;
+				}
+//				if (cids == null || cids.length == 0) {
+//					exibirMensagemValidacao("Por favor, selecione 1 ou mais CIDs para a pesquisa de procedimentos");
+//					return ;
+//				}
+
+				var win : CAD_MovimentacaoCadastroProcedimentoListagem = new CAD_MovimentacaoCadastroProcedimentoListagem();
+				
+				win.cadastro = this;
+				win.categoriaCid = categoriaCid;
+				
+				var sigtapCids:ArrayCollection =  new ArrayCollection();
+				var sigtapCid:SigtapCID = new SigtapCID();
+				sigtapCid.co_cid = StringUtil.trim(txtCodigoCid.text);
+				sigtapCids.addItem(sigtapCid);
+				win.cids = sigtapCids;
+
+				win.paciente = paciente;
+				win.ocupacao = SigtapOcupacao.fromOcupacao(medico.ocupacao) ;
+				
+				win.showCloseButton = true;
+				
+				PopUpManager.addPopUp(win,this,true);
+				PopUpManager.centerPopUp(win);
+			}
+			
+			public function preencherDetalhesProcedimento():void{
+				var categoriaCid:String = cmbCategoriaCid.selectedLabel;
+				
+				if (isInserirNovoRegistro ==  false) {
+					return ;
+				}
+
+//				if ((categoriaCid == CID_PRINCIPAL && dtgProcedimentos.selectedItem == null) ||
+//					(categoriaCid == CID_SECUNDARIO && dtgProcedimentosSecundario.selectedItem == null) ||
+//					(categoriaCid == CID_CAUSAS_ASSOCIADAS && dtgProcedimentosCausasAssociadas.selectedItem == null)) {
+				if (dtgProcedimentos.selectedItem == null) {
+					return ;
+				}
+				
+//				if (categoriaCid == CID_PRINCIPAL) {
+//					var procedimento:MovimentacaoProcedimento = dtgProcedimentosPrincipal.selectedItem as MovimentacaoProcedimento;
+//					cmbEquipamentoPrincipal.enabled = true;
+//					cmbEquipamentoPrincipal.selectedValue = procedimento.equipamento.descricao;
+//					
+//					txtQuantidadePrincipal.text = new String( procedimento.quantidade );
+//					txtQuantidadePrincipal.enabled = true;
+//					txtQuantidadePrincipal.editable = true;
+//					
+//					customComboBoxCategoriaTipoPrincipal.enabled = true;
+//					customComboBoxCategoriaTipoPrincipal.selectedItem = procedimento.categoriaTipo;
+//				} else if (categoriaCid == CID_SECUNDARIO) {
+//					var procedimento:MovimentacaoProcedimento = dtgProcedimentosSecundario.selectedItem as MovimentacaoProcedimento;
+//					cmbEquipamentoSecundario.enabled = true;
+//					cmbEquipamentoSecundario.selectedValue = procedimento.equipamento.descricao;
+//					
+//					txtQuantidadeSecundario.text = new String( procedimento.quantidade );
+//					txtQuantidadeSecundario.enabled = true;
+//					txtQuantidadeSecundario.editable = true;
+//					
+//					customComboBoxCategoriaTipoSecundario.enabled = true;
+//					customComboBoxCategoriaTipoSecundario.selectedItem = procedimento.categoriaTipo;
+//				} else if (categoriaCid == CID_CAUSAS_ASSOCIADAS) {
+//					var procedimento:MovimentacaoProcedimento = dtgProcedimentosCausasAssociadas.selectedItem as MovimentacaoProcedimento;
+//					cmbEquipamentoCausasAssociadas.enabled = true;
+//					cmbEquipamentoCausasAssociadas.selectedValue = procedimento.equipamento.descricao;
+//					
+//					txtQuantidadeCausasAssociadas.text = new String( procedimento.quantidade );
+//					txtQuantidadeCausasAssociadas.enabled = true;
+//					txtQuantidadeCausasAssociadas.editable = true;
+//					
+//					customComboBoxCategoriaTipoCausasAssociadas.enabled = true;
+//					customComboBoxCategoriaTipoCausasAssociadas.selectedItem = procedimento.categoriaTipo;
+//				}
+				var procedimento:MovimentacaoProcedimento = dtgProcedimentos.selectedItem as MovimentacaoProcedimento;
+				cmbEquipamento.enabled = true;
+				cmbEquipamento.selectedValue = procedimento.equipamento.descricao;
+				
+				txtQuantidade.text = new String( procedimento.quantidade );
+				txtQuantidade.enabled = true;
+				txtQuantidade.editable = true;
+				
+				customComboBoxCategoriaTipo.enabled = true;
+				customComboBoxCategoriaTipo.selectedItem = procedimento.categoriaTipo;
+			}
+			
+			public function preencherFormulario():void{
+				dthSolicitacaoMovimentacao.selectedDate = movimentacao.dataSolicitacao;
+				txtAPACBPIMovimentacao.text = movimentacao.apacBpi;
+				txtObservacaoMovimentacao.text = movimentacao.observacao;
+				
+				medico = movimentacao.medico;
+				paciente = movimentacao.paciente;
+//				cids = movimentacao.cids;
+
+				cidCausasAssociadas = movimentacao.cidCausasAssociadas;
+				cidPrincipal = movimentacao.cidPrincipal;
+				cidSecundario = movimentacao.cidSecundario;
+//				procedimentos = movimentacao.procedimentos;
+
+				fornecedor = movimentacao.fornecedor;
+				
+				dtgMedico.dataProvider = medico;
+				txtCodigoMedico.text = String(medico.sequencial);
+//				txtNomeMedico.text = medico.nome;
+//				txtOcupacaoMedico.text = medico.ocupacao.descricao;
+				dtgPaciente.dataProvider = paciente;
+//				dtgCids.dataProvider = cids;
+//				dtgProcedimentos.dataProvider = procedimentos;
+				txtProntuarioPaciente.text = String(paciente.sequencial);
+//				txtNomePaciente.text = paciente.nome;
+//				txtCpfPaciente.text = paciente.cpf;
+				
+//				dtgCids.dataProvider = cids;
+//				dtgProcedimentos.dataProvider = procedimentos;
+//				dtgCidCausasAssociadas.dataProvider = cidCausasAssociadas;
+//				dtgCidPrincipal.dataProvider = cidPrincipal;
+//				dtgCidSecundario.dataProvider = cidSecundario;
+//				if (cidCausasAssociadas != null && cidCausasAssociadas.procedimentos != null) {
+//					dtgProcedimentosCausasAssociadas.dataProvider = cidCausasAssociadas.procedimentos;
+//				}
+//				dtgProcedimentosPrincipal.dataProvider = cidPrincipal.procedimentos;
+//				if (cidSecundario != null && cidSecundario.procedimentos != null) {
+//					dtgProcedimentosSecundario.dataProvider = cidSecundario.procedimentos;
+//				}
+				exibirCid();
+				
+				dtgFornecedor.dataProvider = fornecedor;
+				if (fornecedor != null) {
+					txtValorVendasDisponivel.text = fornecedor.getValorVendasDisponivelAsString();
+					txtValorVendasRealizadas.text = fornecedor.valorVendasRealizadasAsString;
+				}
+				
+				txtNumeroNota.text = movimentacao.numeroNota;
+				
+				dthAutorizacaoMovimentacao.selectedDate = movimentacao.dataAutorizacao;
+				dthEncaminhadoMovimentacao.selectedDate = movimentacao.dataEncaminhamento;
+				dthEntradaMovimentacao.selectedDate = movimentacao.dataEntrada;
+				dthEntregueMovimentacao.selectedDate = movimentacao.dataEntrega;
+				dthVencimentoMovimentacao.selectedDate = movimentacao.dataVencimento;
+			}
+			
+			public function radioEncaminhadoHandle():void{
+				onRadioSituacaoSelected(SITUACAO_ENCAMINHADO);
+			}
+			
+			public function removerCID():void{
+				var categoriaCid:String = cmbCategoriaCid.selectedLabel;
+				
+				if (categoriaCid == CID_PRINCIPAL) {
+					cidPrincipal = null;
+				} else if (categoriaCid == CID_SECUNDARIO) {
+					cidSecundario = null;
+				} else if (categoriaCid == CID_CAUSAS_ASSOCIADAS) {
+					cidCausasAssociadas = null;
+				}
+				
+				exibirCid();
+				verificarExibicaoDetalhesProcedimentos();
+				atualizarValor();
+			}
+			
+			public function removerProcedimento():void{
+				var categoriaCid:String = cmbCategoriaCid.selectedLabel;
+				if (categoriaCid == CID_PRINCIPAL) {
+					if (dtgProcedimentos.selectedItem != null) {
+						cidPrincipal.procedimentos.removeItemAt(dtgProcedimentos.selectedIndex);
+					}
+				} else if (categoriaCid == CID_SECUNDARIO) {
+					if (dtgProcedimentos.selectedItem != null) {
+						cidSecundario.procedimentos.removeItemAt(dtgProcedimentos.selectedIndex);
+					}
+				} else if (categoriaCid == CID_CAUSAS_ASSOCIADAS) {
+					if (dtgProcedimentos.selectedItem != null) {
+						cidCausasAssociadas.procedimentos.removeItemAt(dtgProcedimentos.selectedIndex);
+					}
+				}
+				
+				verificarExibicaoDetalhesProcedimentos();
+				atualizarValor();
+			}
+			
+			public function result(data:Object,event:Event):void {
+				if (event.type == MovimentacaoEvent.ALTERAR) {
+					Alerta.success(data.result.msg);
+					limpar();
+				}
+				
+				if (event.type == MovimentacaoEvent.INSERIR) {
+					Alerta.success(data.result.msg);
+					limpar();
+				}
+				
+				if (event.type == MedicoEvent.OBTER) {
+					setarMedico(data.result as Medico);
+				}
+				
+				if (event.type == PacienteEvent.OBTER) {
+					setarPaciente(data.result as Paciente);
+				}
+				
+				if (event.type == SigtapEvent.OBTER_SIGTAP_CID) {
+					adicionarCID(cmbCategoriaCid.selectedItem as String, data.result as SigtapCID);
+				}
+				
+				if (event.type == SigtapEvent.OBTER_SIGTAP_PROCEDIMENTO) {
+					adicionarProcedimento(cmbCategoriaCid.selectedItem as String, data.result as SigtapProcedimento);
+				}
+				
+				if (event.type == FornecedorEvent.OBTER) {
+					setarFornecedor(data.result as Fornecedor);
+				}
+			}
+			
+			public function salvar():void {
+				verificarInstanciaInsercao();
+				setarDadosInsercao();
+				if (isInserirNovoRegistro) {
+					new MovimentacaoEvent(MovimentacaoEvent.INSERIR, this, movimentacao).dispatch();
+				} else {
+					setarDadosAlteracao();
+					new MovimentacaoEvent(MovimentacaoEvent.ALTERAR, this, movimentacao).dispatch();
+				}
+			}
+			
+			public function setarDadosAlteracao():void{
+				movimentacao.fornecedor = fornecedor;
+				
+				movimentacao.numeroNota = StringUtil.trim( txtNumeroNota.text );
+				if (movimentacao.numeroNota == "") {
+					movimentacao.numeroNota = null;
+				}
+				
+				if (radioEntrada.selected) {
+					movimentacao.dataEntrada = dthEntradaMovimentacao.selectedDate;
+					movimentacao.dataEncaminhamento = null;
+					movimentacao.dataEntrega = null;
+				} else if (radioEncaminhado.selected) {
+					movimentacao.dataEntrada = dthEntradaMovimentacao.selectedDate;
+					movimentacao.dataEncaminhamento = dthEncaminhadoMovimentacao.selectedDate;
+					movimentacao.dataEntrega = null;
+				} else if (radioEntregue.selected) {
+					movimentacao.dataEntrada = dthEntradaMovimentacao.selectedDate;
+					movimentacao.dataEncaminhamento = dthEncaminhadoMovimentacao.selectedDate;
+					movimentacao.dataEntrega = dthEntregueMovimentacao.selectedDate;
+				}
+				
+				movimentacao.dataAutorizacao = dthAutorizacaoMovimentacao.selectedDate;
+				movimentacao.dataVencimento = dthVencimentoMovimentacao.selectedDate;
+			}
+			
+			public function setarDadosInsercao():void{
+				movimentacao.fornecedor = fornecedor;
+				
+				movimentacao.programa = FlexGlobals.topLevelApplication.principal.movimentacao.getPrograma();
+				
+				movimentacao.dataSolicitacao = dthSolicitacaoMovimentacao.selectedDate;
+				movimentacao.apacBpi = StringUtil.trim(txtAPACBPIMovimentacao.text);
+				movimentacao.observacao = StringUtil.trim(txtObservacaoMovimentacao.text); 
+				
+				movimentacao.medico = medico;
+				movimentacao.paciente = paciente;
+				movimentacao.dataEntrada = dthEntradaMovimentacao.selectedDate;
+				movimentacao.dataVencimento = dthVencimentoMovimentacao.selectedDate;
+					
+				movimentacao.cidPrincipal = cidPrincipal;
+				movimentacao.cidSecundario = cidSecundario;
+				movimentacao.cidCausasAssociadas = cidCausasAssociadas;
+			}
+			
+			public function setarDetalhesProcedimento():void{
+				var categoriaCid:String = cmbCategoriaCid.selectedLabel;
+				if (categoriaCid == CID_PRINCIPAL && dtgProcedimentos.selectedItem != null) {
+					var procedimento:MovimentacaoProcedimento = dtgProcedimentos.selectedItem as MovimentacaoProcedimento; 
+					procedimento.equipamento = cmbEquipamento.selectedItem as Equipamento;
+					
+					var quantidade:int = new int ( txtQuantidade.text );
+					if (quantidade == 0) {
+						exibirMensagemValidacao("A quantidade mínima de procedimentos é 1");
+						quantidade = procedimento.quantidade;
+					}
+					
+					if (quantidade > procedimento.sigtap_qt_maxima_execucao) {
+						exibirMensagemValidacao("A quantidade máxima de execução do procedimento " + procedimento.sigtap_co_procedimento + " é " + procedimento.sigtap_qt_maxima_execucao);
+						quantidade = procedimento.quantidade;
+					}
+	
+
+					procedimento.quantidade = quantidade;
+					procedimento.categoriaTipo = customComboBoxCategoriaTipo.selectedLabel;
+					
+					txtQuantidade.text = String( procedimento.quantidade );
+				} else if (categoriaCid == CID_SECUNDARIO && dtgProcedimentos.selectedItem != null) {
+					var procedimento:MovimentacaoProcedimento = dtgProcedimentos.selectedItem as MovimentacaoProcedimento; 
+					procedimento.equipamento = cmbEquipamento.selectedItem as Equipamento;
+					
+					var quantidade:int = new int ( txtQuantidade.text );
+					if (quantidade == 0) {
+						exibirMensagemValidacao("A quantidade mínima de procedimentos é 1");
+						quantidade = procedimento.quantidade;
+					}
+					
+					if (quantidade > procedimento.sigtap_qt_maxima_execucao) {
+						exibirMensagemValidacao("A quantidade máxima de execução do procedimento " + procedimento.sigtap_co_procedimento + " é " + procedimento.sigtap_qt_maxima_execucao);
+						quantidade = procedimento.quantidade;
+					}
+					
+					procedimento.quantidade = quantidade;
+					procedimento.categoriaTipo = customComboBoxCategoriaTipo.selectedLabel;
+					
+					txtQuantidade.text = String( procedimento.quantidade );
+				} else if (categoriaCid == CID_CAUSAS_ASSOCIADAS && dtgProcedimentos.selectedItem != null) {
+					var procedimento:MovimentacaoProcedimento = dtgProcedimentos.selectedItem as MovimentacaoProcedimento; 
+					procedimento.equipamento = cmbEquipamento.selectedItem as Equipamento;
+					
+					var quantidade:int = new int ( txtQuantidade.text );
+					if (quantidade == 0) {
+						exibirMensagemValidacao("A quantidade mínima de procedimentos é 1");
+						quantidade = procedimento.quantidade;
+					}
+					
+					if (quantidade > procedimento.sigtap_qt_maxima_execucao) {
+						exibirMensagemValidacao("A quantidade máxima de execução do procedimento " + procedimento.sigtap_co_procedimento + " é " + procedimento.sigtap_qt_maxima_execucao);
+						quantidade = procedimento.quantidade;
+					}
+					
+					procedimento.quantidade = quantidade;
+					procedimento.categoriaTipo = customComboBoxCategoriaTipo.selectedLabel;
+					
+					txtQuantidade.text = String( procedimento.quantidade );
+				}
+				atualizarValor();
+			}
+			
+			public function setarFornecedor(param:Fornecedor):void{
+				fornecedor = param;
+				dtgFornecedor.dataProvider = fornecedor;
+				fornecedorSequencial = fornecedor.sequencial;
+				txtValorVendasRealizadas.text = fornecedor.valorVendasRealizadasAsString;
+				txtValorVendasDisponivel.text = fornecedor.getValorVendasDisponivelAsString();
+			}
+			
+			public function setarMedico(param:Medico):void{
+				if (medico != null && medico.ocupacao.codigoOcupacao != param.ocupacao.codigoOcupacao) {
+					if (cidPrincipal != null && cidPrincipal.procedimentos != null) {
+						cidPrincipal.procedimentos.removeAll();
+					}
+					if (cidSecundario != null && cidSecundario.procedimentos != null) {
+						cidSecundario.procedimentos.removeAll();
+					}
+					if (cidCausasAssociadas != null && cidCausasAssociadas.procedimentos != null) {
+						cidCausasAssociadas.procedimentos.removeAll();
+					}
+				}
+				
+				medico = param;
+				dtgMedico.dataProvider = medico;
+				
+				txtCodigoMedico.text = String(medico.sequencial);
+				
+				verificarExibicaoDetalhesProcedimentos();
+			}
+			
+			public function setarPaciente(param:Paciente):void{
+				if (paciente != null &&
+					paciente.sequencial != param.sequencial) {
+					if (cidPrincipal != null && cidPrincipal.procedimentos != null) {
+						cidPrincipal.procedimentos.removeAll();
+					}
+					if (cidSecundario != null && cidSecundario.procedimentos != null) {
+						cidSecundario.procedimentos.removeAll();
+					}
+					if (cidCausasAssociadas != null && cidCausasAssociadas.procedimentos != null) {
+						cidCausasAssociadas.procedimentos.removeAll();
+					}
+				}
+				
+				paciente = param;
+				dtgPaciente.dataProvider = paciente;
+				txtProntuarioPaciente.text = String(paciente.sequencial);
+			}
+			
+			public function setEquipamentos(param:ArrayCollection):void{
+				equipamentos = param;
+				cmbEquipamento.dataProvider = equipamentos;
+			}
+			
+			public function setMovimentacao(param:Movimentacao):void {
+				this.movimentacao = param;
+			}
+			
+			public function show():void {
+				
+			}
+			
+			private function verificarExibicaoDetalhesProcedimentos():void{
+				var categoriaCid:String = cmbCategoriaCid.selectedLabel;
+				var cid:MovimentacaoCID;
+				
+				if (categoriaCid == CID_PRINCIPAL) {
+					cid = cidPrincipal;
+				} else if(categoriaCid == CID_SECUNDARIO) {
+					cid = cidSecundario;
+				} else {
+					cid = cidCausasAssociadas;
+				}
+				if (cid == null || cid.procedimentos == null || cid.procedimentos.length == 0 ||
+					dtgProcedimentos.selectedItem == null) {
+					cmbEquipamento.enabled = false;
+					txtQuantidade.text = "";
+					txtQuantidade.enabled = false;
+					customComboBoxCategoriaTipo.enabled = false;
+				}
+				
+			}
+
+
+			public function verificarInstanciaInsercao():void{
+				if (isInserirNovoRegistro) {
+					movimentacao = new Movimentacao();
+				}
+			}
+			public function geraComprovanteEncaminhamento():void{
+				var url:String=ResourceManager.getInstance().getString
+					
+					('strings','url')+"previewComprovanteEncaminhamento";				
+				var request:URLRequest = new URLRequest(url);			
+				
+				
+				preview.initStateProgress();				
+				
+				
+				//--------------------------------------------------------------------------
+				
+				url=url+"?seqMovimentacao="+ movimentacao.sequencial;
+				
+				preview.html.location=url;
+			}
+			public function geraTermoCompromisso():void{
+				var url:String=ResourceManager.getInstance().getString
+					
+					('strings','url')+"previewTermoCompromisso";				
+				var request:URLRequest = new URLRequest(url);			
+				
+				
+				preview.initStateProgress();				
+				
+				
+				//--------------------------------------------------------------------------
+				
+				url=url+"?seqMovimentacao="+ movimentacao.sequencial;
+				/* Alerta.success("url "+ url); */
+				
+				preview.html.location=url;
+			}
+			public function geraEncaminhamentoOrteseProtese():void{
+				var url:String=ResourceManager.getInstance().getString
+					
+					('strings','url')+"previewEncaminhamentoOrteseProtese";				
+				var request:URLRequest = new URLRequest(url);			
+				
+				
+				preview.initStateProgress();				
+				
+				
+				//--------------------------------------------------------------------------
+				
+				url=url+"?seqMovimentacao="+ movimentacao.sequencial;
+				
+				preview.html.location=url;
+			}
+			
+			public function completarDataVencimento() : void {
+				if (dthEntradaMovimentacao.selectedDate != null) {
+					dthVencimentoMovimentacao.selectedDate = lastDay(dthEntradaMovimentacao.selectedDate);
+				}
+				
+			}
+			
+			public function lastDay(source:Date):Date {
+				return new Date(source.fullYear, source.month + 1, 0);
+			}
+			
+		]]>
+	</fx:Script>
+	<mx:TabNavigator id="tabMovimentacao" width="100%" height="100%" backgroundAlpha="0"
+					 borderStyle="none" creationPolicy="all" paddingTop="0">
+		<mx:Form width="100%" height="100%" label="Dados de Solicitação" showEffect="Fade">
+			<mx:FormItem label="Programa:" direction="horizontal">
+				<leonelcasado:CustomComboBox id="cmbProgramaProcedimento" editable="false"/>
+			</mx:FormItem>
+			<mx:FormItem label="Data de Solicitação:">
+				<leonelcasado:CustomDateField id="dthSolicitacaoMovimentacao" showToday="true"/>
+			</mx:FormItem>
+			<mx:FormItem id="lblAPACBPI" label="BPI:" direction="horizontal">
+				<leonelcasado:CustomTextInput id="txtAPACBPIMovimentacao" restrict="0-9" />
+			</mx:FormItem>
+			<mx:FormItem label="Observação:" width="100%">
+				<leonelcasado:CustomTextArea id="txtObservacaoMovimentacao" width="100%" height="40" />
+			</mx:FormItem>
+			<!--**********************************************************-->
+			<leonelcasado:CustomFieldSet title="Dados do Médico" height="5%" paddingBottom="5" paddingLeft="20"
+										 paddingRight="20" paddingTop="20">
+				<mx:Form width="100%">
+					<mx:FormItem label="Médico:" width="100%" direction="horizontal">
+						<mx:VBox>
+							<leonelcasado:CustomLabel text="(COD:)"/>
+							<leonelcasado:CustomTextInput id="txtCodigoMedico" enter="consultarMedico()" restrict="0-9"/>
+							<leonelcasado:CustomButton id="btnPesquisarMedico" width="10%" label="Pesquisar Médico" click="pesquisarMedico()" />
+						</mx:VBox>
+						<mx:DataGrid id="dtgMedico" rowCount="1" width="100%">
+							<mx:columns>
+								<mx:DataGridColumn headerText="NOME" dataField="nome" />
+								<mx:DataGridColumn headerText="CNS" dataField="cns" />
+								<mx:DataGridColumn headerText="CBO" dataField="ocupacao.codigoOcupacao" />
+								<mx:DataGridColumn headerText="Ocupação" dataField="ocupacao.descricao" />
+							</mx:columns>
+						</mx:DataGrid>
+					</mx:FormItem>
+				</mx:Form>
+			</leonelcasado:CustomFieldSet>
+			<leonelcasado:CustomFieldSet title="Dados do Paciente" height="5%" paddingBottom="5" paddingLeft="20"
+										 paddingRight="20" paddingTop="20">
+				<mx:Form width="100%">
+					<mx:FormItem label="Paciente:" width="100%" direction="horizontal">
+						<mx:VBox>
+							<leonelcasado:CustomLabel text="(PRONT:)"/>
+							<leonelcasado:CustomTextInput id="txtProntuarioPaciente" enter="consultarPaciente()" restrict="0-9"/>
+							<leonelcasado:CustomButton id="btnPesquisarPaciente" label="Pesquisar Paciente" click="pesquisarPaciente()" />
+						</mx:VBox>
+						<mx:DataGrid id="dtgPaciente" rowCount="1" width="100%">
+							<mx:columns>
+								<mx:DataGridColumn headerText="PRONTUÁRIO" dataField="sequencial" />
+								<mx:DataGridColumn headerText="NOME" dataField="nome" />
+								<mx:DataGridColumn headerText="CNS" dataField="cns" />
+								<mx:DataGridColumn headerText="CPF" dataField="cpf" />
+								<mx:DataGridColumn headerText="DAT NASC" dataField="dataNascimento" />
+							</mx:columns>
+						</mx:DataGrid>
+					</mx:FormItem>
+				</mx:Form>
+			</leonelcasado:CustomFieldSet>
+		</mx:Form>
+		<mx:Form width="100%" height="100%" label="CID/Procedimentos" showEffect="Fade">
+			<leonelcasado:CustomFieldSet title="Dados de CIDs" height="5%" paddingBottom="5" paddingLeft="20"
+										 paddingRight="20" paddingTop="20" width="100%">
+				<mx:Form width="100%">
+					<mx:FormItem label="Categoria:" width="100%" direction="horizontal">
+						<leonelcasado:CustomComboBox id="cmbCategoriaCid" dataProvider="{LISTA_CATEGORIAS_CID}" change="onCmbCategoriaCidChange()" />
+					</mx:FormItem>
+					<mx:FormItem label="CID:" width="100%" direction="horizontal">
+						<mx:VBox width="100%">
+							<mx:HBox width="100%">
+								<mx:VBox>
+									<leonelcasado:CustomLabel text="(COD:)" />
+									<leonelcasado:CustomTextInput id="txtCodigoCid" width="100" enter="consultarCid()" />
+								</mx:VBox>
+								<mx:DataGrid id="dtgCid" rowCount="1" width="100%">
+									<mx:columns>
+										<!--mx:DataGridColumn headerText="COD" dataField="sigtap_co_cid" width="100" /-->
+										<mx:DataGridColumn headerText="NOME" dataField="sigtap_no_cid"/>
+									</mx:columns>
+								</mx:DataGrid>
+							</mx:HBox>
+							<mx:HBox>
+								<leonelcasado:CustomButton id="btnPesquisarCid" label="Pesquisar CID" click="pesquisarCID()" />
+								<leonelcasado:CustomButton id="btnRemoverCid" label="Remover CID" click="removerCID()" />
+							</mx:HBox>
+						</mx:VBox>
+					</mx:FormItem>
+				</mx:Form>
+			</leonelcasado:CustomFieldSet>
+			<leonelcasado:CustomFieldSet title="Procedimentos" height="5%" paddingBottom="5" paddingLeft="20"
+										 paddingRight="20" paddingTop="20" width="100%">
+				<mx:Form width="100%">
+					<mx:FormItem label="Dados de Procedimentos:" width="100%" direction="horizontal">
+						<mx:VBox>
+							<leonelcasado:CustomLabel text="(COD:)"/>
+							<leonelcasado:CustomTextInput id="txtCodigoProcedimento" enter="consultarProcedimento()" />
+						</mx:VBox>
+						<mx:VBox>
+							<leonelcasado:CustomLabel text="(Detalhes do procedimento:)"/>
+							<mx:HBox width="100%">
+								<mx:Spacer width="100%" />
+								<leonelcasado:CustomLabel text="Equipamento:" />
+								<leonelcasado:CustomComboBox id="cmbEquipamento" enabled="false"
+															 labelField="descricao"
+															 change="setarDetalhesProcedimento()"
+															 />
+								<leonelcasado:CustomLabel id="customLabelCategoriaTipo" />
+								<leonelcasado:CustomComboBox id="customComboBoxCategoriaTipo" enabled="false"
+															 change="setarDetalhesProcedimento()"
+															 />
+								<leonelcasado:CustomLabel text="Quantidade:" />
+								<leonelcasado:CustomTextInput id="txtQuantidade" enabled="false" restrict="0-9"
+															  enter="setarDetalhesProcedimento()"
+															  />
+							</mx:HBox>
+						</mx:VBox>
+					</mx:FormItem>
+					<mx:FormItem label="" width="100%" direction="horizontal">
+						<mx:DataGrid id="dtgProcedimentos" rowCount="5" width="100%" click="preencherDetalhesProcedimento()">
+							<mx:columns>
+								<mx:DataGridColumn headerText="COD" dataField="sigtap_co_procedimento" />
+								<mx:DataGridColumn headerText="NOME" dataField="sigtap_no_procedimento" />
+								<mx:DataGridColumn headerText="VALOR" dataField="valorTotal" labelFunction="CustomViewHelper.dataGridMascararMoeda"/>
+								<mx:DataGridColumn headerText="EQUIPAMENTO" dataField="equipamento.descricao" />
+								<mx:DataGridColumn id="dataGridColumnCategoriaTipo" dataField="categoriaTipo" />
+								<mx:DataGridColumn headerText="QUANTIDADE" dataField="quantidade" />
+							</mx:columns>
+						</mx:DataGrid>
+					</mx:FormItem>
+					<mx:FormItem label="" width="100%" direction="horizontal">
+						<leonelcasado:CustomButton id="btnPesquisarProcedimento" label="Pesquisar Procedimento" click="pesquisarProcedimento()" />
+						<leonelcasado:CustomButton id="btnRemoverProcedimento" label="Remover Procedimento" click="removerProcedimento()" />
+					</mx:FormItem>
+				</mx:Form>
+			</leonelcasado:CustomFieldSet>
+		</mx:Form>
+		<mx:Form width="100%" height="100%" label="Fornecedor" showEffect="Fade">
+			<mx:FormItem label="Fornecedor:" width="100%">
+				<leonelcasado:CustomFieldSet title="Dados do Fornecedor" height="5%" paddingBottom="5" paddingLeft="20"
+											 paddingRight="20" paddingTop="20">
+					<mx:Form width="100%">
+						<mx:HBox width="100%">
+							<mx:VBox>
+								<leonelcasado:CustomLabel text="(COD:)" />
+								<leonelcasado:CustomTextInput id="txtCodigoFornecedor" width="50" enter="consultarFornecedor()" restrict="0-9" />
+							</mx:VBox>
+							<mx:DataGrid id="dtgFornecedor" rowCount="1" width="100%">
+								<mx:columns>
+									<!--mx:DataGridColumn headerText="COD" dataField="sequencial" /-->
+									<mx:DataGridColumn headerText="NOME FANTASIA" dataField="nomeFantasia" />
+									<mx:DataGridColumn headerText="RAZÃO SOCIAL" dataField="razaoSocial" />
+									<mx:DataGridColumn headerText="CNPJ" dataField="cnpj" />
+									<mx:DataGridColumn headerText="TELEFONE" dataField="telefone1" />
+									<mx:DataGridColumn headerText="EMAIL" dataField="email" />
+									<mx:DataGridColumn headerText="VAL MAX" dataField="valorMaximoPedidosAsString" />
+								</mx:columns>
+							</mx:DataGrid>
+						</mx:HBox>
+						<mx:FormItem label="Valor de vendas realizadas (R$):">
+							<leonelcasado:CustomTextInput id="txtValorVendasRealizadas" enabled="false" />
+						</mx:FormItem>
+						<mx:FormItem label="Valor para vendas disponível (R$):">
+							<leonelcasado:CustomTextInput id="txtValorVendasDisponivel" enabled="false" />
+						</mx:FormItem>
+						<leonelcasado:CustomButton id="btnPequisarFornecedor" label="Pesquisar Fornecedor" click="pesquisarFornecedor()" />
+					</mx:Form>
+				</leonelcasado:CustomFieldSet>
+			</mx:FormItem>
+			<mx:FormItem label="Número da Nota:">
+				<leonelcasado:CustomTextInput id="txtNumeroNota" enabled="false" restrict="0-9" />
+			</mx:FormItem>
+			<mx:FormItem label="Valor (R$):">
+				<leonelcasado:CustomTextInput id="txtValor" enabled="false" />
+			</mx:FormItem>
+			<mx:FormItem label="Situação da solicitação:">
+				<leonelcasado:CustomFieldSet title="Datas" height="5%" paddingBottom="5" paddingLeft="20"
+											 paddingRight="20" paddingTop="20">
+					<mx:Form>
+						<mx:FormItem label="Situação:">
+							<mx:HBox>
+								<mx:RadioButton id="radioEntrada" label="Entrada" enabled="false"
+												change="onRadioSituacaoSelected(SITUACAO_ENTRADA)" />
+								<mx:RadioButton id="radioEncaminhado" label="Encaminhado (somente Órtese e Prótese)" enabled="false"
+												change="onRadioSituacaoSelected(SITUACAO_ENCAMINHADO)"/>
+								<mx:RadioButton id="radioEntregue"  label="Entregue" enabled="false"
+												change="onRadioSituacaoSelected(SITUACAO_ENTREGUE)" />
+							</mx:HBox>
+						</mx:FormItem>
+						<mx:FormItem label="Entrada:">
+							<leonelcasado:CustomDateField id="dthEntradaMovimentacao" enabled="false" focusOut="{completarDataVencimento()}"
+														  />
+														  <!-- change="onDateFieldSituacaoChange()" -->
+
+						</mx:FormItem>
+						<mx:FormItem label="Encaminhado:">
+							<leonelcasado:CustomDateField id="dthEncaminhadoMovimentacao" enabled="false"
+														  />
+														  <!-- change="onDateFieldSituacaoChange()" -->
+
+						</mx:FormItem>
+						<mx:FormItem label="Entregue:">
+							<leonelcasado:CustomDateField id="dthEntregueMovimentacao" enabled="false"
+														  />
+														  <!-- change="onDateFieldSituacaoChange()" -->
+
+						</mx:FormItem>
+						<mx:FormItem label="Autorização:">
+								<leonelcasado:CustomDateField id="dthAutorizacaoMovimentacao" enabled="false" change="onDthAutorizacaoMovimentacaoChange()" />
+
+						</mx:FormItem>
+						<mx:FormItem label="Data de Vencimento:">
+							<leonelcasado:CustomDateField id="dthVencimentoMovimentacao" enabled="false"/>
+						</mx:FormItem>
+					</mx:Form>
+				</leonelcasado:CustomFieldSet>
+			</mx:FormItem>
+		</mx:Form>
+		<mx:Form label="Impressões" id="impresoes" width="100%" showEffect="fade" height="100%">			
+			<mx:HDividedBox width="100%" height="100%">			
+				
+				<leonelcasado:CustomFieldSet width="100%" height="40%" title="Registro de Encaminhamento" id="encaminhamento">
+						
+					<mx:Form width="100%" height="100%">
+						<mx:FormItem label="Registro de Encaminhamento" direction="horizontal">
+							<s:Button label="Visualizar" id="btnRegistroEncaminhamento" click="geraEncaminhamentoOrteseProtese()"/>
+						</mx:FormItem>
+						<mx:FormItem label="Comprovante de Encaminhamento" direction="horizontal">
+							<s:Button label="Visualizar" id="btnComprovanteEncaminhamento" click="geraComprovanteEncaminhamento()"/>
+						</mx:FormItem>
+						<mx:FormItem label="Comprovante de Recebimento de Aparelho" direction="horizontal">
+							<s:Button label="Visualizar" id="btnRecebimentoAparelho" click="geraTermoCompromisso()"/>
+						</mx:FormItem>
+					</mx:Form>
+						
+				</leonelcasado:CustomFieldSet>
+						
+				<componentes:Preview id="preview" width="100%" height="100%"/>
+				
+			</mx:HDividedBox>
+		</mx:Form>
+	</mx:TabNavigator>
+	<!-- *********************************************************************************** -->
+	<componentes:BarraControles id="controles" includeInLayoutBtnSalvar="true" salvar="salvar()"
+								styleButtons="menuButton"/>
+</mx:VBox>
