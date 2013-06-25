@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+	width="100%" height="100%" horizontalAlign="center" verticalAlign="middle"
+	creationComplete="init()" title="Visualizador">
+	<fx:Script>
+		<![CDATA[
+			import infoliver.util.Imagens;
+			import mx.managers.PopUpManager;
+			
+			[Bindable]public var url:String="";
+			//private var timer:Timer;
+			
+			public function init():void{
+				this.currentState="default";
+				if(html!=null){
+					if(html.htmlText!=null && html.htmlText.length>0)html.htmlText="";
+					html.visible=false;
+					html.alpha=0;
+				} 
+				this.title="Visualizador";
+			}
+			
+			public function initStateProgress():void{
+				html.visible=false;
+				this.currentState="progress";
+				//-----------------------------------				
+				//timer = new Timer(20000);
+				//timer.addEventListener(TimerEvent.TIMER,cancelarLoadArquivo);
+				//timer.start();
+			}
+			
+			private function cancelarLoadArquivo(event:TimerEvent):void {
+				//timer.stop();
+				//timer.removeEventListener(TimerEvent.TIMER,cancelarLoadArquivo);
+				//--------------------------------------------------------------
+				this.currentState="default";
+				html.visible=false;
+				html.alpha=0;
+				this.title="Visualizador";
+			}
+			
+			public function loadArquivo(arq:Object,nome:String):void{
+				html.location = File(arq).url;
+				this.title=nome;
+				initStateProgress();
+			}
+			
+			private function removerProgress():void{
+				//timer.stop();
+				//timer.removeEventListener(TimerEvent.TIMER,cancelarLoadArquivo);
+				//--------------------------------------------------------------
+				this.currentState="html";
+				html.alpha=1;
+				html.visible=true;
+			}
+		]]>
+	</fx:Script>
+	<mx:states>
+		<s:State name="default"/>
+		<s:State name="progress"/>
+		<s:State name="html"/>
+	</mx:states>
+	<s:BorderContainer backgroundImage="@Embed('/assets/general/bgPreview.png')" width="100%" height="100%"
+		borderVisible="false" backgroundImageFillMode="scale">
+		<s:layout>
+			<s:VerticalLayout horizontalAlign="center" verticalAlign="middle" gap="0"/>  
+		</s:layout>
+		<mx:ProgressBar label="Carregando..." indeterminate="true" 
+			includeInLayout="false" visible="false"
+			includeInLayout.progress="true" visible.progress="true"/>
+		<leonelcasado:CustomButton label="Cancelar" icon="{Imagens.iconClose}" 
+	   		includeInLayout="false" visible="false"
+	   		includeInLayout.progress="true" visible.progress="true"								   
+	   		click="init()" enter="init()"/>
+		<mx:HTML id="html" width="100%" height="100%" location="{url}" complete="removerProgress()"
+			includeInLayout="false" visible="false"
+			includeInLayout.html="true" visible.html="true" alpha="0"/>
+	</s:BorderContainer>
+</mx:Panel>

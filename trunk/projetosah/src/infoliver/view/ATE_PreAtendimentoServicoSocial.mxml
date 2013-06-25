@@ -1,0 +1,717 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		  xmlns:componentes="infoliver.view.componentes.*"
+		  title="Pre Atendimento (Serviço Social)" width="100%" height="100%"
+		  paddingTop="3" paddingBottom="3" paddingLeft="3" paddingRight="3" creationComplete="init()">
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.EncaminhamentoExterno;
+			import infoliver.model.entity.PreAtendimento;
+			import infoliver.model.entity.Setor;
+			import infoliver.model.entity.SetorEncaminhamentoExterno;
+			import infoliver.model.entity.TipoDeficiencia;
+			import infoliver.model.entity.TipoStatusAtendimento;
+			import infoliver.model.entity.Usuario;
+			import infoliver.model.events.EncaminhadorEvent;
+			import infoliver.model.events.EncaminhamentoExternoEvent;
+			import infoliver.model.events.PreAtendimentoEvent;
+			import infoliver.model.events.SetorEncaminhamentoExternoEvent;
+			import infoliver.model.events.SetorEvent;
+			import infoliver.model.events.TipoDeficienciaEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			import infoliver.view.componentes.ColunaChamarAtendimento;
+			import infoliver.view.componentes.ColunaIniciarAtendimento;
+			
+			import leonelcasado.componentes.Alerta;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.resources.ResourceManager;
+			
+			[Bindable]public var listaAtendimentos:Array=[];
+			[Bindable]public var nome:String;
+			[Bindable]public var documento:String;
+			[Bindable]public var nomeEntrevistado:String;
+			[Bindable]public var tipoDocumento:String;			
+			[Bindable]public var listaPacientes:Array=[];
+			[Bindable]public var listaSequencial:Array=[];
+			[Bindable]public var listaEncaminhamento:Array=[];
+			[Bindable]public var listaSequencialEncaminhamento:Array=[];
+			[Bindable]public var flag:Boolean;
+			[Bindable]public var flagAtendidos:Boolean =false;
+			[Bindable]public var sequencial:Object;
+			[Bindable]public var flagEncaminhamento:Boolean=false;
+			[Bindable]public var listaPre:ArrayCollection= new ArrayCollection();
+			[Bindable]public var encaminhamentoExterno:EncaminhamentoExterno = new EncaminhamentoExterno();
+			[Bindable]public var sequencialSetor:Object;
+			[Bindable]public var flagAcesso:Boolean=true;
+			[Bindable]public var sala:String;
+			
+			
+			
+			private function init():void{				
+				criarColunasDinamicas();	
+				listarVisitantesDia();
+				flag=true;		
+				verificaAcesso();
+			}
+			
+			private var appModel:ModelLocator = ModelLocator.getInstance();
+			
+			public function chama():void{
+				if(dtgPreAtendimento.dtgCustom.selectedItem!=null){
+					var preAtendimento:PreAtendimento = dtgPreAtendimento.dtgCustom.selectedItem as PreAtendimento;
+					FlexGlobals.topLevelApplication.principal.preAtendimentoServicoSocial.lblNomeChamado.text = preAtendimento.nome;
+					
+				}
+			}
+			public function verificaAcesso():void{
+				if(flagAcesso==true){
+					Alerta.info("Por Favor Indique a Sala de Atendimento","Informar Sala");					
+					flagAcesso = false;
+				}
+				
+			}
+			public function getSala():void{
+				
+					sala = txtSala.texto;
+				
+			}
+			
+			
+			//======================= Consulta Visitante Pré Atendimento ===========//
+			private function criarColunasDinamicas():void{
+						
+				dtgPreAtendimento.addColunaTexto("Nome","nome",null,null,100);
+				dtgPreAtendimento.addColunaTexto("Documento","documento",null,null,40);
+				dtgPreAtendimento.addColunaTexto("Tipo","tipoPaciente",null,null,50);
+				dtgPreAtendimento.addColunaComponenteItemRenderer("",ColunaChamarAtendimento,20);
+				dtgPreAtendimento.addColunaComponenteItemRenderer("",ColunaIniciarAtendimento,20);
+				
+				dtgAtendidos.addColunaTexto("Nome","nome",null,null,100);
+				dtgAtendidos.addColunaTexto("Documento","documento",null,null,40);
+				dtgAtendidos.addColunaTexto("Tipo","tipoPaciente",null,null,50);
+				
+			}
+			public function adicionaAtendimentos(data:Object):void{
+				
+					var preAtendimento:PreAtendimento = data as PreAtendimento;						
+					var lista:Array = new Array(preAtendimento);
+					var atendimentos:ArrayCollection= new ArrayCollection(lista);
+					
+					
+			}
+			private function listarVisitantesDiaComFiltro():void{
+				var preAtendimento:PreAtendimento = new PreAtendimento();				
+				var paginacaoVO:PaginacaoVO=new PaginacaoVO;
+				var setor:Setor = new Setor();	
+				var tipo:TipoStatusAtendimento = new TipoStatusAtendimento();
+				tipo.sequencial = 1;
+				preAtendimento.tipoStatusAtendimento=tipo;
+				preAtendimento.setor = setor;
+				preAtendimento.nome = txtBusca.text;
+				preAtendimento.tipoPaciente =  txtBusca.text;
+				preAtendimento.documento =  txtBusca.text;
+				
+				paginacaoVO.entidade=preAtendimento;
+				paginacaoVO.quantidadePaginacao=dtgPreAtendimento.maximo;
+				paginacaoVO.inicioPaginacao=dtgPreAtendimento.indice;
+				
+				new PreAtendimentoEvent(PreAtendimentoEvent.LISTARCOMFILTRO,this,paginacaoVO).dispatch();
+			}
+			public function listarAtendidos():void{				
+				var preAtendimento:PreAtendimento = new PreAtendimento();				
+				var paginacaoVO:PaginacaoVO=new PaginacaoVO;
+				var setor:Setor = new Setor();
+				var tipo:TipoStatusAtendimento = new TipoStatusAtendimento();
+				tipo.sequencial=2;
+				setor.sequencial=22;				
+				preAtendimento.setor = setor;
+				preAtendimento.tipoStatusAtendimento=tipo;
+				preAtendimento.nome = txtBusca.text;
+				preAtendimento.tipoPaciente =  txtBusca.text;
+				preAtendimento.documento =  txtBusca.text;
+				
+				paginacaoVO.entidade=preAtendimento;
+				paginacaoVO.quantidadePaginacao=dtgPreAtendimento.maximo;
+				paginacaoVO.inicioPaginacao=dtgPreAtendimento.indice;
+				
+				new PreAtendimentoEvent(PreAtendimentoEvent.LISTARATENDIDOS,this,paginacaoVO).dispatch();
+			}
+			//======================= Entrevista: Visitante / Paciente  ===========//
+			
+			public function setaDadosEntrevista(data:Object):void{								
+				nomeEntrevistado = data.nome;
+				documento = data.documento;		
+				sequencial = data.setor.sequencial;
+				tipoDocumento = data.tipoDocumento;
+				cmbTipoDocumento.selectedValue = data.tipoDocumento;
+				
+			
+			}
+			
+			public function adcionaPacientes():void{
+				if(cmbDeficiencia.cmbCrud.selectedItem!=null){
+					var tipoDeficiencia:TipoDeficiencia = cmbDeficiencia.cmbCrud.selectedItem as TipoDeficiencia;
+					listaPacientes.push(tipoDeficiencia);
+					dtgSelecionados.dataProvider=listaPacientes;
+				//	listaSequencial.push(pacienteSelecionado.sequencial);
+				}
+			}
+			public function setaEndidadeParaAlterar(data:Object):void{
+				var preAtendimento:PreAtendimento = new PreAtendimento();
+				preAtendimento = data as PreAtendimento;
+				preAtendimento.tipoStatusAtendimento.sequencial = 2;
+				sequencial = data.sequencial;
+				new PreAtendimentoEvent(PreAtendimentoEvent.ALTERAR,this,preAtendimento).dispatch();
+				
+			}
+			
+			
+			public function setaEntidadeParaSalvar():void{
+				
+				var preAtendimento:PreAtendimento = new PreAtendimento();
+				var usuario:Usuario = new Usuario();
+				var status:TipoStatusAtendimento = new TipoStatusAtendimento();
+				status.sequencial = 2;
+				usuario.sequencial = appModel.loginVO.usuario.sequencial;
+				var setor:Setor = new Setor();
+				preAtendimento.usuario = usuario; 
+				preAtendimento.tipoStatusAtendimento = status;
+				preAtendimento.tipoDocumento = cmbTipoDocumento.selectedLabel;
+				preAtendimento.tipoPaciente = "PACIENTE";
+				preAtendimento.bairro = txtBairro.texto;
+				preAtendimento.cidade = txtCidade.texto;
+				preAtendimento.dataEncaminhamentoExterno = dthEncaminhamentoExterno.text.length >0?dthEncaminhamentoExterno.selectedDate:null;
+				preAtendimento.documento=txtDocumento.texto;
+				preAtendimento.idade = txtIdadePaciente.texto;
+				preAtendimento.logradouro = txtRua.texto;
+				preAtendimento.nome = txtNomePaciente.texto;
+				preAtendimento.numero = txtNumero.texto;
+				preAtendimento.referencia = txtReferencia.texto;
+				preAtendimento.relato = txtRelato.texto;
+				setor.sequencial = 22;
+				preAtendimento.setor = setor;
+				preAtendimento.sequencial = sequencial as Object;
+				var encaminhamento:EncaminhamentoExterno = new EncaminhamentoExterno();
+				encaminhamento.sequencial =  cmbParaEncaminhamentoExterno.cmbCrud.selectedIndex>0?cmbParaEncaminhamentoExterno.cmbCrud.selectedItem.sequencial:null;
+				preAtendimento.encaminhamentoExterno = encaminhamento;		
+				preAtendimento.setorEncaminhamentoInterno = cmbEncaminhamentoInterno.cmbCrud.selectedIndex>0?cmbEncaminhamentoInterno.cmbCrud.selectedItem.sequencial:null;				
+				new PreAtendimentoEvent(PreAtendimentoEvent.ALTERAR,this,preAtendimento).dispatch();
+				//limparCampos();
+				
+			}
+			//======================= Encaminhamento Interno  ===========//
+				public function adcionaEncaminhamentos():void{
+					if(cmbEncaminhamentoInterno.cmbCrud.selectedItem!=null){
+						var setor:Setor= cmbEncaminhamentoInterno.cmbCrud.selectedItem as Setor;
+						listaEncaminhamento.push(setor);
+						dtgEncaminhamento.dataProvider=listaEncaminhamento;
+						//	listaSequencial.push(pacienteSelecionado.sequencial);
+					}
+			}
+			// ====================== Listar Pacientes do dia ==================== //
+			public function listarVisitantesDia():void{
+				
+				var preAtendimento:PreAtendimento = new PreAtendimento();				
+				var paginacaoVO:PaginacaoVO=new PaginacaoVO;
+				var setor:Setor = new Setor();
+				setor.sequencial = 22;
+				var tipo:TipoStatusAtendimento = new TipoStatusAtendimento();
+				tipo.sequencial=1;
+				preAtendimento.setor = setor;
+				preAtendimento.tipoStatusAtendimento = tipo;
+				paginacaoVO.entidade=preAtendimento;
+				paginacaoVO.quantidadePaginacao=dtgPreAtendimento.maximo;
+				paginacaoVO.inicioPaginacao=dtgPreAtendimento.indice;
+				
+				new PreAtendimentoEvent(PreAtendimentoEvent.LISTAR,this,paginacaoVO).dispatch();
+			}
+			// ======================  Carregar Combos / Crud Combos ==================== //
+			
+			// COMBO ENCAMINHAMENTO EXTERNO==================================================
+			private function getDescricao(isInclusao:Boolean=false):EncaminhamentoExterno{
+				
+					
+					var encaminhamentoExterno:EncaminhamentoExterno=new EncaminhamentoExterno;
+					if(!isInclusao)encaminhamentoExterno=cmbEncaminhamentoExterno.itemSelecionado as EncaminhamentoExterno;
+					encaminhamentoExterno.descricao=cmbParaEncaminhamentoExterno.cmbCrud.text;	
+					encaminhamentoExterno.logradouro = txtLogradouroEncaminhamento.texto;
+					encaminhamentoExterno.responsavel = txtResponsavelEncaminhamento.texto;
+					encaminhamentoExterno.referencia = txtReferenciaEncaminhamento.texto;
+					return encaminhamentoExterno;
+				}
+					private function getDescricaoEncaminhamentoExterno(isInclusao:Boolean=true):EncaminhamentoExterno{
+						var encaminhamento:EncaminhamentoExterno=new EncaminhamentoExterno;
+						if(!isInclusao)encaminhamento=cmbEncaminhamentoExterno.itemSelecionado as EncaminhamentoExterno;
+						encaminhamento.descricao=cmbEncaminhamentoExterno.cmbCrud.text;
+						return encaminhamento;
+					}
+					
+				
+			private function alteraEncaminhamento():EncaminhamentoExterno{
+				var encaminhamentoExterno:EncaminhamentoExterno=new EncaminhamentoExterno;
+				encaminhamentoExterno.logradouro = txtLogradouroEncaminhamento.texto;
+				encaminhamentoExterno.responsavel = txtResponsavelEncaminhamento.texto;
+				encaminhamentoExterno.referencia = txtReferenciaEncaminhamento.texto;
+				encaminhamentoExterno.sequencial = cmbParaEncaminhamentoExterno.cmbCrud.selectedItem.sequencial;
+				return encaminhamentoExterno;
+			}
+			
+			private function alterarEncainhamentoExterno():void{
+				cmbParaEncaminhamentoExterno.alterar(EncaminhamentoExternoEvent,EncaminhamentoExternoEvent.ALTERAR,alteraEncaminhamento());
+				
+			}
+			private function inserirEncaminhamentoExterno():void{
+				cmbEncaminhamentoExterno.inserir(EncaminhamentoExternoEvent,EncaminhamentoExternoEvent.INSERIR,getDescricaoEncaminhamentoExterno(true));
+				cmbEncaminhamentoExterno.cmbCrud.text = "";
+			}
+			private function inserirEncaminhamento():void{
+				cmbParaEncaminhamentoExterno.inserir(EncaminhamentoExternoEvent,EncaminhamentoExternoEvent.INSERIR,getDescricao(true));
+			}
+			public function carregaComboEncaminhamentoExterno():void{
+				cmbEncaminhamentoExterno.listar(EncaminhamentoExternoEvent,EncaminhamentoExternoEvent.LISTAR);	
+				
+			}
+			public function carregaComboParaEncaminhamentoExterno():void{
+					
+				cmbParaEncaminhamentoExterno.listar(EncaminhamentoExternoEvent,EncaminhamentoExternoEvent.LISTAR);
+			}
+			
+			
+			//  Combo Deficiência=================================================================
+			private function getDescricaoDeficiencia(isInclusao:Boolean=false):TipoDeficiencia{
+				var tipoDeficiencia:TipoDeficiencia = new TipoDeficiencia();
+				if(!isInclusao)tipoDeficiencia=cmbDeficiencia.itemSelecionado as TipoDeficiencia;
+				tipoDeficiencia.descricao=cmbDeficiencia.cmbCrud.text;
+				return tipoDeficiencia;
+			}
+			
+			private function inserirTipoDeficiencia():void{
+				cmbDeficiencia.inserir(TipoDeficienciaEvent,TipoDeficienciaEvent.INSERIR,getDescricaoDeficiencia(true));
+			}
+			public function carregaComboDeficiencia():void{
+				cmbDeficiencia.listar(TipoDeficienciaEvent,TipoDeficienciaEvent.LISTAR);			
+			}
+			//  Combo Setor Encaminhamento Externo
+			private function getDescricaoSetorExterno(isInclusao:Boolean=false):SetorEncaminhamentoExterno{
+				var setorExterno :SetorEncaminhamentoExterno = new SetorEncaminhamentoExterno();
+				if(!isInclusao)setorExterno=cmbSetorExterno.itemSelecionado as SetorEncaminhamentoExterno;
+				setorExterno.descricao=cmbSetorExterno.cmbCrud.text;
+				return setorExterno;
+			}
+			
+			private function inserirSetorExterno():void{
+				cmbSetorExterno.inserir(SetorEncaminhamentoExternoEvent,SetorEncaminhamentoExternoEvent.INSERIR,getDescricaoSetorExterno(true));
+			}
+			public function carregaComboSetorExterno():void{				
+				cmbSetorExterno.listar(SetorEncaminhamentoExternoEvent,SetorEncaminhamentoExternoEvent.LISTAR);
+				
+			}
+			public function getSequencialEncaminhamento():void{
+				if(cmbParaEncaminhamentoExterno.cmbCrud.selectedItem!=null){
+					flagEncaminhamento=true;
+					var encaminhamento:EncaminhamentoExterno = new EncaminhamentoExterno();
+					encaminhamento.sequencial = cmbParaEncaminhamentoExterno.cmbCrud.selectedItem.sequencial;
+					new EncaminhamentoExternoEvent(EncaminhamentoExternoEvent.LISTARFILTRO,this,encaminhamento).dispatch();
+				}
+				
+				
+			}
+			public function setaDadosEncaminhamento(data:Object):void{
+				var encaminhamento:EncaminhamentoExterno = new EncaminhamentoExterno();
+				
+				
+				//txtReferenciaEncaminhamento.text = data.result.entidade.referencia;
+				//txtResponsavelEncaminhamento.text = data.result.entidade.responsavel;
+			}
+			// Combo Setor Encaminhamento Interno
+			private function getDescricaoSetorInterno(isInclusao:Boolean=false):Setor{
+				var setor :Setor = new Setor();
+				if(!isInclusao)setor=cmbEncaminhamentoInterno.itemSelecionado as Setor;
+				setor.descricao=cmbEncaminhamentoInterno.cmbCrud.text;
+				return setor;
+			}
+			
+			private function inserirSetorInterno():void{
+				cmbEncaminhamentoInterno.inserir(SetorEvent,SetorEvent.INSERIR,getDescricaoSetorInterno(true));
+			}
+			public function carregaComboSetorInterno():void{
+				cmbEncaminhamentoInterno.listar(SetorEvent,SetorEvent.LISTAR);
+			}
+			
+			// Result
+			public function result(data:Object,event:Event):void{
+				 if(event.type==PreAtendimentoEvent.LISTAR){					
+					dtgPreAtendimento.inicializarTotalizadores();
+					dtgPreAtendimento.setDataGridPaginado(data.result.totalRegistros,data.result.entidade);
+					
+				}
+				 else if(event.type==TipoDeficienciaEvent.LISTAR){
+					 cmbDeficiencia.cmbCrud.dataProvider=data.result;
+				 }
+				 else if(event.type==EncaminhamentoExternoEvent.LISTAR){
+					 cmbEncaminhamentoExterno.cmbCrud.dataProvider=data.result;
+					 
+				 }
+				 else if(event.type==EncaminhamentoExternoEvent.LISTARFILTRO){
+					 var e:EncaminhamentoExterno = new EncaminhamentoExterno();
+					listaPre.source= data.result.source;
+					encaminhamentoExterno=listaPre.getItemAt(0) as EncaminhamentoExterno;
+					txtReferenciaEncaminhamento.text = encaminhamentoExterno.referencia;
+					txtResponsavelEncaminhamento.text = encaminhamentoExterno.responsavel;
+					txtLogradouroEncaminhamento.text = encaminhamentoExterno.logradouro;
+					
+					 
+				 }
+				 else if(event.type==SetorEncaminhamentoExternoEvent.LISTAR){
+					 cmbSetorExterno.cmbCrud.dataProvider=data.result;
+				 }
+				 else if(event.type==SetorEvent.LISTAR){
+					 cmbEncaminhamentoInterno.cmbCrud.dataProvider=data.result;
+				 }
+				 else if(event.type==PreAtendimentoEvent.LISTARCOMFILTRO){
+					 dtgPreAtendimento.inicializarTotalizadores();
+					 dtgPreAtendimento.setDataGridPaginado(data.result.totalRegistros,data.result.entidade);				
+				 }
+				 else if(event.type==PreAtendimentoEvent.ALTERAR){
+					listarVisitantesDia();		
+					
+				 }
+				 else if(event.type==PreAtendimentoEvent.LISTARATENDIDOS){					
+					 dtgAtendidos.inicializarTotalizadores();
+					 dtgAtendidos.setDataGridPaginado(data.result.totalRegistros,data.result.entidade);		 
+					 				 
+				 }
+			}
+			
+			
+			private function fim_Click():void{
+				//dtg.fim();
+				//listar();
+			}
+			
+			private function fechar():void{
+				FlexGlobals.topLevelApplication.fecharTela();
+			}
+			public function novo():void{
+				
+			}
+			public function salvar():void{
+				if(flagEncaminhamento==false){
+					setaEntidadeParaSalvar();
+					//limparCampos();
+				}else{
+					setaEntidadeParaSalvar();
+					gerarEncaminhamentoExterno();
+					//limparCampos();
+				}
+				
+				
+				
+			}
+			public function selecionarItem():void{
+				
+			}
+			public function alterarItem():void{
+				
+			}
+			public function salvarItem():void{
+				
+			}
+			public function excluirrItem():void{
+				
+			}
+			//=================================== RELATÓRIO =============================
+				public function gerarEncaminhamentoExterno():void{
+										
+						var url:String=ResourceManager.getInstance().getString('strings','url')+"previewEncaminhamentoExterno";				
+						var request:URLRequest = new URLRequest(url);											
+						preview.initStateProgress();				
+						//--------------------------------------------------------------------------						
+						url=url+"?seqPaciente="+sequencial
+						preview.html.location=url;					
+					
+				}
+			private function limparCampos():void{
+				txtBairro.text = "";
+				txtCidade.text = "";
+				txtDocumento.text = "";
+				txtIdadePaciente.text = "";
+				txtLogradouroEncaminhamento.text = "";
+				txtNomePaciente.text = "";
+				txtNumero.text = "";
+				txtReferencia.text = "";
+				txtReferenciaEncaminhamento.text = "";
+				txtRelato.text = "";
+				txtResponsavelEncaminhamento.text = "";
+				txtRua.text = "";
+				cmbParaEncaminhamentoExterno.cmbCrud.selectedIndex = 0;
+				dtgEncaminhamento.dataProvider = null;
+			}
+		]]>
+	</fx:Script>
+	
+	<leonelcasado:CustomFieldSet title="Pré-Atendimento (Serviço Social)" width="100%" height="100%">
+			
+		<s:Form width="100%" height="100%">	
+			<mx:TabNavigator id="tabPreAtendimentoServicoSocial" width="100%" height="100%" paddingTop="10" 
+							 backgroundAlpha="0" creationPolicy="all" borderStyle="none">
+				<s:NavigatorContent label="Pré-Atendimento">
+					<mx:Form width="100%" height="100%">					
+					<leonelcasado:CustomFieldSet title="Listagem para Pré-Atendimento do Dia" width="100%" height="40%">
+						<mx:Form width="100%">
+						<mx:FormItem label="Localizar:" width="100%" direction="horizontal">
+							<leonelcasado:CustomTextInput id="txtBusca" width="100%" enter="listarVisitantesDiaComFiltro()"/>
+							<leonelcasado:CustomButton id="btnBusca" click="listarVisitantesDia()" label="Listar Todos"/>	
+							<leonelcasado:CustomLabel id="lblSala" width="3%" text="Sala Entrevista:"/>
+							<leonelcasado:CustomTextInput id="txtSala" width="100%"/>
+							<leonelcasado:CustomButton id="btnSala" click="getSala()" label="OK"/>
+						</mx:FormItem>
+						<leonelcasado:CustomDataGrid id="dtgPreAtendimento" width="100%" height="100%" includeInLayoutTotalRegistro="false" includeInLayoutPaginacao="false" 
+													 includeInLayoutBtnExcluirRegistro="false"/>							
+					</mx:Form>
+						
+						</leonelcasado:CustomFieldSet>
+						<leonelcasado:CustomFieldSet title="Listagem Atendidos" width="100%" height="60%">
+							<mx:Form width="100%">
+								<mx:FormItem label="Localizar:" width="100%" direction="horizontal">
+									<leonelcasado:CustomTextInput id="txtBuscaAtendidos" width="100%" enter="listarVisitantesDiaComFiltro()"/>
+									<leonelcasado:CustomButton id="btnBuscaAtendidos" click="listarAtendidos()" label="Listar Todos"/>								
+								</mx:FormItem>	
+							</mx:Form>		
+							<mx:FormItem width="100%" height="80%">
+							<leonelcasado:CustomDataGrid id="dtgAtendidos" width="100%" includeInLayoutTotalRegistro="false" includeInLayoutPaginacao="false" 
+														 includeInLayoutBtnExcluirRegistro="false"/>
+								</mx:FormItem>
+						</leonelcasado:CustomFieldSet>
+					
+				</mx:Form>
+				</s:NavigatorContent>
+				<s:NavigatorContent width="100%" height="10%" label="Entrevista">
+					<mx:Box width="100%" height="100%">						
+					<leonelcasado:CustomFieldSet title="Dados Visitante/Paciente" width="100%" height="20%">
+						<mx:Form width="100%">							
+							<mx:FormItem label="Prontuário" width="100%" height="30%" direction="horizontal">
+								<leonelcasado:CustomLabel id="lblProntuarioEntrevista" width="3%"/>
+								<mx:FormItem label="Nome:" width="100%" height="30%" direction="horizontal">
+									<leonelcasado:CustomLabel id="lblNomeEntrevista" width="3%" text="{nomeEntrevistado}"/>
+									</mx:FormItem>
+							</mx:FormItem>	
+							<mx:FormItem label="Tipo Doc." width="5%" direction="horizontal">
+								<leonelcasado:CustomLabel id="lblTipoDocEntrevista" width="5%" text="{tipoDocumento}"/>
+								<mx:FormItem label="Documento:" width="100%" height="30%" direction="horizontal">
+									<leonelcasado:CustomLabel id="lblDocEntrevista" width="3%" text="{documento}"/>									
+								</mx:FormItem>	
+							</mx:FormItem>	
+						</mx:Form>
+					</leonelcasado:CustomFieldSet>	
+						<leonelcasado:CustomFieldSet title="Deficiência" width="100%">
+							<mx:Form width="100%" creationComplete="carregaComboDeficiencia()">
+							<mx:FormItem label="Tipo" width="100%" direction="horizontal">
+								<leonelcasado:CustomComboBoxCrud width="20%" id="cmbDeficiencia" customLabelField="descricao" isOrdenarLista="true" 
+																 selecionarItem="selecionarItem()" salvarItem="inserirTipoDeficiencia()" alterarItem="alterarItem()"
+																 excluirItem="excluirrItem()"/>	
+								<s:Button id="btnAdicionar" label="Adicionar" click="adcionaPacientes()"/>									
+							</mx:FormItem></mx:Form>
+													
+								<mx:DataGrid id="dtgSelecionados" width="100%" draggableColumns="false" height="100%">									
+									<mx:columns>
+										<mx:DataGridColumn headerText="Código" dataField="sequencial" width="80"/>
+										<mx:DataGridColumn headerText="Descrição" dataField="descricao"/>								
+										<mx:DataGridColumn width="30">
+											<mx:itemRenderer>
+												<fx:Component>
+													<mx:Box horizontalAlign="center" verticalAlign="middle">
+														<fx:Script>
+															<![CDATA[
+																import infoliver.model.entity.Arquivo;
+																import infoliver.model.entity.Paciente;
+																import infoliver.model.events.ArquivoEvent;
+																
+																import leonelcasado.componentes.Alerta;
+																import leonelcasado.componentes.Imagens;
+																
+																import mx.controls.Alert;
+																import mx.events.CloseEvent;
+																
+																private function excluir():void{
+																	outerDocument.listaPacientes.splice(outerDocument.dtgSelecionados.selectedIndex,1);
+																	outerDocument.listaSequencial.splice(outerDocument.dtgSelecionados.selectedIndex,1);
+																	Alerta.confirm("Deseja excluir o registro selecionado?",confirmarExclusao);
+																}
+																private function confirmarExclusao(event:CloseEvent):void{
+																	if(event.detail==Alert.YES){																		
+																		outerDocument.dtgSelecionados.dataProvider=outerDocument.listaPacientes;																			
+																	}
+																}								
+																
+															]]>
+														</fx:Script>
+														<leonelcasado:CustomImagem toolTip="Exclusão" click="excluir()" source="{Imagens.iconDelete}"/>
+													</mx:Box>
+												</fx:Component>
+											</mx:itemRenderer>
+										</mx:DataGridColumn>
+									</mx:columns>
+								</mx:DataGrid>							
+								
+							</leonelcasado:CustomFieldSet>					
+						
+						
+						<leonelcasado:CustomFieldSet title="Dados Recebimento Externo" width="100%" height="17%" paddingTop="20">
+							<mx:Form width="100%" creationComplete="carregaComboEncaminhamentoExterno(),carregaComboSetorExterno()">							
+								<mx:FormItem label="Encaminhamento" width="100%" height="30%" direction="horizontal">
+									<leonelcasado:CustomComboBoxCrud width="20%" id="cmbEncaminhamentoExterno" customLabelField="descricao" 
+																	 salvarItem="inserirEncaminhamentoExterno()"/>	
+									<leonelcasado:CustomLabel text="Setor:"/>
+									<leonelcasado:CustomComboBoxCrud width="30%" id="cmbSetorExterno" customLabelField="descricao" salvarItem="inserirSetorExterno()"/>	
+									<leonelcasado:CustomLabel text="Data:"/>
+									<leonelcasado:CustomDateField width="10%" id="dthEncaminhamentoExterno"/>
+								</mx:FormItem>											
+																			
+							</mx:Form>
+						</leonelcasado:CustomFieldSet>	
+						<leonelcasado:CustomFieldSet title="Relato Visitante/Paciente" width="100%" paddingTop="20">
+						<mx:Form width="100%" height="100%">
+						<mx:FormItem label="Relato" width="100%" height="100%">
+							<leonelcasado:CustomTextArea width="100%" height="100%" id="txtRelato"/>				
+						</mx:FormItem>	
+							</mx:Form>
+							</leonelcasado:CustomFieldSet>
+						
+					</mx:Box>
+				</s:NavigatorContent>
+				<s:NavigatorContent width="100%" height="100%" label="Encaminhamento Interno">
+					<leonelcasado:CustomFieldSet title="Encaminhamento Interno" width="100%">
+						<mx:Form width="100%" creationComplete="carregaComboSetorInterno()">
+							<mx:FormItem label="Tipo" width="100%" direction="horizontal">
+								<leonelcasado:CustomComboBoxCrud width="20%" id="cmbEncaminhamentoInterno" customLabelField="descricao" isOrdenarLista="true" 
+																 selecionarItem="selecionarItem()" salvarItem="inserirSetorInterno()" alterarItem="alterarItem()"
+																 excluirItem="excluirrItem()"/>	
+								<s:Button id="btnAdicionarEncaminhamento" label="Adicionar" click="adcionaEncaminhamentos()"/>									
+							</mx:FormItem></mx:Form>
+						
+						<mx:DataGrid id="dtgEncaminhamento" width="100%" draggableColumns="false" height="100%">									
+							<mx:columns>
+								<mx:DataGridColumn headerText="Código" dataField="sequencial" width="80"/>
+								<mx:DataGridColumn headerText="Descrição" dataField="descricao"/>								
+								<mx:DataGridColumn width="30">
+									<mx:itemRenderer>
+										<fx:Component>
+											<mx:Box horizontalAlign="center" verticalAlign="middle">
+												<fx:Script>
+													<![CDATA[
+														import infoliver.model.entity.Arquivo;
+														import infoliver.model.entity.Paciente;
+														import infoliver.model.events.ArquivoEvent;
+														
+														import leonelcasado.componentes.Alerta;
+														import leonelcasado.componentes.Imagens;
+														
+														import mx.controls.Alert;
+														import mx.events.CloseEvent;
+														
+														private function excluir():void{
+															outerDocument.listaEncaminhamento.splice(outerDocument.dtgEncaminhamento.selectedIndex,1);
+															outerDocument.listaSequencialEncaminhamento.splice(outerDocument.dtgEncaminhamento.selectedIndex,1);
+															Alerta.confirm("Deseja excluir o registro selecionado?",confirmarExclusao);
+														}
+														private function confirmarExclusao(event:CloseEvent):void{
+															if(event.detail==Alert.YES){																
+																outerDocument.dtgEncaminhamento.dataProvider=outerDocument.listaEncaminhamento;																
+															}
+														}								
+														
+													]]>
+												</fx:Script>
+												<leonelcasado:CustomImagem toolTip="Exclusão" click="excluir()" source="{Imagens.iconDelete}"/>
+											</mx:Box>
+										</fx:Component>
+									</mx:itemRenderer>
+								</mx:DataGridColumn>
+							</mx:columns>
+						</mx:DataGrid>							
+						
+					</leonelcasado:CustomFieldSet>	
+				</s:NavigatorContent>
+				
+				<s:NavigatorContent width="100%" height="100%" label="Encaminhamento Externo">
+					<mx:HDividedBox  width="100%" height="100%" paddingBottom="3" paddingLeft="3">
+					<leonelcasado:CustomFieldSet title="Dados para Encaminhamento Externo" width="100%" height="100%" paddingTop="20">
+						<mx:Form width="100%" creationComplete="carregaComboParaEncaminhamentoExterno()">							
+							<mx:FormItem label="Encaminhamento" width="100%" height="30%" direction="horizontal">
+								<leonelcasado:CustomComboBoxCrud width="20%" id="cmbParaEncaminhamentoExterno" customLabelField="descricao" 
+																 salvarItem="inserirEncaminhamento()" selecionarItem="getSequencialEncaminhamento()" 
+																 alterarItem="alterarEncainhamentoExterno()"/>	
+								</mx:FormItem>
+								<mx:FormItem label="Endereço:" width="100%">
+									<leonelcasado:CustomTextInput id="txtLogradouroEncaminhamento" width="100%"/>
+								</mx:FormItem>
+								<mx:FormItem label="Referência:" width="100%">
+									<leonelcasado:CustomTextInput id="txtReferenciaEncaminhamento" width="100%"/>
+								</mx:FormItem>
+								<mx:FormItem label="Responsavél:" width="100%">
+									<leonelcasado:CustomTextInput id="txtResponsavelEncaminhamento" width="100%"/>
+								</mx:FormItem>
+																							
+						</mx:Form>
+						<mx:TabNavigator width="100%" height="100%" backgroundAlpha="0" borderStyle="none" creationPolicy="all">						
+						<s:NavigatorContent width="100%" height="100%" label="Dados Gerais">							
+								<mx:Form width="100%" showEffect="fade">					
+									<mx:FormItem label="Nome:" width="100%" direction="horizontal">										
+										<leonelcasado:CustomTextInput width="100%" id="txtNomePaciente" text="{nomeEntrevistado}"/>										
+									</mx:FormItem>	
+									<mx:FormItem label="Tipo Documento:" width="100%" direction="horizontal">
+										<leonelcasado:CustomComboBox id="cmbTipoDocumento"> 
+											<fx:Array>
+												<fx:Object label="CNS" data="1"/>
+												<fx:Object label="RG" data="2"/>
+												<fx:Object label="CPF" data="4"/>
+												<fx:Object label="CTPS" data="5"/>						
+											</fx:Array>					
+										</leonelcasado:CustomComboBox>		
+										<leonelcasado:CustomTextInput width="100%" id="txtDocumento" text="{documento}"/>										
+									</mx:FormItem>
+									<mx:FormItem label="Idade:" width="100%" direction="horizontal">										
+										<leonelcasado:CustomTextInput width="100%" id="txtIdadePaciente"/>										
+									</mx:FormItem>
+									
+								</mx:Form>
+								
+						</s:NavigatorContent>
+							<s:NavigatorContent width="100%" height="100%" label="Endereço">							
+								<mx:Form width="100%">					
+									<mx:FormItem label="Rua:" width="100%" height="30%" direction="horizontal">										
+										<leonelcasado:CustomTextInput width="90%" id="txtRua"/>
+										<s:Label text="Nº:"/>
+										<leonelcasado:CustomTextInput id="txtNumero" width="10%"/>
+									</mx:FormItem>	
+									<mx:FormItem label="Bairro:" width="100%" height="30%" direction="horizontal">										
+										<leonelcasado:CustomTextInput width="85%" id="txtBairro"/>
+										<leonelcasado:CustomLabel text="Cidade:"/>
+										<leonelcasado:CustomTextInput width="15%" id="txtCidade"/>
+									</mx:FormItem>
+									<mx:FormItem label="Referência:" width="100%" height="100%" direction="horizontal">
+										<leonelcasado:CustomTextInput width="100%" id="txtReferencia"/>
+									</mx:FormItem>
+								</mx:Form>								
+							</s:NavigatorContent>
+				</mx:TabNavigator>
+				</leonelcasado:CustomFieldSet>
+					<componentes:Preview id="preview" width="100%" height="100%"/>	
+				</mx:HDividedBox>		
+				</s:NavigatorContent>
+			
+			</mx:TabNavigator>
+		</s:Form>
+		<componentes:BarraControles id="controles" includeInLayoutBtnSalvar="true" salvar="salvar()" includeInLayoutBtnFechar="true"
+									styleButtons="menuButton" fechar="fechar()"/>
+	</leonelcasado:CustomFieldSet>	
+</mx:Panel>

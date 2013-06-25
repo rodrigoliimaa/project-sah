@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+	xmlns:view="infoliver.view.*" width="100%" height="100%"
+	paddingLeft="3" paddingRight="3" paddingTop="3" paddingBottom="3" 
+	verticalAlign="top" title="Paciente" show="init()">
+	<fx:Script>
+		<![CDATA[
+			import mx.core.UIComponent;
+			import mx.resources.ResourceManager;
+			
+			public function init():void{
+				tabPacienteGerenciador.selectedIndex=0;
+				pacienteListagem.limpar();
+				pacienteCadastro.label='Novo';
+				//----------------------------------------------
+				(tabPacienteGerenciador.getChildAt(1) as UIComponent).enabled = false;
+			}
+			
+			private function desabilitaHabilitaTabEdicao():void{
+				if(tabPacienteGerenciador.selectedIndex==0){
+					pacienteCadastro.label='Novo';
+					(tabPacienteGerenciador.getChildAt(1) as UIComponent).enabled = false;
+				}else
+					(tabPacienteGerenciador.getChildAt(1) as UIComponent).enabled = true;
+			}
+			
+			public function novoPaciente(flag:Boolean,data:Object=null):void{
+				tabPacienteGerenciador.selectedIndex=1;
+				flag==true?pacienteCadastro.label='Novo':pacienteCadastro.label='Edição';
+				pacienteCadastro.tabPaciente.selectedIndex=2;
+				pacienteCadastro.isInserirNovoRegistro=flag;
+				pacienteCadastro.data=data;
+				desabilitaHabilitaTabEdicao();
+				
+			}
+			
+		]]>
+	</fx:Script>
+	<mx:TabNavigator id="tabPacienteGerenciador" width="100%" height="100%" change="desabilitaHabilitaTabEdicao()"
+		horizontalGap="0" backgroundAlpha="0" paddingTop="0" borderStyle="none"
+		useHandCursor="true" buttonMode="true" creationPolicy="all">
+		<view:CAD_PacienteListagem id="pacienteListagem" label="Listagem" width="100%" height="100%"/>
+		<view:CAD_PacienteCadastro id="pacienteCadastro" label="Novo" width="100%" height="100%"/>
+		<view:REL_EtiquetasPaciente id="etiquetasPaciente" label="Etiquetas Paciente" width="100%" height="100%"/>		
+	</mx:TabNavigator>
+</mx:Panel>

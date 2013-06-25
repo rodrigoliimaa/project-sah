@@ -1,0 +1,439 @@
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		 xmlns:componentes="infoliver.view.componentes.*"
+		 width="100%" height="100%" initialize="init()">
+	<fx:Script>
+		<![CDATA[
+			import flash.sampler.NewObjectSample;
+			
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.Agendamento;
+			import infoliver.model.entity.Medico;
+			import infoliver.model.entity.Ocupacao;
+			import infoliver.model.entity.Paciente;
+			import infoliver.model.entity.Usuario;
+			import infoliver.model.events.AgendamentoEvent;
+			import infoliver.model.events.MedicoEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			import infoliver.util.RoleSistema;
+			
+			import leonelcasado.componentes.Alerta;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Button;
+			import mx.core.FlexGlobals;
+			import mx.resources.ResourceManager;
+			import mx.utils.StringUtil;
+			
+			public const DATA_DE_HOJE:String = "DATA DE HOJE";
+			public const TODAS_AS_DATAS:String = "TODAS AS DATAS";
+			public const ESPECIFICAR_DATA:String = "ESPECIFICAR DATA";
+			public const LISTA_DATAS_AGENDAMENTOS:Array = [
+				DATA_DE_HOJE, TODAS_AS_DATAS, ESPECIFICAR_DATA
+			];
+			
+			public const CNS_MEDICO:String = "CNS (MÉDICO)";
+			public const NOME_MEDICO:String = "NOME (MÉDICO)";
+			public const OCUPACAO_MEDICO:String = "OCUPAÇÃO (MÉDICO)";
+			public const CNS_PACIENTE:String = "CNS (PACIENTE)";
+			public const CPF_PACIENTE:String = "CPF (PACIENTE)";
+			public const NOME_PACIENTE:String = "NOME (PACIENTE)";
+			public const OCUPACAO_PACIENTE:String = "OCUPAÇÃO (PACIENTE)";
+			public const PRONTUARIO:String = "PRONTUÁRIO";
+			public const RG_PACIENTE:String = "RG (PACIENTE)";
+			public const LISTA_TIPO_PESQUISA:Array = [
+				CNS_MEDICO, NOME_MEDICO, OCUPACAO_MEDICO,
+				CNS_PACIENTE, CPF_PACIENTE, NOME_PACIENTE, OCUPACAO_PACIENTE, PRONTUARIO, RG_PACIENTE
+			];
+			
+			public const TODAS_AS_SITUACOES:String = "TODAS";
+			public const LISTA_SITUACAO_AGENDAMENTO:Array = [
+				TODAS_AS_SITUACOES
+			].concat(Agendamento.LISTA_SITUACAO);
+			
+			public const TODOS_OS_TURNOS:String = "TODOS";
+			public const LISTA_TURNO_AGENDAMENTO:Array = [
+				{label:"TODOS", data:TODOS_OS_TURNOS},
+				{label:"MANHÃ", data:Agendamento.TURNO_MANHA},
+				{label:"TARDE", data:Agendamento.TURNO_TARDE}
+			];
+			
+			public var agendamentos:ArrayCollection = new ArrayCollection();
+			
+			private var appModel:ModelLocator = ModelLocator.getInstance();
+			[Bindable]private var nomeMedico:String; 
+			[Bindable]private var cnsMedico:String;
+			[Bindable]private var ocupacaoMedico:String; 
+			[Bindable]private var cnsPaciente:String;
+			[Bindable]private var cpfPaciente:String;
+			[Bindable]private var nomePaciente:String;
+			[Bindable]private var ocupacaoPaciente:String; 
+			[Bindable]private var rgPaciente:String;
+			[Bindable]private var prontuario:String; 
+			[Bindable]private var usuarioLogado:Usuario;
+			[Bindable]private var dataIni:String;
+			[Bindable]private var dataFim:String;
+			
+			private function init():void{
+				criarColunas();
+				validarPermissoesDaTela();
+				usuarioLogado = ModelLocator.getInstance().loginVO.usuario;
+			}
+			
+			public function criarColunas():void{
+				//dtg.addColunaCentralizada("COD","sequencial",null,30);
+				dtg.addColunaData("DATA","data",null,60);
+				dtg.addColunaCentralizada("TURNO","turno",null,35);
+				//dtg.addColunaCentralizada("SITUAÇÃO","situacao",null,60);
+				//dtg.addColunaCentralizada("COD (REAG.)","reagendamento.sequencial",null,80);
+				dtg.addColunaCentralizada("NOME (MÉD.)","medico.nome",null,200);
+				dtg.addColunaCentralizada("DESC (EQ. MÉD.)","equipeMedica.descricao",null,200);
+				//dtg.addColunaCentralizada("ATIVO (MÉD.)","medico.indicadorAtivo",null,75);
+				dtg.addColunaCentralizada("PRONT.","paciente.sequencial",null,45);
+				dtg.addColunaCentralizada("NOME","paciente.nome",null,180);
+				dtg.addColunaData("DT. NASC.","paciente.dataNascimento",null, 50);
+			}
+			public function gerarRelatorios():void{
+				
+				var url:String=ResourceManager.getInstance().getString('strings','url')+"previewRelatorioAgendamentos";				
+				var request:URLRequest = new URLRequest(url);				
+				preview.initStateProgress();				
+				//--------------------------------------------------------------------------						
+				url=url+"?nomeMedico="+nomeMedico+"&ocupacaoMedico="+ocupacaoMedico+"&cnsMedico="+cnsMedico+"&cnsPaciente="+cnsPaciente+"&cpfPaciente="+cpfPaciente
+					+"&nomePaciente="+nomePaciente+"&ocupacaoPaciente="+ocupacaoPaciente+"&rgPaciente="+rgPaciente+"&prontuario="+prontuario+"&data="+dthInicio.selectedDate
+					+"&dataFim="+dthFim.selectedDate+"&usuarioLogado="+usuarioLogado.sequencial;											
+				preview.html.location=url;
+				
+				
+			}
+			
+			private function validarPermissoesDaTela():void{
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_ALTERAR_AGENDAMENTO)) {
+					btnAtendido.enabled = true;
+					btnCancelado.enabled = true;
+					btnFalta.enabled = true;
+					btnPresencaConfirmada.enabled = true;
+				} else {
+					btnAtendido.enabled = false;
+					btnCancelado.enabled = false;
+					btnFalta.enabled = false;
+					btnPresencaConfirmada.enabled = false;
+				}
+				
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_INSERIR_AGENDAMENTO)) {
+					controles.includeInLayoutBtnNovo=true;
+				} else {
+					controles.includeInLayoutBtnNovo=false;
+				}
+				
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_REAGENDAR)) {
+					btnReagendamento.enabled = true;
+				} else {
+					btnReagendamento.enabled = false;
+				}
+			}
+			
+			public function novo():void{
+				FlexGlobals.topLevelApplication.principal.agendamento.novoAgendamento();
+			}
+			
+			public function listar():void{
+				var agendamento:Agendamento = new Agendamento();
+				agendamento.medico = new Medico();
+				agendamento.paciente = new Paciente();
+				
+				if (cmbDataAgendamento.selectedItem.toString() == DATA_DE_HOJE) {
+					agendamento.data = new Date();
+					dataIni = new Date().toString();
+					agendamento.dataFim = new Date();
+					dataFim = new Date().toString();
+				} else if (cmbDataAgendamento.selectedItem.toString() == ESPECIFICAR_DATA) {
+					agendamento.data = dthInicio.selectedDate;
+					dataIni = dthInicio.selectedDate.toString();
+					agendamento.dataFim = dthFim.selectedDate;
+					dataFim = dthFim.selectedDate.toString();
+				} else {
+					agendamento.data = null;
+					dataIni = null;
+					agendamento.dataFim = null;
+					dataFim = null;
+				}
+				
+				if (cmbTurnoAgendamento.selectedItem.data != TODOS_OS_TURNOS) {
+					agendamento.turno = cmbTurnoAgendamento.selectedItem.data; 
+				} else {
+					agendamento.turno = null;
+				}
+				
+				if (cmbSituacaoAgendamento.selectedItem.toString() != TODAS_AS_SITUACOES) {
+					agendamento.situacao = cmbSituacaoAgendamento.selectedItem.toString(); 
+				} else {
+					agendamento.situacao = null;
+				}
+				
+//				agendamento.medico = new Medico();
+//				agendamento.paciente = new Paciente();
+				if (StringUtil.trim( txtValorBusca.text ) != "") {
+					var tipoPesquisa:String = cmbTipoPesquisa.selectedItem.toString();
+					if (tipoPesquisa == CNS_MEDICO) {
+						agendamento.medico.cns = StringUtil.trim( txtValorBusca.text );
+						cnsMedico =  StringUtil.trim( txtValorBusca.text );
+						gerarRelatorios();
+					} else {
+						agendamento.medico.cns = null;
+						cnsMedico="";
+					}
+					
+					if (tipoPesquisa == NOME_MEDICO) {
+						agendamento.medico.nome = StringUtil.trim( txtValorBusca.text );
+						nomeMedico =  StringUtil.trim( txtValorBusca.text );
+						gerarRelatorios();
+					} else {
+						agendamento.medico.nome = null;
+						nomeMedico ="";
+					}
+					
+					if (tipoPesquisa == OCUPACAO_MEDICO) {
+						agendamento.medico.ocupacao = new Ocupacao();
+						agendamento.medico.ocupacao.descricao = StringUtil.trim( txtValorBusca.text );
+						ocupacaoMedico =  StringUtil.trim( txtValorBusca.text );
+						gerarRelatorios();
+					} else {
+						agendamento.medico.ocupacao = null;
+						ocupacaoMedico ="";
+					}
+					
+					if (tipoPesquisa == CNS_PACIENTE) {
+						agendamento.paciente.cns = StringUtil.trim( txtValorBusca.text );
+						cnsPaciente =  StringUtil.trim( txtValorBusca.text );
+						gerarRelatorios();
+					} else {
+						agendamento.paciente.cns = null;
+						cnsPaciente = "";
+					}
+					
+					if (tipoPesquisa == CPF_PACIENTE) {
+						agendamento.paciente.cpf = StringUtil.trim( txtValorBusca.text );
+						cpfPaciente =  StringUtil.trim( txtValorBusca.text );
+						gerarRelatorios();
+					} else {
+						agendamento.paciente.cpf = null;
+						cpfPaciente = "";
+					}
+					
+					if (tipoPesquisa == NOME_PACIENTE) {
+						agendamento.paciente.nome = StringUtil.trim( txtValorBusca.text );
+						nomePaciente =  StringUtil.trim( txtValorBusca.text );
+						gerarRelatorios();
+					} else {
+						agendamento.paciente.nome = null;
+						nomePaciente = "";
+					}
+					
+					if (tipoPesquisa == OCUPACAO_PACIENTE) {
+						agendamento.paciente.ocupacao = new Ocupacao();
+						agendamento.paciente.ocupacao.descricao = StringUtil.trim( txtValorBusca.text );
+						ocupacaoPaciente =  StringUtil.trim( txtValorBusca.text );
+						gerarRelatorios();
+					} else {
+						agendamento.paciente.ocupacao = null;
+						ocupacaoPaciente = "";
+					}
+					
+					if (tipoPesquisa == PRONTUARIO) {
+						agendamento.paciente.sequencial = StringUtil.trim( txtValorBusca.text );
+						prontuario =  StringUtil.trim( txtValorBusca.text );
+						gerarRelatorios();
+					} else {
+						agendamento.paciente.sequencial = null;
+						prontuario = "";
+					}
+					
+					if (tipoPesquisa == RG_PACIENTE) {
+						agendamento.paciente.rg = StringUtil.trim( txtValorBusca.text );
+						rgPaciente =  StringUtil.trim( txtValorBusca.text );
+						gerarRelatorios();
+						
+					} else {
+						agendamento.paciente.rg = null;
+						rgPaciente = "";
+					}
+				}
+
+				agendamento.medico.usuarioResponsavel = ModelLocator.getInstance().loginVO.usuario;
+				
+				var paginacaoVO:PaginacaoVO = new PaginacaoVO();
+				paginacaoVO.entidade = agendamento;
+				paginacaoVO.quantidadePaginacao = dtg.maximo;
+				paginacaoVO.inicioPaginacao = dtg.indice;
+
+				new AgendamentoEvent(AgendamentoEvent.LISTA_PAGINADO, this, paginacaoVO).dispatch();
+				gerarRelatorios();
+			}
+			
+			public function result(data:Object,event:Event):void{
+				if (event.type == AgendamentoEvent.LISTA_PAGINADO) {
+					agendamentos = data.result.entidade;
+					dtg.inicializarTotalizadores();
+					dtg.setDataGridPaginado(data.result.totalRegistros,agendamentos);
+				}
+				
+				if (event.type == AgendamentoEvent.ALTERAR_SITUACAO) {
+					Alerta.success(data.result.msg);
+					listar();
+				}
+			}
+			
+			private function fechar():void{
+				FlexGlobals.topLevelApplication.fecharTela();
+			}
+			
+			private function inicio_Click():void{
+				dtg.inicio();
+				listar();
+			}
+			
+			private function retroceder_Click():void{
+				dtg.retroceder();
+				listar();
+			}
+			
+			private function avancar_Click():void{
+				dtg.avancar();
+				listar();
+			}
+			
+			private function fim_Click():void{
+				dtg.fim();
+				listar();
+			}
+			
+			public function onCmbDatasAgendamentoChange():void{
+				var tipoPesquisa:String = cmbDataAgendamento.selectedItem.toString();
+				if(tipoPesquisa == ESPECIFICAR_DATA) {
+					dthInicio.enabled = true;
+					dthFim.enabled = true;
+				} else {
+					dthInicio.enabled = false;
+					dthFim.enabled = false;
+				}
+			}
+			
+			public function onCmbTipoPesquisaChange():void{
+				var tipoPesquisa:String = cmbTipoPesquisa.selectedItem.toString();
+				if(tipoPesquisa == CNS_MEDICO || tipoPesquisa == CNS_PACIENTE
+					|| tipoPesquisa == CPF_PACIENTE || tipoPesquisa == PRONTUARIO
+					|| tipoPesquisa == RG_PACIENTE) {
+					txtValorBusca.restrict = "0-9";
+				} else {
+					txtValorBusca.restrict = "A-Z/a-z/ /";
+				}
+			}
+			
+			public function onDthInicioChange():void{
+				if (dthFim.selectedDate == null ||
+					dthFim.selectedDate.time < dthInicio.selectedDate.time) {
+					dthFim.selectedDate = dthInicio.selectedDate;
+				}
+			}
+			
+			public function onDthFimChange():void{
+				if (dthInicio.selectedDate == null ||
+					dthFim.selectedDate.time < dthInicio.selectedDate.time) {
+					dthInicio.selectedDate = dthFim.selectedDate;
+				}
+			}
+			
+			public function alterarSituacaoAgendamento(situacao:String):void{
+				if (dtg.dtgCustom.selectedItem != null
+					&& dtg.dtgCustom.selectedItem.situacao != situacao) {
+					var agendamento:Agendamento = new Agendamento();
+					
+					if (situacao == Agendamento.SITUACAO_REAGENDAMENTO) {
+						agendamento = dtg.dtgCustom.selectedItem as Agendamento;
+						FlexGlobals.topLevelApplication.principal.agendamento.novoAgendamento(agendamento);
+					} else {
+						agendamento.sequencial = dtg.dtgCustom.selectedItem.sequencial;
+						agendamento.situacao = situacao;
+						new AgendamentoEvent(AgendamentoEvent.ALTERAR_SITUACAO, this, agendamento).dispatch();
+					}
+				}
+			}
+		]]>
+	</fx:Script>
+	<mx:HDividedBox width="100%" height="100%" paddingBottom="3" paddingLeft="3">
+	<leonelcasado:CustomFieldSet title="Dados de Pesquisa" width="100%" height="100%">
+		<mx:Form width="100%" height="100%">
+			<mx:FormItem label="Data:" width="100%" direction="horizontal">
+				<leonelcasado:CustomComboBox id="cmbDataAgendamento" change="onCmbDatasAgendamentoChange()">
+					<s:ArrayList source="{LISTA_DATAS_AGENDAMENTOS}" />
+				</leonelcasado:CustomComboBox>
+				<!--<leonelcasado:CustomLabel text="Data:" />
+				<leonelcasado:CustomDateField id="dthAgendamento" enabled="false" />-->
+				<leonelcasado:CustomLabel text="Início:" />
+				<leonelcasado:CustomDateField id="dthInicio" enabled="false"
+											  change="onDthInicioChange()" />
+				<leonelcasado:CustomLabel text="Fim:" />
+				<leonelcasado:CustomDateField id="dthFim" enabled="false"
+											  change="onDthFimChange()"/>
+			</mx:FormItem>
+			<mx:FormItem label="Turno:" width="100%" direction="horizontal">
+				<leonelcasado:CustomComboBox id="cmbTurnoAgendamento">
+					<s:ArrayList source="{LISTA_TURNO_AGENDAMENTO}" />
+				</leonelcasado:CustomComboBox>
+			</mx:FormItem>
+			<mx:FormItem label="Tipo:" width="100%" direction="horizontal">
+				<leonelcasado:CustomComboBox id="cmbTipoPesquisa" change="onCmbTipoPesquisaChange()"
+											 selectedItem="{NOME_PACIENTE}">
+					<s:ArrayList source="{LISTA_TIPO_PESQUISA}" />
+				</leonelcasado:CustomComboBox>
+				<leonelcasado:CustomTextInput id="txtValorBusca" width="100%" />
+				<!-- restrict="A-Z/a-z/ /" -->
+			</mx:FormItem>
+			<mx:FormItem label="Situação:" width="100%" direction="horizontal">
+				<leonelcasado:CustomComboBox id="cmbSituacaoAgendamento">
+					<s:ArrayList source="{LISTA_SITUACAO_AGENDAMENTO}" />
+				</leonelcasado:CustomComboBox>
+			</mx:FormItem>
+			<mx:FormItem>
+				<componentes:BarraControles id="controles" styleButtons="menuButton"
+											includeInLayoutBtnNovo="true" includeInLayoutBtnConsultar="true"
+											includeInLayoutBtnFechar="true" 
+											consultar="listar()"
+											fechar="fechar()"
+											novo="novo()"/>
+			</mx:FormItem>
+				
+		
+	<leonelcasado:CustomDataGrid id="dtg" width="100%" height="100%"
+								 horizontalScrollCustomDataGrid="on"
+								 primeiroRegistro="inicio_Click()" registroAlterior="retroceder_Click()" 
+								 proximoRegistro="avancar_Click()" ultimoRegistro="fim_Click()"
+								 includeInLayoutBtnAlterarRegistro="false"
+								 includeInLayoutBtnExcluirRegistro="false"
+								 />
+	
+		<mx:FormItem label="Marcar Situação:" width="100%" direction="horizontal">
+			<leonelcasado:CustomButton id="btnAtendido" label="Atendido"
+									   click="alterarSituacaoAgendamento(Agendamento.SITUACAO_ATENDIDO)"
+									   />
+			<leonelcasado:CustomButton id="btnCancelado" label="Cancelado"
+									   click="alterarSituacaoAgendamento(Agendamento.SITUACAO_CANCELADO)"
+									   />
+			<leonelcasado:CustomButton id="btnFalta" label="Falta"
+									   click="alterarSituacaoAgendamento(Agendamento.SITUACAO_FALTA)"
+									   />
+			<leonelcasado:CustomButton id="btnPresencaConfirmada" label="Presença Confirmada"
+									   click="alterarSituacaoAgendamento(Agendamento.SITUACAO_PRESENCA_CONFIRMADA)"
+									   />
+			<leonelcasado:CustomButton id="btnReagendamento" label="Reagendamento" 
+									   click="alterarSituacaoAgendamento(Agendamento.SITUACAO_REAGENDAMENTO)"
+									   />
+		</mx:FormItem>
+		</mx:Form>
+	</leonelcasado:CustomFieldSet>		
+		<componentes:Preview id="preview" width="80%" height="100%"/>
+	</mx:HDividedBox>
+</mx:VBox>

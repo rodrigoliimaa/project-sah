@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		  xmlns:componentes="infoliver.view.componentes.*"
+		  xmlns:view="infoliver.view.*" width="100%" height="100%"
+		  paddingLeft="3" paddingRight="3" paddingTop="3" paddingBottom="3" 
+		  verticalAlign="top" title="Feriado" show="init()">
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.Feriado;
+			import infoliver.model.events.FeriadoEvent;
+			import infoliver.util.RoleSistema;
+			
+			import leonelcasado.componentes.Alerta;
+			import leonelcasado.componentes.CustomViewHelper;
+			
+			import mx.collections.ArrayCollection;
+			import mx.core.FlexGlobals;
+			import mx.utils.StringUtil;
+			
+			private var feriado:Feriado;
+			private var feriados:Vector.<Feriado>;
+			private var isInserirNovoRegistro:Boolean = true;
+			
+			private var appModel:ModelLocator = ModelLocator.getInstance();
+			
+			public function alterar():void{
+				if (dtg.dtgCustom.selectedItem != null) {
+					feriado = dtg.dtgCustom.selectedItem as Feriado;
+					txtDescricaoFeriado.text = feriado.descricao;
+					dthDataInicioFeriado.selectedDate = feriado.dataInicio;
+					dthDataFimFeriado.selectedDate = feriado.dataFim;
+					checkBoxSempreNaMesmaDataFeriado.selected =
+						(feriado.sempreNaMesmaData == "S") ? true : false;
+					
+					controles.btnSalvar.enabled = true;
+					
+					checkBoxSempreNaMesmaDataFeriado.enabled = true;
+					dthDataFimFeriado.enabled = true;
+					dthDataInicioFeriado.enabled = true;
+					txtDescricaoFeriado.editable = true;
+					
+					isInserirNovoRegistro = false;
+				}
+			}
+			
+			public function criarColunas():void{
+				dtg.addColunaNumero("sequencial","sequencial",null,"right",0,false);
+				dtg.addColunaData("INÍCIO","dataInicio", null, 120);
+				dtg.addColunaData("FIM","dataFim", null, 120);
+				dtg.addColunaCentralizada("DESCRIÇÃO","descricao", null, 500);
+				dtg.addColunaCentralizada("Sempre na mesma data","sempreNaMesmaData", null, 60);
+			}
+			
+			public function excluir():void{
+				if (dtg.dtgCustom.selectedItem != null) {
+					feriado = dtg.dtgCustom.selectedItem as Feriado;
+					new FeriadoEvent(FeriadoEvent.EXCLUIR, this, feriado).dispatch();
+				}
+			}
+			
+			public function fechar():void{
+				FlexGlobals.topLevelApplication.fecharTela();
+			}
+			
+			public function init():void{
+				criarColunas();
+				listar();
+				
+				controles.btnSalvar.enabled = false;
+				
+				validarPermissoesDaTela();
+			}
+			
+			private function validarPermissoesDaTela():void{
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_ALTERAR_FERIADO)) {
+					dtg.includeInLayoutBtnAlterarRegistro=true;
+					dtg.doubleClickEnabled = true;
+				} else {
+					dtg.includeInLayoutBtnAlterarRegistro=false;
+					dtg.doubleClickEnabled = false;
+				}
+				
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_EXCLUIR_FERIADO)) {
+					dtg.includeInLayoutBtnExcluirRegistro=true;
+				} else {
+					dtg.includeInLayoutBtnExcluirRegistro=false;
+				}
+				
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_INSERIR_FERIADO)) {
+					controles.includeInLayoutBtnNovo=true;
+				} else {
+					controles.includeInLayoutBtnNovo=false;
+				}
+			}
+			
+			public function limpar():void{
+				CustomViewHelper.limparCamposFormulario(this);
+			}
+			
+			public function listar():void{
+				new FeriadoEvent(FeriadoEvent.LISTAR, this).dispatch();
+			}
+				
+			public function novo():void{
+				if (feriado == null) {
+					feriado = new Feriado();
+				}
+				feriado.sequencial = null;
+				
+				limpar();
+				
+				controles.btnSalvar.enabled = true;
+				
+				checkBoxSempreNaMesmaDataFeriado.enabled = true;
+				checkBoxSempreNaMesmaDataFeriado.selected = true;
+				dthDataFimFeriado.enabled = true;
+				dthDataInicioFeriado.enabled = true;
+				txtDescricaoFeriado.editable = true;
+				
+				isInserirNovoRegistro = true;
+
+				txtDescricaoFeriado.setFocus();
+			}
+			
+			public function onDthDataInicioFeriadoChange():void{
+				if (dthDataFimFeriado.selectedDate == null ||
+					dthDataFimFeriado.selectedDate.time < dthDataInicioFeriado.selectedDate.time) {
+					dthDataFimFeriado.selectedDate = dthDataInicioFeriado.selectedDate;
+				}
+			}
+			
+			public function result(data:Object, event:Event):void{
+				if (event.type == FeriadoEvent.ALTERAR) {
+					Alerta.info(data.result.msg);
+					listar();
+					limpar();
+					controles.btnSalvar.enabled = false;
+				}
+				
+				if (event.type == FeriadoEvent.EXCLUIR) {
+					Alerta.info(data.result.msg);
+					listar();
+					limpar();
+					controles.btnSalvar.enabled = false;
+				}
+				
+				if (event.type == FeriadoEvent.INSERIR) {
+					Alerta.info(data.result.msg);
+					listar();
+					limpar();
+					controles.btnSalvar.enabled = false;
+				}
+				
+				if (event.type == FeriadoEvent.LISTAR) {
+					dtg.dtgCustom.dataProvider = data.result;
+				}
+			}
+			
+			public function salvar():void{
+				if (feriado == null) {
+					feriado = new Feriado();
+				}
+				
+				feriado.dataFim = dthDataFimFeriado.selectedDate;
+				feriado.dataInicio = dthDataInicioFeriado.selectedDate;
+				feriado.descricao = StringUtil.trim( txtDescricaoFeriado.text );
+				feriado.sempreNaMesmaData =
+					(checkBoxSempreNaMesmaDataFeriado.selected == true) ? "S" : "N";
+				
+				if (isInserirNovoRegistro == true) {
+					new FeriadoEvent(FeriadoEvent.INSERIR, this, feriado).dispatch();
+				} else {
+//					feriado.sequencial = dtg.dtgCustom.selectedItem.sequencial;
+					new FeriadoEvent(FeriadoEvent.ALTERAR, this, feriado).dispatch();
+				}
+			}
+		]]>
+	</fx:Script>
+	<mx:TabNavigator id="tabFeriadoGerenciador" width="100%" height="100%" 
+					 horizontalGap="0" backgroundAlpha="0" paddingTop="0" borderStyle="none"
+					 useHandCursor="true" buttonMode="true" creationPolicy="all">
+		<mx:VBox label="Listagem">
+			<leonelcasado:CustomFieldSet title="Dados do Feriado" width="100%" height="10%">
+				<mx:Form width="100%">
+					<mx:FormItem label="Descrição:" width="100%">
+						<leonelcasado:CustomTextInput id="txtDescricaoFeriado" width="100%" editable="false"/>
+					</mx:FormItem>
+					<mx:HBox>
+						<mx:FormItem label="Data de Início:">
+							<leonelcasado:CustomDateField id="dthDataInicioFeriado" enabled="false"
+														 change="onDthDataInicioFeriadoChange()" />
+						</mx:FormItem>
+						<mx:FormItem label="Data de Fim:">
+							<leonelcasado:CustomDateField id="dthDataFimFeriado" enabled="false" />
+						</mx:FormItem>
+						<mx:FormItem label="Sempre na mesma data (Ocorre na mesma data para todos os anos?) :">
+							<leonelcasado:CustomCheckBox id="checkBoxSempreNaMesmaDataFeriado" enabled="false"
+														 selected="true" />
+						</mx:FormItem>
+					</mx:HBox>
+					<mx:FormItem>
+						<componentes:BarraControles id="controles" styleButtons="menuButton"
+													fechar="fechar()"
+													includeInLayoutBtnFechar="true"
+													includeInLayoutBtnNovo="true"
+													includeInLayoutBtnSalvar="true"
+													novo="novo()"
+													salvar="salvar()"
+													/>
+					</mx:FormItem>
+				</mx:Form>
+			</leonelcasado:CustomFieldSet>
+			<leonelcasado:CustomDataGrid id="dtg" width="100%" height="100%"
+										 horizontalScrollCustomDataGrid="on"
+										 includeInLayoutBtnAlterarRegistro="true"
+										 includeInLayoutBtnExcluirRegistro="true"
+										 includeInLayoutPaginacao="false"
+										 alterarRegistro="alterar()" selecionarItem="alterar()"
+										 excluirRegistro="excluir()"
+										 />
+<!--										 primeiroRegistro="inicio_Click()" registroAlterior="retroceder_Click()" 
+										 proximoRegistro="avancar_Click()" ultimoRegistro="fim_Click()"
+										 includeInLayoutBtnAlterarRegistro="true"
+										 includeInLayoutBtnExcluirRegistro="false"-->
+		</mx:VBox>
+	</mx:TabNavigator>
+</mx:Panel>	

@@ -1,0 +1,261 @@
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		  xmlns:componentes="infoliver.view.componentes.*"
+		  title="RELATÓRIO DE EQUIPAMENTOS" width="100%" height="100%" verticalAlign="top"
+		  paddingTop="3" paddingBottom="3" paddingLeft="3" paddingRight="3" creationComplete="init()">
+	<fx:Script>
+		<![CDATA[
+			import flash.globalization.DateTimeFormatter;
+			
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.Fornecedor;
+			import infoliver.model.entity.Movimentacao;
+			import infoliver.model.entity.Programa;
+			import infoliver.model.events.FornecedorEvent;
+			import infoliver.model.events.MovimentacaoEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			import infoliver.util.RoleSistema;
+			
+			import leonelcasado.componentes.Alerta;
+			import leonelcasado.componentes.CustomViewHelper;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.CalendarLayoutChangeEvent;
+			import mx.resources.ResourceManager;
+			import mx.utils.StringUtil;
+			
+			public const APAC_BPI_DATAGRID_INDEX:int = 1;
+			
+			public const APAC:String = "APAC";
+			public const BPI:String = "BPI";
+			public const NUMERO_NOTA:String = "NÚMERO DA NOTA";
+			public const LISTA_TIPO_PESQUISA_AUDITIVO:Array = [
+				APAC, NUMERO_NOTA
+			];
+			public const LISTA_TIPO_PESQUISA_ORTESE_PROTESE:Array = [
+				BPI, NUMERO_NOTA
+			];
+			
+			public const TODAS_SITUACOES:String = "TODAS";
+			public const SITUACAO_ENTRADA:String = "ENTRADA";
+			public const SITUACAO_ENCAMINHADO:String = "ENCAMINHADO";
+			public const SITUACAO_ENTREGUE:String = "ENTREGUE";
+			public const LISTA_SITUACOES:Array = [
+				TODAS_SITUACOES, SITUACAO_ENTRADA, SITUACAO_ENCAMINHADO,SITUACAO_ENTREGUE
+			];
+			public const LISTA_SITUACOES_ORTESE_PROTESE:Array = [
+				TODAS_SITUACOES, SITUACAO_ENTRADA, SITUACAO_ENCAMINHADO, SITUACAO_ENTREGUE
+			];
+			public const LISTA_PROGRAMA:Array = ['ORTESE/PROTESE','AUDITIVO'];
+			private var movimentacoes:ArrayCollection;
+			private var sequencialForncedor : int;
+			private var appModel:ModelLocator = ModelLocator.getInstance();			 
+			private var dataInicio:String = (new Date().month +1 ) +"/" + (new Date().date +"/" + new Date().fullYear); 
+			private var dataFinal:String=  (new Date().month +1 ) +	"/" + (new Date().date +"/" + new Date().fullYear); 
+		
+			public function criarColunas():void{
+				
+			dtgEquipamentos.addColunaTexto("CÓDIGO","apacBpi", null,null, 80);
+			dtgEquipamentos.addColunaTexto("PROCEDIMENTO","observacao", null,null, 140);
+				
+				
+			}
+			
+			public function hasListagem():Boolean{
+				return (movimentacoes != null && movimentacoes.length > 0);
+			}
+			
+			private function init():void{
+				criarColunas();
+				validarPermissoesDaTela();
+				
+			}
+			
+			public function limparListagem():void{
+				movimentacoes = new ArrayCollection();
+				dtgEquipamentos.dtgCustom.dataProvider = movimentacoes;
+			}
+			
+			
+			public function listar():void{	
+				var movimentacao:Movimentacao = new Movimentacao();
+				var programa:Programa = new Programa();
+				var relatorio:String = "sintetico";
+				if(radioAnalitico.selected){
+					relatorio="analitico";
+					movimentacao.situacao="analitico";
+				}
+				
+				
+				
+				var fornecedor:Fornecedor = new Fornecedor();								
+				movimentacao.fornecedor = fornecedor;				
+				if (cmbPrograma.selectedIndex ==0){
+					programa.sequencial = 1;					
+				} else if (cmbPrograma.selectedIndex ==1) {
+					programa.sequencial = 2;					
+				}				
+				movimentacao.programa = programa;	
+				movimentacao.dataInicioSolicitacao = dthInicioSolicitacao.selectedDate;
+				movimentacao.dataFimSolicitacao = new Date();
+				
+				if (dthFimSolicitacao.selectedDate == null) {
+					Alert.show("Data fim não preenchida.", "Aviso");
+					return;
+				}
+				
+				if (dthFimSolicitacao.selectedDate != null) {
+					movimentacao.dataFimSolicitacao = dthFimSolicitacao.selectedDate;
+				}
+				
+				movimentacao.situacao = cmbSituacao.selectedLabel;
+				
+				new MovimentacaoEvent(MovimentacaoEvent.LISTAR_RELATORIO_EQUIPAMENTOS, this, movimentacao).dispatch();
+				var url:String=ResourceManager.getInstance().getString('strings','url')+"previewRelatorioEquipamento";	
+				
+				var request:URLRequest = new URLRequest(url);	
+				preview.init();
+				preview.initStateProgress();				
+				//--------------------------------------------------------------------------
+				
+				url=url+"?seqPrograma="+ programa.sequencial+"&setor="+cmbPrograma.selectedLabel+ "&dataInicioSolicitacao="+dateTimeFormatter.format(dthInicioSolicitacao.selectedDate)+"&dataFim="+dateTimeFormatter.format(dthFimSolicitacao.selectedDate)
+					+"&situacao="+cmbSituacao.selectedLabel+"&tipo="+relatorio	;
+				
+				
+				preview.html.location=url;			
+			}			
+			private function useDateInicio(eventObj:CalendarLayoutChangeEvent):void {
+				// Make sure selectedDate is not null.
+				if (eventObj.currentTarget.selectedDate == null) {
+					return;
+				}
+				
+				dataInicio= (eventObj.currentTarget.selectedDate.getDate() ) +
+					"/" + (eventObj.currentTarget.selectedDate.getMonth()+1   +         
+						"/" + eventObj.currentTarget.selectedDate.getFullYear());
+			}
+			private function useDateFim(eventObj:CalendarLayoutChangeEvent):void {
+				// Make sure selectedDate is not null.
+				if (eventObj.currentTarget.selectedDate == null) {
+					return;
+				}			
+				
+				dataFinal= (eventObj.currentTarget.selectedDate.getDate()) +
+					"/" + (eventObj.currentTarget.selectedDate..getMonth()+1+            
+						"/" + eventObj.currentTarget.selectedDate.getFullYear());
+			}
+			
+			public function result(data:Object,event:Event):void{
+				if (event.type == MovimentacaoEvent.LISTAR_RELATORIO_EQUIPAMENTOS) {
+					movimentacoes = data.result;					
+					dtgEquipamentos.inicializarTotalizadores();
+					dtgEquipamentos.dtgCustom.dataProvider = movimentacoes;				
+			}
+			}
+			private function validarPermissoesDaTela():void{
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_ALTERAR_MOVIMENTACAO)) {
+					dtgEquipamentos.includeInLayoutBtnAlterarRegistro=false;
+					dtgEquipamentos.doubleClickEnabled = true;
+				} else {
+					dtgEquipamentos.includeInLayoutBtnAlterarRegistro=false;
+					dtgEquipamentos.doubleClickEnabled = false;
+				}
+				
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_EXCLUIR_MOVIMENTACAO)) {
+					dtgEquipamentos.includeInLayoutBtnExcluirRegistro=false;
+				} else {
+					dtgEquipamentos.includeInLayoutBtnExcluirRegistro=false;
+				}
+				
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_INSERIR_MOVIMENTACAO)) {
+					controles.includeInLayoutBtnNovo=false;
+				} else {
+					controles.includeInLayoutBtnNovo=false;
+				}
+			}
+			
+			private function fechar():void{
+				FlexGlobals.topLevelApplication.fecharTela();
+			}
+			
+			private function inicio_Click():void{
+				dtgEquipamentos.inicio();
+				listar();
+			}
+			
+			private function retroceder_Click():void{
+				dtgEquipamentos.retroceder();
+				listar();
+			}
+			
+			private function avancar_Click():void{
+				dtgEquipamentos.avancar();
+				listar();
+			}
+			
+			private function fim_Click():void{
+				dtgEquipamentos.fim();
+				listar();
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<mx:DateFormatter id="dateTimeFormatter" formatString="DD/MM/YYYY"/>
+	</fx:Declarations>
+	
+	
+	<mx:HDividedBox  width="100%" height="100%" paddingBottom="3" paddingLeft="3">
+		<leonelcasado:CustomFieldSet title="Dados de Pesquisa" width="50%" height="100%">
+			<mx:Form width="100%">
+				<leonelcasado:CustomFieldSet title="Programa" height="5%" paddingBottom="5" paddingLeft="20"
+											 paddingRight="20" paddingTop="20" width="100%">
+					<mx:FormItem label="Programa:" width="100%" direction="horizontal">				
+						<leonelcasado:CustomComboBox id="cmbPrograma" >
+							<s:ArrayList source="{LISTA_PROGRAMA}"/>
+						</leonelcasado:CustomComboBox>
+						<leonelcasado:CustomLabel id="lblSituacao" text="Situação:"/>
+						<leonelcasado:CustomComboBox id="cmbSituacao" >
+							<s:ArrayList source="{LISTA_SITUACOES}"/>
+						</leonelcasado:CustomComboBox>		
+						<leonelcasado:CustomLabel id="lblTipoRelatorio" text="Tipo:"/>
+						<mx:RadioButton id="radioSintetico" label="Síntetico" enabled="true" selected="true"/>
+						<mx:RadioButton id="radioAnalitico" label="Analítico" enabled="true" />
+						
+					</mx:FormItem>
+				</leonelcasado:CustomFieldSet>
+				<leonelcasado:CustomFieldSet title="Período:" height="5%" width="100%" paddingBottom="5" paddingLeft="20"
+											 paddingRight="20" paddingTop="20">
+					<mx:FormItem label="Expecificar datas:" width="100%" direction="horizontal">					
+						<leonelcasado:CustomLabel text="Início:" />
+						<leonelcasado:CustomDateField id="dthInicioSolicitacao" enabled="true" selectedDate="{new Date()}" showToday="true" change="useDateInicio(event)"/>
+						<leonelcasado:CustomLabel text="Fim:" />
+						<leonelcasado:CustomDateField id="dthFimSolicitacao" enabled="true" selectedDate="{new Date()}" showToday="true" change="useDateFim(event)" />
+					</mx:FormItem>	
+				</leonelcasado:CustomFieldSet>
+				<mx:FormItem direction="horizontal">
+					<componentes:BarraControles id="controles" styleButtons="menuButton"
+												includeInLayoutBtnNovo="false" includeInLayoutBtnConsultar="true"
+												includeInLayoutBtnFechar="true" 
+												consultar="listar()"
+												fechar="fechar()"/>					
+				</mx:FormItem>
+				
+				
+				
+			</mx:Form>
+			<leonelcasado:CustomDataGrid id="dtgEquipamentos" width="100%" height="100%"
+										 horizontalScrollCustomDataGrid="on"
+										 primeiroRegistro="inicio_Click()" registroAlterior="retroceder_Click()" 
+										 proximoRegistro="avancar_Click()" ultimoRegistro="fim_Click()"
+										 includeInLayoutBtnAlterarRegistro="false" includeInLayoutPaginacao="false"									
+										 includeInLayoutBtnExcluirRegistro="false" includeInLayoutTotalRegistro="false"
+										 />
+		</leonelcasado:CustomFieldSet>		
+		<componentes:Preview id="preview" width="50%" height="100%"/>
+	</mx:HDividedBox>
+</mx:Panel>

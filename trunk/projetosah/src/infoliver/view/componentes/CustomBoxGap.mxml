@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	width="100%" height="100%" backgroundAlpha="0.2" 
+	cornerRadius="5" backgroundColor="#656565" borderStyle="solid"
+	paddingLeft="5" paddingRight="5" paddingTop="5" paddingBottom="5">
+</mx:Box>

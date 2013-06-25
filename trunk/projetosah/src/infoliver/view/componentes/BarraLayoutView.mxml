@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	width="100%" horizontalAlign="right" verticalAlign="top">
+	<fx:Script>
+		<![CDATA[
+			import leonelcasado.componentes.Imagens;
+			import mx.events.ItemClickEvent;
+			
+			public var formulario:*;
+			public var listagem:*;
+			
+			public function inicializar():void{
+				barra.selectedIndex=0;
+				//---------------------------------
+				formulario.includeInLayout=true;
+				formulario.visible=true;
+				//---------------------------------
+				listagem.includeInLayout=true;
+				listagem.visible=true;
+			}
+			
+			private function mudarLayout(event:ItemClickEvent):void{
+				switch (event.index) {
+					case 0:
+						formulario.includeInLayout=true;
+						formulario.visible=true;
+						//---------------------------------						
+						listagem.includeInLayout=true;
+						listagem.visible=true;
+						break;
+//					case 1:
+//						formulario.includeInLayout=true;
+//						formulario.visible=true;
+//						//---------------------------------
+//						listagem.includeInLayout=false;
+//						listagem.visible=false;
+//						break;
+					case 1:
+						formulario.includeInLayout=false;
+						formulario.visible=false;
+						//---------------------------------
+						listagem.includeInLayout=true;
+						listagem.visible=true;
+						break;
+				}
+			}
+		]]>
+	</fx:Script>
+	<mx:ToggleButtonBar id="barra" itemClick="mudarLayout(event)" selectedIndex="0" width="50" height="25">
+		<mx:dataProvider>
+			<fx:Object toolTip="Compartilhado" icon="{Imagens.iconFormDataGrid}" />
+			<!--fx:Object toolTip="Formulário" icon="{Imagens.iconForm}" /-->
+			<fx:Object toolTip="Listagem" icon="{Imagens.iconDataGrid}" />
+		</mx:dataProvider>
+	</mx:ToggleButtonBar>
+</mx:HBox>

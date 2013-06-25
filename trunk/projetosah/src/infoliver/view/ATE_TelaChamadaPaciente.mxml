@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		  xmlns:componentes="infoliver.view.componentes.*"
+		  title="Painel Chamada" width="100%" height="100%"
+		  paddingTop="3" paddingBottom="3" paddingLeft="3" paddingRight="3" initialize="init()" >
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.entity.PreAtendimento;
+			
+			import leonelcasado.com.adobe.cairngorm.componentes.Alerta;
+			
+			import mx.core.FlexGlobals;
+			[Bindable]public var nome:String;
+			[Bindable]public var sala:String;
+			public function init():void{
+				
+				
+			}
+			public function chama(preAtendimento:PreAtendimento):void{
+			
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<leonelcasado:CustomFieldSet title="ATENDIMENTOS" width="100%" height="100%">
+		
+		<s:Form width="100%" height="100%">	
+			<leonelcasado:CustomLabel width="1243" color="#F70909" fontSize="60" paddingRight="300"
+									  paddingTop="20" text="CHAMADA ATENDIMENTOS" textAlign="center"
+									  verticalAlign="middle"/>
+			<mx:FormItem width="100%" height="50%" paddingTop="100" direction="horizontal">
+				<leonelcasado:CustomLabel width="3%" height="100%" color="#F70909" fontSize="60" 
+						  paddingLeft="10" text="Nome:"/>					
+				<mx:Label id="lblNome" width="97%" height="100%" color="#0B0202" fontSize="60"
+						  paddingLeft="10" text="{nome}"/>					
+			</mx:FormItem>
+			<mx:FormItem width="100%" height="50%" direction="horizontal" paddingBottom="0"
+						 paddingTop="70">
+			<leonelcasado:CustomLabel width="3%" height="100%" color="#F70909" fontSize="60"
+									  paddingBottom="0" paddingLeft="10" paddingTop="0" text="Sala:"
+									  verticalAlign="top"/>					
+			<mx:Label id="lblsala" width="1081" height="100%" color="#100F0F"
+									  fontSize="60" paddingLeft="10" paddingRight="800"
+									  text="{sala}"/>					
+			</mx:FormItem>
+			
+		</s:Form>
+	</leonelcasado:CustomFieldSet>	
+</mx:Panel>

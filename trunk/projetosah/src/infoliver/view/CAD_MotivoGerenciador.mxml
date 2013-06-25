@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		 xmlns:componentes="infoliver.view.componentes.*"
+		 width="100%" height="100%" initialize="init()">
+
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.Motivo;
+			import infoliver.model.events.MotivoEvent;
+			import infoliver.util.RoleSistema;
+			
+			import leonelcasado.componentes.Alerta;
+			import leonelcasado.componentes.CustomViewHelper;
+			
+			import mx.core.FlexGlobals;
+			import mx.utils.StringUtil;
+			
+			private var motivo:Motivo;
+			private var motivos:Vector.<Motivo>;
+			private var isInserirNovoRegistro:Boolean = true;
+			
+			private var appModel:ModelLocator = ModelLocator.getInstance();
+			
+			public function alterar():void{
+				if (dtg.dtgCustom.selectedItem != null) {
+					motivo = dtg.dtgCustom.selectedItem as Motivo;
+					txtDescricaoMotivo.text = motivo.descricao;
+					
+					controles.btnSalvar.enabled = true;
+					
+					txtDescricaoMotivo.editable = true;
+					
+					isInserirNovoRegistro = false;
+				}
+			}
+			
+			public function criarColunas():void{
+				dtg.addColunaNumero("sequencial","sequencial",null,"right",0,false);
+				dtg.addColunaCentralizada("DESCRIÇÃO","descricao", null, 500);
+			}
+			
+			public function excluir():void{
+				if (dtg.dtgCustom.selectedItem != null) {
+					motivo = dtg.dtgCustom.selectedItem as Motivo;
+					new MotivoEvent(MotivoEvent.EXCLUIR, this, motivo).dispatch();
+				}
+			}
+			
+			public function fechar():void{
+				FlexGlobals.topLevelApplication.fecharTela();
+			}
+			
+			public function init():void{
+				criarColunas();
+				listar();
+				
+				controles.btnSalvar.enabled = false;
+				
+				validarPermissoesDaTela();
+			}
+			
+			private function validarPermissoesDaTela():void{
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_ALTERAR_MOTIVO)) {
+					dtg.includeInLayoutBtnAlterarRegistro=true;
+					dtg.doubleClickEnabled = true;
+				} else {
+					dtg.includeInLayoutBtnAlterarRegistro=false;
+					dtg.doubleClickEnabled = false;
+				}
+				
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_EXCLUIR_MOTIVO)) {
+					dtg.includeInLayoutBtnExcluirRegistro=true;
+				} else {
+					dtg.includeInLayoutBtnExcluirRegistro=false;
+				}
+				
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_INSERIR_MOTIVO)) {
+					controles.includeInLayoutBtnNovo=true;
+				} else {
+					controles.includeInLayoutBtnNovo=false;
+				}
+			}
+			
+			public function limpar():void{
+				CustomViewHelper.limparCamposFormulario(this);
+			}
+			
+			public function listar():void{
+				new MotivoEvent(MotivoEvent.LISTAR, this).dispatch();
+			}
+			
+			public function novo():void{
+				if (motivo == null) {
+					motivo = new Motivo();
+				}
+				motivo.sequencial = null;
+				
+				limpar();
+				
+				controles.btnSalvar.enabled = true;
+				
+				txtDescricaoMotivo.editable = true;
+				
+				isInserirNovoRegistro = true;
+				
+				txtDescricaoMotivo.setFocus();
+			}
+			
+			public function result(data:Object, event:Event):void{
+				if (event.type == MotivoEvent.ALTERAR) {
+					Alerta.info(data.result.msg);
+					listar();
+					limpar();
+					controles.btnSalvar.enabled = false;
+					FlexGlobals.topLevelApplication.principal.licenca.listarMotivos();
+				}
+				
+				if (event.type == MotivoEvent.EXCLUIR) {
+					Alerta.info(data.result.msg);
+					listar();
+					limpar();
+					controles.btnSalvar.enabled = false;
+					FlexGlobals.topLevelApplication.principal.licenca.listarMotivos();
+				}
+				
+				if (event.type == MotivoEvent.INSERIR) {
+					Alerta.info(data.result.msg);
+					listar();
+					limpar();
+					controles.btnSalvar.enabled = false;
+					FlexGlobals.topLevelApplication.principal.licenca.listarMotivos();
+				}
+				
+				if (event.type == MotivoEvent.LISTAR) {
+					dtg.dtgCustom.dataProvider = data.result;
+				}
+			}
+			
+			public function salvar():void{
+				if (motivo == null) {
+					motivo = new Motivo();
+				}
+				
+				motivo.descricao = StringUtil.trim( txtDescricaoMotivo.text );
+				
+				if (isInserirNovoRegistro == true) {
+					new MotivoEvent(MotivoEvent.INSERIR, this, motivo).dispatch();
+				} else {
+					//					feriado.sequencial = dtg.dtgCustom.selectedItem.sequencial;
+					new MotivoEvent(MotivoEvent.ALTERAR, this, motivo).dispatch();
+				}
+			}
+		]]>
+	</fx:Script>
+	<leonelcasado:CustomFieldSet title="Dados do Motivo" width="100%" height="10%">
+		<mx:Form width="100%">
+			<mx:FormItem label="Descrição:" width="100%">
+				<leonelcasado:CustomTextInput id="txtDescricaoMotivo" width="100%" editable="false"/>
+			</mx:FormItem>
+			<mx:FormItem>
+				<componentes:BarraControles id="controles" styleButtons="menuButton"
+											fechar="fechar()"
+											includeInLayoutBtnFechar="true"
+											includeInLayoutBtnNovo="true"
+											includeInLayoutBtnSalvar="true"
+											novo="novo()"
+											salvar="salvar()"
+											/>
+			</mx:FormItem>
+		</mx:Form>
+	</leonelcasado:CustomFieldSet>
+	<leonelcasado:CustomDataGrid id="dtg" width="100%" height="100%"
+								 horizontalScrollCustomDataGrid="on"
+								 includeInLayoutBtnAlterarRegistro="true"
+								 includeInLayoutBtnExcluirRegistro="true"
+								 includeInLayoutPaginacao="false"
+								 alterarRegistro="alterar()" selecionarItem="alterar()"
+								 excluirRegistro="excluir()"
+								 />
+</mx:VBox>
