@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		 xmlns:componentes="infoliver.view.componentes.*"
+		 width="100%" height="100%" initialize="init()">
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.Fornecedor;
+			import infoliver.model.entity.Movimentacao;
+			import infoliver.model.entity.Programa;
+			import infoliver.model.events.FornecedorEvent;
+			import infoliver.model.events.MovimentacaoEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			import infoliver.util.RoleSistema;
+			
+			import leonelcasado.componentes.Alerta;
+			import leonelcasado.componentes.CustomViewHelper;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.utils.StringUtil;
+			
+			public const APAC_BPI_DATAGRID_INDEX:int = 4;
+			
+			public const APAC:String = "APAC";
+			public const BPI:String = "BPI";
+			public const NUMERO_NOTA:String = "NÚMERO DA NOTA";
+			public const LISTA_TIPO_PESQUISA_AUDITIVO:Array = [
+				APAC, NUMERO_NOTA
+			];
+			public const LISTA_TIPO_PESQUISA_ORTESE_PROTESE:Array = [
+				BPI, NUMERO_NOTA
+			];
+			
+			public const TODAS_SITUACOES:String = "TODAS";
+			public const SITUACAO_ENTRADA:String = "ENTRADA";
+			public const SITUACAO_ENCAMINHADO:String = "ENCAMINHADO";
+			public const SITUACAO_ENTREGUE:String = "ENTREGUE";
+			public const LISTA_SITUACOES_AUDITIVO:Array = [
+				TODAS_SITUACOES, SITUACAO_ENTRADA, SITUACAO_ENTREGUE
+			];
+			public const LISTA_SITUACOES_ORTESE_PROTESE:Array = [
+				TODAS_SITUACOES, SITUACAO_ENTRADA, SITUACAO_ENCAMINHADO, SITUACAO_ENTREGUE
+			];
+			
+			private var movimentacoes:ArrayCollection;
+			
+			private var appModel:ModelLocator = ModelLocator.getInstance();
+			
+			public function alterar():void{
+				if(dtg.dtgCustom.selectedItem != null){
+					FlexGlobals.topLevelApplication.principal.movimentacao.novaMovimentacao(
+						dtg.dtgCustom.selectedItem as Movimentacao
+					);
+				}
+			}
+			
+			public function criarColunas():void{
+//				dtg.addColunaCentralizada("COD","sequencial", null, 30);
+//				dtg.addColunaCentralizada("","apacBpi", null, 90);
+//				dtg.addColunaCentralizada("NÚMERO NOTA","numeroNota", null, 90);
+//				dtg.addColunaData("DAT. SOLICITAÇÃO","dataSolicitacao", null, 100);
+//				dtg.addColunaData("DAT. VENCIMENTO","dataVencimento", null, 100);
+//				dtg.addColunaCentralizada("MÉDICO","medico.nome", null, 300);
+//				dtg.addColunaCentralizada("PACIENTE","paciente.nome", null, 300);
+//				dtg.addColunaCentralizada("FORNECEDOR","fornecedor.nomeFantasia", null, 300);
+				dtg.addColunaCentralizada("PROTOC","sequencial", null, 30);
+				dtg.addColunaCentralizada("PRONT","paciente.sequencial", null, 90);
+				dtg.addColunaCentralizada("NOME","paciente.nome", null, 300);
+				dtg.addColunaCentralizada("CNS","paciente.cns", null, 90);
+				dtg.addColunaCentralizada("","apacBpi", null, 90);
+				dtg.addColunaCentralizada("NÚMERO NOTA","numeroNota", null, 90);
+				dtg.addColunaData("DAT. SOLICITAÇÃO","dataSolicitacao", null, 100);
+				dtg.addColunaData("DAT. VENCIMENTO","dataVencimento", null, 100);
+				dtg.addColunaCentralizada("MÉDICO","medico.nome", null, 300);
+				dtg.addColunaCentralizada("FORNECEDOR","fornecedor.nomeFantasia", null, 300);
+			}
+			
+			public function hasListagem():Boolean{
+				return (movimentacoes != null && movimentacoes.length > 0);
+			}
+			
+			private function init():void{
+				criarColunas();
+				validarPermissoesDaTela();
+			}
+			
+			public function limparListagem():void{
+				movimentacoes = new ArrayCollection();
+				dtg.dtgCustom.dataProvider = movimentacoes;
+			}
+			
+			public function listar():void{
+				var movimentacao:Movimentacao = new Movimentacao();
+				var fornecedor :Fornecedor = new Fornecedor();
+				movimentacao.fornecedor = fornecedor;
+				movimentacao.programa =
+					FlexGlobals.topLevelApplication.principal.movimentacao.getPrograma();
+				
+					
+				
+				if ( StringUtil.trim(txtValorBusca.text) != "") {
+					var tipoPesquisa:String = cmbTipoPesquisa.selectedItem.toString();
+					if (tipoPesquisa == BPI || tipoPesquisa == APAC) {
+						movimentacao.apacBpi = StringUtil.trim(txtValorBusca.text);
+					} else if (tipoPesquisa == NUMERO_NOTA) {
+						movimentacao.numeroNota = StringUtil.trim(txtValorBusca.text);
+					}
+				}
+				
+				if (checkBoxDataSolicitacao.selected == true) {
+					movimentacao.dataInicioSolicitacao = dthInicioSolicitacao.selectedDate;
+					if (dthFimSolicitacao.selectedDate != null) {
+						movimentacao.dataFimSolicitacao = dthFimSolicitacao.selectedDate;
+					}
+				
+				}
+				movimentacao.situacao = cmbSituacoes.selectedLabel;
+
+				if (checkBoxDataSituacao.selected == true) {
+					movimentacao.dataInicioSituacao = dthInicioSituacao.selectedDate;
+					movimentacao.dataFimSituacao = dthFimSituacao.selectedDate;
+				}
+				
+				if (checkBoxAutorizado.selected) {
+					movimentacao.dataAutorizacao = new Date();
+				}
+				
+				var paginacaoVO:PaginacaoVO = new PaginacaoVO();
+				paginacaoVO.entidade = movimentacao;
+				paginacaoVO.quantidadePaginacao = dtg.maximo;
+				paginacaoVO.inicioPaginacao = dtg.indice;
+				
+				new MovimentacaoEvent(MovimentacaoEvent.LISTA_PAGINADO, this, paginacaoVO).dispatch();
+				
+				txtValorBusca.setFocus();
+			}
+			
+			public function novo():void{
+				FlexGlobals.topLevelApplication.principal.movimentacao.novaMovimentacao();
+			}
+			
+			public function result(data:Object,event:Event):void{
+				if (event.type == MovimentacaoEvent.LISTA_PAGINADO) {
+					movimentacoes = data.result.entidade;
+					
+					dtg.inicializarTotalizadores();
+					dtg.setDataGridPaginado(data.result.totalRegistros,movimentacoes);
+				} else if (event.type == MovimentacaoEvent.EXCLUIR) {
+					listar();
+				}
+			}
+			
+			private function validarPermissoesDaTela():void{
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_ALTERAR_MOVIMENTACAO)) {
+					dtg.includeInLayoutBtnAlterarRegistro=true;
+					dtg.doubleClickEnabled = true;
+				} else {
+					dtg.includeInLayoutBtnAlterarRegistro=false;
+					dtg.doubleClickEnabled = false;
+				}
+				
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_EXCLUIR_MOVIMENTACAO)) {
+					dtg.includeInLayoutBtnExcluirRegistro=true;
+				} else {
+					dtg.includeInLayoutBtnExcluirRegistro=false;
+				}
+				
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_INSERIR_MOVIMENTACAO)) {
+					controles.includeInLayoutBtnNovo=true;
+				} else {
+					controles.includeInLayoutBtnNovo=false;
+				}
+			}
+			
+			private function fechar():void{
+				FlexGlobals.topLevelApplication.fecharTela();
+			}
+			
+			private function inicio_Click():void{
+				dtg.inicio();
+				listar();
+			}
+			
+			private function retroceder_Click():void{
+				dtg.retroceder();
+				listar();
+			}
+			
+			private function avancar_Click():void{
+				dtg.avancar();
+				listar();
+			}
+			
+			private function fim_Click():void{
+				dtg.fim();
+				listar();
+			}
+			
+			public function onCmbTipoPesquisaChange():void{
+				var tipoPesquisa:String = cmbTipoPesquisa.selectedItem.toString();
+				if(tipoPesquisa == "") {
+					txtValorBusca.restrict = "A-Z/a-z/ /";
+				} else {
+					txtValorBusca.restrict = "0-9";
+				}
+			}
+			
+			public function onCheckBoxDataSolicitacaoChange():void{
+				if (checkBoxDataSolicitacao.selected) {
+					dthInicioSolicitacao.enabled = true;
+					dthFimSolicitacao.enabled = true;
+				} else {
+					dthInicioSolicitacao.enabled = false;
+					dthFimSolicitacao.enabled = false;
+				}
+			}
+			
+			public function onCmbSituacoesChange():void{
+				if (cmbSituacoes.selectedLabel == TODAS_SITUACOES) {
+					checkBoxDataSituacao.selected = false;
+					checkBoxDataSituacao.enabled = false;
+					dthInicioSituacao.enabled = false;
+					dthFimSituacao.enabled = false;
+				} else {
+					checkBoxDataSituacao.enabled = true;
+				}
+			}
+			
+			public function onCheckBoxDataSituacaoChange():void{
+				if (checkBoxDataSituacao.selected) {
+					dthInicioSituacao.enabled = true;
+					dthFimSituacao.enabled = true;
+				} else {
+					dthInicioSituacao.enabled = false;
+					dthFimSituacao.enabled = false;
+				}
+			}
+			
+			public function excluir():void {
+				var movimentacao:Movimentacao = dtg.dtgCustom.selectedItem as Movimentacao;
+				
+				if (movimentacao != null) {
+					
+					Alerta.confirm("Deseja realmmente excluir esta movimentação?",
+						function (event:CloseEvent) : void {
+							if(event.detail==Alert.YES){																		
+								new MovimentacaoEvent(MovimentacaoEvent.EXCLUIR, this, movimentacao).dispatch();
+							}
+						}
+					, "Aviso");
+					
+				} else {
+					Alerta.aviso("Aviso", "Nenhuma movimentação selecionada para exclusão");
+				}
+			}
+		]]>
+	</fx:Script>
+	<leonelcasado:CustomFieldSet title="Dados de Pesquisa" width="100%" height="10%">
+		<mx:Form width="100%">
+			<mx:FormItem label="Tipo:" width="100%" direction="horizontal">
+				<leonelcasado:CustomComboBox id="cmbTipoPesquisa" change="onCmbTipoPesquisaChange()" restrict="0-9">
+					<s:ArrayList source="{LISTA_TIPO_PESQUISA_ORTESE_PROTESE}" />
+				</leonelcasado:CustomComboBox>
+				<leonelcasado:CustomTextInput id="txtValorBusca" width="100%" />
+			</mx:FormItem>
+			<leonelcasado:CustomFieldSet title="Solicitação" height="5%" paddingBottom="5" paddingLeft="20"
+										 paddingRight="20" paddingTop="20">
+				<mx:HBox>
+					<leonelcasado:CustomLabel text="Especificar datas:" />
+					<leonelcasado:CustomCheckBox id="checkBoxDataSolicitacao" change="onCheckBoxDataSolicitacaoChange()" />
+					<leonelcasado:CustomLabel text="Início:" />
+					<leonelcasado:CustomDateField id="dthInicioSolicitacao" enabled="false" selectedDate="{new Date()}" showToday="true"/>
+					<leonelcasado:CustomLabel text="Fim:" />
+					<leonelcasado:CustomDateField id="dthFimSolicitacao" enabled="false" />
+				</mx:HBox>
+			</leonelcasado:CustomFieldSet>
+			<leonelcasado:CustomFieldSet title="Situação" height="5%" paddingBottom="5" paddingLeft="20"
+										 paddingRight="20" paddingTop="20">
+				<mx:HBox>
+					<leonelcasado:CustomComboBox id="cmbSituacoes" change="onCmbSituacoesChange()"/>
+						
+					<leonelcasado:CustomLabel text="Especificar datas:" />
+					<leonelcasado:CustomCheckBox id="checkBoxDataSituacao" change="onCheckBoxDataSituacaoChange()" enabled="false" />
+					<leonelcasado:CustomLabel text="Início:" /> 
+					<leonelcasado:CustomDateField id="dthInicioSituacao" enabled="false" selectedDate="{new Date()}" showToday="true"/>
+					<leonelcasado:CustomLabel text="Fim:" />
+					<leonelcasado:CustomDateField id="dthFimSituacao" enabled="false" />
+					<leonelcasado:CustomLabel text="Autorizado" />
+					<leonelcasado:CustomCheckBox id="checkBoxAutorizado" />
+				</mx:HBox>
+			</leonelcasado:CustomFieldSet>
+			<mx:FormItem>
+				<componentes:BarraControles id="controles" styleButtons="menuButton"
+											includeInLayoutBtnNovo="true" includeInLayoutBtnConsultar="true"
+											includeInLayoutBtnFechar="true" 
+											consultar="listar()"
+											fechar="fechar()"
+											novo="novo()"/>
+			</mx:FormItem>
+		</mx:Form>
+	</leonelcasado:CustomFieldSet>
+	<leonelcasado:CustomDataGrid id="dtg" width="100%" height="100%"
+								 horizontalScrollCustomDataGrid="on"
+								 primeiroRegistro="inicio_Click()" registroAlterior="retroceder_Click()" 
+								 proximoRegistro="avancar_Click()" ultimoRegistro="fim_Click()"
+								 includeInLayoutBtnAlterarRegistro="true"
+								 alterarRegistro="alterar()"
+								 excluirRegistro="excluir()"
+								 includeInLayoutBtnExcluirRegistro="false"
+								 />
+</mx:VBox>

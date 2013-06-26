@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:HBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		 width="100%" horizontalAlign="right" horizontalGap="3">
+	<fx:Metadata>
+		[Event(name="novo", type="flash.events.Event")]
+		[Event(name="salvar", type="flash.events.Event")]
+		[Event(name="consultar", type="flash.events.Event")]
+		[Event(name="cancelar", type="flash.events.Event")]
+		[Event(name="fechar", type="flash.events.Event")]
+		[Event(name="limpar", type="flash.events.Event")]
+	</fx:Metadata>
+	<fx:Script>
+		<![CDATA[
+			import leonelcasado.componentes.Imagens;
+			
+			[Bindable] public var includeInLayoutBtnSalvar:Boolean=false;
+			[Bindable] public var includeInLayoutBtnNovo:Boolean=false;
+			[Bindable] public var includeInLayoutBtnConsultar:Boolean=false;
+			[Bindable] public var includeInLayoutBtnCancelar:Boolean=false;
+			[Bindable] public var includeInLayoutBtnFechar:Boolean=false;
+			[Bindable] public var includeInLayoutBtnLimpar:Boolean=false;
+			
+			[Bindable] public var labelBtnSalvar:String="Salvar";
+			[Bindable] public var labelBtnConsultar:String="Consultar";
+			[Bindable] public var styleButtons:String;
+
+			protected function onNovo():void{
+				this.dispatchEvent(new Event("novo"));
+			}
+			
+			protected function onSalvar():void{
+				this.dispatchEvent(new Event("salvar"));
+			}
+			
+			protected function onConsultar():void{
+				this.dispatchEvent(new Event("consultar"));
+			}
+
+			protected function onCancelar():void{
+				this.dispatchEvent(new Event("cancelar"));
+			}
+
+			protected function onFechar():void{
+				this.dispatchEvent(new Event("fechar"));
+			}
+			
+			protected function onLimpar():void{
+				this.dispatchEvent(new Event("limpar"));
+			}			
+		]]>
+	</fx:Script>
+	<leonelcasado:CustomButton id="btnSalvar" label="{labelBtnSalvar}" icon="{Imagens.iconSave}" styleName="{styleButtons}" 
+		includeInLayout="{includeInLayoutBtnSalvar}" visible="{includeInLayoutBtnSalvar}"
+		click="onSalvar()" enter="onSalvar()"/>
+	<mx:VRule height="{btnSalvar.visible==true &amp;&amp; btnFechar.visible==true?btnSalvar.height:0}"/>
+
+	<leonelcasado:CustomButton id="btnNovo" label="Novo" icon="{Imagens.iconNovo}" styleName="{styleButtons}" 
+		includeInLayout="{includeInLayoutBtnNovo}" visible="{includeInLayoutBtnNovo}"
+		click="onNovo()" enter="onNovo()"/>
+	<mx:VRule height="{btnNovo.visible==true &amp;&amp; btnFechar.visible==true?btnNovo.height:0}"/>
+	
+	<leonelcasado:CustomButton id="btnConsultar" label="{labelBtnConsultar}" icon="{Imagens.iconPesquisa}" styleName="{styleButtons}"
+		includeInLayout="{includeInLayoutBtnConsultar}" visible="{includeInLayoutBtnConsultar}"
+		click="onConsultar()" enter="onConsultar()"/>								   
+	<mx:VRule height="{btnConsultar.height}" includeInLayout="{btnConsultar.visible==true?true:false}" visible="{btnConsultar.visible==true?true:false}"/>
+	
+	<leonelcasado:CustomButton id="btnCancelar" label="Cancelar" icon="{Imagens.iconDelete}" styleName="{styleButtons}"
+		includeInLayout="{includeInLayoutBtnCancelar}" visible="{includeInLayoutBtnCancelar}"
+		click="onCancelar()" enter="onCancelar()"/>
+	
+	<leonelcasado:CustomButton id="btnFechar" label="Fechar" icon="{Imagens.iconVoltar}" styleName="{styleButtons}"
+		includeInLayout="{includeInLayoutBtnFechar}" visible="{includeInLayoutBtnFechar}"
+		click="onFechar()" enter="onFechar()"/>
+	
+	<leonelcasado:CustomButton id="btnLimpar" label="Limpar" icon="{Imagens.iconClear}" styleName="{styleButtons}"
+							   includeInLayout="{includeInLayoutBtnLimpar}" visible="{includeInLayoutBtnLimpar}"
+							   click="onLimpar()" enter="onLimpar()"/>	
+</mx:HBox>

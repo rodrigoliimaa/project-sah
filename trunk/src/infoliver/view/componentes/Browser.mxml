@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+	width="100%" height="100%" horizontalAlign="center" verticalAlign="top"
+	initialize="init()">
+	<fx:Script>
+		<![CDATA[
+			import leonelcasado.componentes.Imagens;
+			import infoliver.model.ModelLocator;
+			import mx.core.FlexGlobals;
+			import mx.resources.ResourceManager;
+			
+			private var appModel:ModelLocator=ModelLocator.getInstance();
+			[Bindable]public var includeInLayoutControlsBrowser:Boolean=false;
+			[Bindable]public var includeInLayoutBtnClose:Boolean=false;
+			[Bindable]public var url:String="";
+			
+			private function init():void{
+			}
+						
+			protected function fechar():void{
+				includeInLayoutControlsBrowser=false;
+				includeInLayoutBtnClose=false;
+				habilitarBrowser(false);
+//				if(appModel.loginVO.usuario.setor.empresa.urlSite!=null){
+//					habilitarComponenteHtml(true);
+//					html.location=appModel.loginVO.usuario.setor.empresa.urlSite;
+//					html.reload();
+//				}
+			}
+			
+			public function habilitarBrowser(flag:Boolean):void{
+				habilitarComponenteHtml(flag);
+				includeInLayoutControlsBrowser=flag;
+				includeInLayoutBtnClose=flag;
+				html.htmlText="";
+			}
+			
+			public function habilitarComponenteHtml(flag:Boolean):void{
+				html.includeInLayout=flag;
+				html.visible=flag;
+				includeInLayoutControlsBrowser=false;
+				includeInLayoutBtnClose=false;
+			}			
+		]]>
+	</fx:Script>
+	<mx:HTML id="html" width="100%" height="100%" location="{url}"/>
+</mx:VBox>

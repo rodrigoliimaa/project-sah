@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		 xmlns:componentes="infoliver.view.componentes.*"
+		 width="100%" height="100%" initialize="init()" show="show()">
+	
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.entity.Fornecedor;
+			import infoliver.model.events.FornecedorEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			
+			import leonelcasado.componentes.Alerta;
+			import leonelcasado.componentes.CustomViewHelper;
+			import leonelcasado.componentes.Imagens;
+			
+			import mx.core.FlexGlobals;
+			
+			[Bindable]public var isInserirNovoRegistro:Boolean = true;
+			private var fornecedor:Fornecedor;
+			
+			public function init():void {
+				fornecedor = new Fornecedor();
+			}
+			
+			public function show():void {
+				
+			}
+			
+			public function limpar():void{
+				CustomViewHelper.limparCamposFormulario(this);				
+				FlexGlobals.topLevelApplication.principal.fornecedor.fornecedorListagem.dtg.inicializarTotalizadores();
+				FlexGlobals.topLevelApplication.principal.fornecedor.fornecedorListagem.txtValorBusca.text ="";
+				FlexGlobals.topLevelApplication.principal.fornecedor.init();
+			}
+			
+			public function listar():void{
+				var fornecedorParaListagem:Fornecedor = new Fornecedor();
+				fornecedorParaListagem.nomeFantasia = txtNomeFantasiaFornecedor.text;
+				
+				var paginacaoVO:PaginacaoVO = new PaginacaoVO();
+				paginacaoVO.entidade = fornecedorParaListagem;
+				paginacaoVO.inicioPaginacao = 0;
+				paginacaoVO.quantidadePaginacao = 10;
+				
+				//				FlexGlobals.topLevelApplication.principal.medico.medicoListagem.txtValorBusca.text
+				//					= txtNomeMedico.text;
+				new FornecedorEvent(FornecedorEvent.LISTA_PAGINADO,
+					FlexGlobals.topLevelApplication.principal.fornecedor.fornecedorListagem,
+					paginacaoVO).dispatch();
+				
+				FlexGlobals.topLevelApplication.principal.fornecedor.init();
+			}
+			
+			public function salvar():void {
+				fornecedor.cnpj = txtCNPJFornecedor.textoSemMascara();
+				fornecedor.email = txtEmailFornecedor.text;
+//				fornecedor.endereco = txtEnderecoFornecedor.text;
+				fornecedor.cep = txtCepFornecedor.textoSemMascara();
+				fornecedor.uf=cmbUfFornecedor.selectedIndex>0?cmbUfFornecedor.selectedItem.uf:null;
+				fornecedor.municipio=cmbMunicipioFornecedor.cmbMunicipio.selectedItem!=null?cmbMunicipioFornecedor.cmbMunicipio.selectedItem.municipio:null;
+				fornecedor.codigoIbgeMunicipio=cmbMunicipioFornecedor.txtCodigoIbgeMunicipio.texto;
+				fornecedor.logradouro = txtLogradouroFornecedor.texto;
+				fornecedor.numero = txtNumeroFornecedor.texto;
+				fornecedor.complemento = txtComplementoFornecedor.texto;
+				fornecedor.bairro = txtBairroFornecedor.texto;
+				fornecedor.referencia = txtReferenciaFornecedor.texto;
+				fornecedor.inscricaoEstadual = txtInscricaoEstadualFornecedor.text;
+				fornecedor.inscricaoMunicipal = txtInscricaoMunicipalFornecedor.text;
+				fornecedor.nomeFantasia = txtNomeFantasiaFornecedor.text;
+				fornecedor.razaoSocial = txtRazaoSocialFornecedor.text;
+				fornecedor.tecnicoResponsavel = txtTecnicoResponsavelFornecedor.text;
+				fornecedor.telefone1 = txtTelefone1Fornecedor.textoSemMascara();
+				fornecedor.telefone2 = txtTelefone2Fornecedor.textoSemMascara();
+				fornecedor.telefone3 = txtTelefone3Fornecedor.textoSemMascara();
+				
+//				var valorMaximoPedidosStr:String = txtValorMaximoPedidosFornecedor.texto;
+//				valorMaximoPedidosStr = valorMaximoPedidosStr.replace(/,/g,'');
+//				valorMaximoPedidosStr = valorMaximoPedidosStr.replace(/\./g,'');
+//				while (valorMaximoPedidosStr.search(/\./) != -1) {
+//					valorMaximoPedidosStr = valorMaximoPedidosStr.replace(/\./,'');
+//				}
+				fornecedor.valorMaximoPedidos = Number(txtValorMaximoPedidosFornecedor.texto
+					.replace(/,/g,'').replace(/\./g,'')
+				);
+				
+				fornecedor.indicadorAtivo = checkBoxAtivoFornecedor.selected ? "S" : "N";
+				
+				if (isInserirNovoRegistro) {
+					new FornecedorEvent(FornecedorEvent.INSERIR, this, fornecedor).dispatch();
+				} else {
+					new FornecedorEvent(FornecedorEvent.ALTERAR, this, fornecedor).dispatch();
+				}
+			}
+			
+			
+			public function result(data:Object,event:Event):void {
+				if (event.type == FornecedorEvent.ALTERAR) {
+					Alerta.success(data.result.msg);
+					limpar();
+				}
+				
+				if (event.type == FornecedorEvent.INSERIR) {
+					Alerta.success(data.result.msg);
+				}
+				
+//				if (event.type == OcupacaoEvent.PESQUISAR_POR_DESCRICAO) {
+//					dtgOcupacao.dataProvider = data.result;
+//				}
+			}
+			
+			public function setFornecedor(param:Fornecedor):void {
+				this.fornecedor = param;
+			}
+			
+			public function preencherFormulario():void{
+				txtCNPJFornecedor.textoComMascara(fornecedor.cnpj);
+				txtEmailFornecedor.text = fornecedor.email;
+//				txtEnderecoFornecedor.text = fornecedor.endereco;
+				txtCepFornecedor.textoComMascara(fornecedor.cep);
+				cmbUfFornecedor.selectedValue = fornecedor.uf;
+				cmbMunicipioFornecedor.consultarUfMunicipio(fornecedor.uf, fornecedor.municipio);
+				txtLogradouroFornecedor.text = fornecedor.logradouro;
+				txtNumeroFornecedor.text = fornecedor.numero;
+				txtComplementoFornecedor.text = fornecedor.complemento;
+				txtBairroFornecedor.text = fornecedor.bairro;
+				txtReferenciaFornecedor.text = fornecedor.referencia;
+//				cmbMunicipioFornecedor.selectedValue = fornecedor.municipio;
+//				cmbMunicipioFornecedor.txtCodigoIbgeMunicipio.text = fornecedor.codigoIbgeMunicipio;
+				txtInscricaoEstadualFornecedor.text = fornecedor.inscricaoEstadual;
+				txtInscricaoMunicipalFornecedor.text = fornecedor.inscricaoMunicipal;
+				txtNomeFantasiaFornecedor.text = fornecedor.nomeFantasia;
+				txtRazaoSocialFornecedor.text = fornecedor.razaoSocial;
+				txtTecnicoResponsavelFornecedor.text = fornecedor.tecnicoResponsavel;
+				txtTelefone1Fornecedor.textoComMascara(fornecedor.telefone1);
+				txtTelefone2Fornecedor.textoComMascara(fornecedor.telefone2);
+				txtTelefone3Fornecedor.textoComMascara(fornecedor.telefone3);
+//				txtValorMaximoPedidosFornecedor.text = nf.format(fornecedor.valorMaximoPedidos as String);
+				txtValorMaximoPedidosFornecedor.text =
+					fornecedor.valorMaximoPedidosAsString;
+//					DecimalFormatter.instance.format(fornecedor.valorMaximoPedidos / 100);
+				
+				checkBoxAtivoFornecedor.selected =
+					fornecedor.indicadorAtivo == "S" ? true : false;
+			}
+			
+			private function consultarMunicipio():void{
+				cmbMunicipioFornecedor.consultarUfMunicipio(cmbUfFornecedor.selectedLabel,txtCepFornecedor.cidade);
+			}
+			
+			private function listarMunicipio():void{
+				cmbMunicipioFornecedor.listarMunicipio(cmbUfFornecedor.selectedLabel);
+			}
+		]]>
+	</fx:Script>
+	<!--fx:Declarations>
+		<mx:NumberFormatter id="nf"
+							decimalSeparatorTo=","
+							precision="2" 
+							thousandsSeparatorTo="."
+							useThousandsSeparator="true"/>
+	</fx:Declarations-->
+	<mx:TabNavigator id="tabFornecedor" width="100%" height="100%" backgroundAlpha="0"
+					 borderStyle="none" creationPolicy="all" paddingTop="0">
+		<mx:Form width="100%" height="100%" label="Dados" showEffect="Fade">
+			<mx:FormItem width="100%" label="CNPJ:">
+				<leonelcasado:Cnpj id="txtCNPJFornecedor" width="100%" />
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Nome Fantasia:">
+				<leonelcasado:CustomTextInput id="txtNomeFantasiaFornecedor" width="100%"/>
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Razão Social:">
+				<leonelcasado:CustomTextInput id="txtRazaoSocialFornecedor" width="100%" />
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Inscrição Estadual:">
+				<leonelcasado:CustomTextInput id="txtInscricaoEstadualFornecedor" width="100%" restrict="0-9" />
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Inscrição Municipal:">
+				<leonelcasado:CustomTextInput id="txtInscricaoMunicipalFornecedor" width="100%" restrict="0-9" />
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Técnico Responsável:">
+				<leonelcasado:CustomTextInput id="txtTecnicoResponsavelFornecedor" width="100%" />
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Valor Máximo de Pedidos (R$):">
+				<leonelcasado:Decimal id="txtValorMaximoPedidosFornecedor" width="100%" maxChars="26" />
+			</mx:FormItem>
+			<!--****************************************************-->
+			<!--mx:FormItem width="100%" label="Endereço (remover):">
+				<leonelcasado:CustomTextInput id="txtEnderecoFornecedor" width="100%" />
+			</mx:FormItem-->
+			<mx:FormItem width="100%" label="CEP:" direction="horizontal">
+				<leonelcasado:Cep id="txtCepFornecedor" width="100%"/>
+				<leonelcasado:CustomButton label="Consultar" icon="{Imagens.iconPesquisa}" width="30"									   
+				   click="txtCepFornecedor.consultarCep()" enter="txtCepFornecedor.consultarCep()"	focusOut="consultarMunicipio()"/>
+			</mx:FormItem>
+			<mx:FormItem label="UF:" width="100%" direction="horizontal">
+				<leonelcasado:Uf id="cmbUfFornecedor" labelView="uf" selectedValue="{txtCepFornecedor.uf}" change="listarMunicipio()"/>
+				<leonelcasado:Municipio id="cmbMunicipioFornecedor" width="100%" selectedValue="@{txtCepFornecedor.cidade}"/>
+			</mx:FormItem>
+			<mx:FormItem label="Endereço:" width="100%" direction="horizontal">
+				<leonelcasado:CustomTextInput id="txtLogradouroFornecedor" width="100%" text="@{txtCepFornecedor.logradouroCompleto}"/>
+				<leonelcasado:CustomLabel text="Nº:"/>
+				<leonelcasado:CustomTextInput id="txtNumeroFornecedor" width="100"/>
+			</mx:FormItem>
+			<mx:FormItem label="Complemento:" width="100%">
+				<leonelcasado:CustomTextInput id="txtComplementoFornecedor" width="100%"/>
+			</mx:FormItem>
+			<mx:FormItem label="Bairro:" width="100%">
+				<leonelcasado:CustomTextInput id="txtBairroFornecedor" width="100%" text="@{txtCepFornecedor.bairro}"/>
+			</mx:FormItem>
+			<mx:FormItem label="Referência:" width="100%">
+				<leonelcasado:CustomTextInput id="txtReferenciaFornecedor" width="100%"/>
+			</mx:FormItem>
+			<!--****************************************************-->
+			<mx:FormItem width="100%" label="Telefone 1:" direction="horizontal">
+				<leonelcasado:Telefone id="txtTelefone1Fornecedor" width="100%"/>
+				<leonelcasado:CustomLabel text="Telefone 2:" />
+				<leonelcasado:Telefone id="txtTelefone2Fornecedor" width="100%"/>
+				<leonelcasado:CustomLabel text="Telefone 3:" />
+				<leonelcasado:Telefone id="txtTelefone3Fornecedor" width="100%"/>
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Email:">
+				<leonelcasado:Email id="txtEmailFornecedor" width="100%" maxChars="100"/>
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Ativo:">
+				<leonelcasado:CustomCheckBox id="checkBoxAtivoFornecedor" selected="true"/>
+			</mx:FormItem>
+		</mx:Form>
+	</mx:TabNavigator>
+	<!-- *********************************************************************************** -->
+	<componentes:BarraControles id="controles" includeInLayoutBtnSalvar="true" salvar="salvar()"
+								styleButtons="menuButton"/>
+</mx:VBox>

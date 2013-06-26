@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		  xmlns:componentes="infoliver.view.componentes.*"
+		  title="Pre Atendimento Recepçao" width="100%" height="100%"
+		  paddingTop="3" paddingBottom="3" paddingLeft="3" paddingRight="3" creationComplete="init()">
+	<fx:Script>
+		<![CDATA[
+			import flash.events.Event;
+			import flash.media.Sound;
+			import flash.net.URLRequest;
+			
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.Paciente;
+			import infoliver.model.entity.Pessoa;
+			import infoliver.model.entity.PreAtendimento;
+			import infoliver.model.entity.Setor;
+			import infoliver.model.entity.TipoStatusAtendimento;
+			import infoliver.model.entity.Usuario;
+			import infoliver.model.events.PacienteEvent;
+			import infoliver.model.events.PreAtendimentoEvent;
+			import infoliver.model.events.SetorEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			import infoliver.view.componentes.ColunaExcluirPreAtendimento;
+			
+			import leonelcasado.com.adobe.cairngorm.componentes.Alerta;
+			import leonelcasado.componentes.CustomViewHelper;
+			
+			import mx.core.FlexGlobals;
+			
+			private var appModel:ModelLocator = ModelLocator.getInstance();
+			[Bindable]public var isInserirNovoRegistro:Boolean;
+			[Bindable]public var sound:Sound = new Sound();
+			import mx.effects.SoundEffect;
+			[Embed(source="aeroporto.mp3")] public var soundClass:Class;
+			
+			
+			private function init():void{
+				criarColunasDinamicas();
+				carregarCombos();				
+				listarVisitantesDia();
+				
+			}
+			private function criarColunasDinamicas():void{
+				
+				dtgConsultaCadastrado.addColunaNumero("Pront","sequencial",null,null,50);				
+				dtgConsultaCadastrado.addColunaTexto("Nome","nome",null,null,200);
+				dtgConsultaCadastrado.addColunaTexto("Mãe","nomeMae",null,null,200);
+				dtgConsultaCadastrado.addColunaTexto("CNS","cns",null,null,50);
+				
+			
+				dtgPreAtendimentoPaciente.addColunaTexto("Nome","nome",null,null,100);
+				dtgPreAtendimentoPaciente.addColunaNumero("Documento","documento",null,null,30);
+				dtgPreAtendimentoPaciente.addColunaTexto("Tipo","tipoPaciente",null,null,40);
+				dtgPreAtendimentoPaciente.addColunaTexto("Setor","setor.descricao",null,null,50);
+				dtgPreAtendimentoPaciente.addColunaComponenteItemRenderer("",ColunaExcluirPreAtendimento,20);
+				
+			}
+			
+			private function preencheFormulario():void{
+				if(dtgConsultaCadastrado.dtgCustom.selectedItem !=null){
+					var paciente:Paciente = dtgConsultaCadastrado.dtgCustom.selectedItem as Paciente;
+					txtDocumento.text = paciente.cns;
+					txtNomePaciente.text = paciente.nome;					
+					lblProntuario.text = paciente.sequencial.toString();
+					
+				}
+					
+			}
+			//=======================Crud Visitante ===============================//
+			private function setEntidade():PreAtendimento{
+				
+				var preAtendimento:PreAtendimento = new PreAtendimento();
+				var tipo:TipoStatusAtendimento = new TipoStatusAtendimento();
+				var setor:Setor = new Setor();
+				var usuario:Usuario = new Usuario();
+				preAtendimento.tipoPaciente="VISITANTE";
+				if(lblProntuario.text !=null){
+				preAtendimento.tipoPaciente = "PACIENTE";	
+				}
+				preAtendimento.dataCadastro = null;
+				preAtendimento.dataEncaminhamentoExterno = null;
+				preAtendimento.relato = "inicio";				
+				preAtendimento.nome = txtNomePaciente.text;
+				preAtendimento.documento = txtDocumento.text;
+				preAtendimento.tipoDocumento = cmbTipoDocumento.selectedLabel;
+				
+				setor.sequencial = cmbSetorEncaminhamento.selectedIndex>=0?cmbSetorEncaminhamento.selectedItem.sequencial:null;				
+				preAtendimento.setor = setor as Setor;
+				
+				usuario.sequencial = appModel.loginVO.usuario.sequencial;
+				preAtendimento.usuario = usuario as Usuario;
+				
+				tipo.sequencial = 1;
+				preAtendimento.tipoStatusAtendimento = tipo as TipoStatusAtendimento;
+				
+				
+			
+				return preAtendimento;				
+				
+			}
+			private function setEntidadeAlterar():void{	
+				
+				
+			}
+			
+			private function salvar():void{		
+				if(cmbSetorEncaminhamento.selectedIndex<=0){
+					Alerta.error("Selecione Setor para Encaminhamento");
+				}else{
+				new PreAtendimentoEvent(PreAtendimentoEvent.INSERIR,this,setEntidade()).dispatch();		
+				txtValorBusca.text = "";
+				dtgConsultaCadastrado.inicializarTotalizadores();
+				limparCampos();
+				}
+			}
+			// ====================== Som ==================== 
+			 
+			private function somClick(): void {
+				var smallSound:Sound = new soundClass() as Sound;
+				smallSound.play();
+			}
+			// ====================== Listar Pessoas atendidas do dia ==================== 
+			//consulta que retorna todos as pessoas que foram atendidas no dia e popula o datagrid 
+			// sempre que um visitante é cadastrado essa consulta é feita
+			private function listarVisitantesDia():void{
+				dtgPreAtendimentoPaciente.inicializarTotalizadores();
+				var preAtendimento:PreAtendimento = new PreAtendimento();				
+				var paginacaoVO:PaginacaoVO=new PaginacaoVO;
+				var setor:Setor = new Setor();
+				var tipo:TipoStatusAtendimento = new TipoStatusAtendimento();
+				setor.sequencial = 22;
+				preAtendimento.setor = setor;
+				preAtendimento.tipoStatusAtendimento = tipo;
+				paginacaoVO.entidade=preAtendimento;
+				paginacaoVO.quantidadePaginacao=dtgPreAtendimentoPaciente.maximo;
+				paginacaoVO.inicioPaginacao=dtgPreAtendimentoPaciente.indice;
+				
+				new PreAtendimentoEvent(PreAtendimentoEvent.LISTARTODOS,this,paginacaoVO).dispatch();
+			}
+			private function listarVisitantesDiaComFiltro():void{
+				var preAtendimento:PreAtendimento = new PreAtendimento();				
+				var paginacaoVO:PaginacaoVO=new PaginacaoVO;
+				var setor:Setor = new Setor();				
+				preAtendimento.setor = setor;
+				preAtendimento.nome = txtLocalizarComFiltro.text;
+				preAtendimento.tipoPaciente = txtLocalizarComFiltro.text;
+				preAtendimento.documento = txtLocalizarComFiltro.text;
+				
+				paginacaoVO.entidade=preAtendimento;
+				paginacaoVO.quantidadePaginacao=dtgPreAtendimentoPaciente.maximo;
+				paginacaoVO.inicioPaginacao=dtgPreAtendimentoPaciente.indice;
+				
+				new PreAtendimentoEvent(PreAtendimentoEvent.LISTARCOMFILTRO,this,paginacaoVO).dispatch();
+			}
+			public function excluirPreAtendimento():void{
+				if(dtgPreAtendimentoPaciente.dtgCustom.selectedItem!=null){					
+					var preAtendimento:PreAtendimento = dtgPreAtendimentoPaciente.dtgCustom.selectedItem as PreAtendimento;					
+					new PreAtendimentoEvent(PreAtendimentoEvent.EXCLUIR,this,preAtendimento).dispatch();
+				}
+			}
+			
+			// ===================== busca de paciente já cadastrado===============
+			
+			// consulta de paciente já cadastrado, retornando null, visitante deve ser cadastrado
+			private function consultaPaciente():void{
+				var paciente:Paciente=new Paciente;
+				if(cmbTipoPesquisa.selectedItem.data==1)
+					paciente.nome=CustomViewHelper.trim(txtValorBusca.text);
+				else if(cmbTipoPesquisa.selectedItem.data==2)
+					paciente.sequencial=CustomViewHelper.trim(txtValorBusca.text);					
+				else if(cmbTipoPesquisa.selectedItem.data==4)
+					paciente.cpf=CustomViewHelper.trim(txtValorBusca.text);
+				else if(cmbTipoPesquisa.selectedItem.data==5)
+					paciente.cns=CustomViewHelper.trim(txtValorBusca.text);
+				else if(cmbTipoPesquisa.selectedItem.data==6)
+					paciente.rg=CustomViewHelper.trim(txtValorBusca.text);
+				//---------------------------------------------------------------
+				var paginacaoVO:PaginacaoVO=new PaginacaoVO;
+				paginacaoVO.entidade=paciente;
+				paginacaoVO.quantidadePaginacao=dtgConsultaCadastrado.maximo;
+				paginacaoVO.inicioPaginacao=dtgConsultaCadastrado.indice;
+				//---------------------------------------------------------------
+				new PacienteEvent(PacienteEvent.LISTAR_PAGINADO,this,paginacaoVO).dispatch();
+				txtValorBusca.setFocus();
+			}
+			public function consultaPreAtendimento():void{
+				var paginacaoVO:PaginacaoVO=new PaginacaoVO;
+				var preAtendimento:PreAtendimento= new PreAtendimento();
+				paginacaoVO.entidade=preAtendimento;
+				paginacaoVO.quantidadePaginacao=dtgPreAtendimentoPaciente.maximo;
+				paginacaoVO.inicioPaginacao=dtgConsultaCadastrado.indice;
+				new PreAtendimentoEvent(PreAtendimentoEvent.LISTAR,this,paginacaoVO).dispatch();
+			}
+			public function result(data:Object,event:Event):void{
+				if(event.type==PacienteEvent.LISTAR_PAGINADO){
+					dtgConsultaCadastrado.inicializarTotalizadores();
+					dtgConsultaCadastrado.setDataGridPaginado(data.result.totalRegistros,data.result.entidade);
+				}
+				else if(event.type==SetorEvent.LISTAR){
+					cmbSetorEncaminhamento.dataProvider=data.result;					
+				}
+				else if(event.type==PreAtendimentoEvent.INSERIR){
+					//dtgPreAtendimentoPaciente.inicializarTotalizadores();
+					Alerta.success(data.result.msg);
+					listarVisitantesDia();
+					if(FlexGlobals.topLevelApplication.principal.preAtendimentoServicoSocial.flag){
+						FlexGlobals.topLevelApplication.principal.preAtendimentoServicoSocial.listarVisitantesDia();
+					}
+					
+					
+				}
+				else if(event.type==PreAtendimentoEvent.LISTARTODOS){
+					dtgPreAtendimentoPaciente.inicializarTotalizadores();
+					dtgPreAtendimentoPaciente.setDataGridPaginado(data.result.totalRegistros,data.result.entidade);				
+				}
+				else if(event.type==PreAtendimentoEvent.LISTARCOMFILTRO){
+					dtgPreAtendimentoPaciente.inicializarTotalizadores();
+					dtgPreAtendimentoPaciente.setDataGridPaginado(data.result.totalRegistros,data.result.entidade);				
+				}
+				else if(event.type==PreAtendimentoEvent.EXCLUIR){
+					listarVisitantesDia();		
+					if(FlexGlobals.topLevelApplication.principal.preAtendimentoServicoSocial.flag){
+						FlexGlobals.topLevelApplication.principal.preAtendimentoServicoSocial.listarVisitantesDia();
+					}
+				}
+			}
+			
+			//============================= popular combos=========================//
+			private function carregarCombos():void{
+				new SetorEvent(SetorEvent.LISTAR,this).dispatch();
+			}
+			
+			private function inicio_Click():void{
+				dtgConsultaCadastrado.inicio();
+				
+			}
+			
+			private function retroceder_Click():void{
+				dtgConsultaCadastrado.retroceder();
+				
+			}
+			
+			private function avancar_Click():void{
+				dtgConsultaCadastrado.avancar();
+				
+			}
+			
+			private function fim_Click():void{
+				dtgConsultaCadastrado.fim();
+				
+			}
+			
+			private function fechar():void{
+				FlexGlobals.topLevelApplication.fecharTela();
+			}
+			public function novo():void{
+				
+			}
+			public function limparCampos():void{
+				lblProntuario.text = "";
+				txtDocumento.text= "";
+				txtNomePaciente.text="";
+				cmbTipoDocumento.selectedIndex=0;
+				cmbSetorEncaminhamento.selectedIndex=0;
+				
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<leonelcasado:CustomFieldSet title="Listagem de Paciente" width="100%" height="100%">
+		<mx:Form width="100%">
+			<mx:FormItem label="Tipo:" width="100%" direction="horizontal">
+				<leonelcasado:CustomComboBox id="cmbTipoPesquisa" >
+					<fx:Array>
+						<fx:Object label="NOME" data="1"/>
+						<fx:Object label="PRONTUÁRIO" data="2"/>
+						<fx:Object label="CPF" data="4"/>
+						<fx:Object label="CNS" data="5"/>
+						<fx:Object label="RG" data="6"/>
+					</fx:Array>
+				</leonelcasado:CustomComboBox>
+				<leonelcasado:CustomTextInput id="txtValorBusca" width="100%" enter="consultaPaciente()"/>
+			</mx:FormItem>
+		</mx:Form>
+		<leonelcasado:CustomDataGrid id="dtgConsultaCadastrado" width="100%" height="100%"
+									 includeInLayoutBtnInserirRegistro="false" includeInLayoutPaginacao="false"
+									 includeInLayoutBtnExcluirRegistro="false" includeInLayoutTotalRegistro="false"
+									 primeiroRegistro="inicio_Click()" registroAlterior="retroceder_Click()" 
+									 proximoRegistro="avancar_Click()" ultimoRegistro="fim_Click()" 
+									 selecionarItem="preencheFormulario()"/>
+	</leonelcasado:CustomFieldSet>
+	
+	<leonelcasado:CustomFieldSet title="Dados do Paciente / Visitante" width="100%" height="10%">
+		<mx:Form width="100%">
+			<mx:FormItem label="Setor:" width="100%">
+				<leonelcasado:CustomComboBox id="cmbSetorEncaminhamento" prompt="Selecione" labelField="descricao">					
+				</leonelcasado:CustomComboBox>	
+			</mx:FormItem>
+			<mx:FormItem label="Prontuário" width="100%" direction="horizontal">
+				<leonelcasado:CustomLabel id="lblProntuario" width="3%"/>							
+			</mx:FormItem>	
+			<mx:FormItem label="Nome" width="100%">
+				<leonelcasado:CustomTextInput id="txtNomePaciente" width="50%"/>
+			</mx:FormItem>
+			<mx:FormItem label="Tipo de Documento: " direction="horizontal" width="100%">
+				<leonelcasado:CustomComboBox id="cmbTipoDocumento"> 
+					<fx:Array>
+						<fx:Object label="CNS" data="1"/>
+						<fx:Object label="RG" data="2"/>
+						<fx:Object label="CPF" data="4"/>
+						<fx:Object label="CTPS" data="5"/>						
+					</fx:Array>					
+				</leonelcasado:CustomComboBox>				
+					<leonelcasado:CustomTextInput id="txtDocumento" width="44%"/>					
+			</mx:FormItem>	
+<mx:FormItem>	
+			<componentes:BarraControles id="controles" styleButtons="menuButton"
+										includeInLayoutBtnSalvar="true" salvar="salvar()" 
+										includeInLayoutBtnNovo="true" novo="limparCampos()"	
+										includeInLayoutBtnFechar="true" fechar="fechar()"/>
+</mx:FormItem>	
+		</mx:Form>
+	</leonelcasado:CustomFieldSet>
+	<leonelcasado:CustomFieldSet title="Listagem de Pré Atendimento do Dia" width="100%" height="100%" paddingTop="20">
+		<mx:Form width="100%">		
+		<mx:FormItem width="100%" label="Localizar">
+			<leonelcasado:CustomTextInput id="txtLocalizarComFiltro" width="100%" enter="listarVisitantesDiaComFiltro()"/>
+		</mx:FormItem>
+		</mx:Form>
+		<leonelcasado:CustomDataGrid id="dtgPreAtendimentoPaciente" width="100%" height="100%" 
+									 includeInLayoutPaginacao="false" includeInLayoutBtnExcluirRegistro="false" 
+									 includeInLayoutTotalRegistro="false" includeInLayoutBtnInserirRegistro="false"/>		
+		
+	</leonelcasado:CustomFieldSet>
+	
+</mx:Panel>

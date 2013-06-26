@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	xmlns:componentes="infoliver.view.componentes.*"
+	xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+	layout="horizontal"	title="Laudos SUS" width="100%" height="100%"
+	creationComplete="init()" show="show()">	
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.entity.GrupoLaudo;
+			import infoliver.model.entity.ProcedimentoMedico;
+			import infoliver.model.events.GrupoLaudoEvent;
+			import infoliver.model.events.MedicoEvent;
+			import infoliver.model.events.ProcedimentoMedicoEvent;
+			import infoliver.model.events.RelatorioEvent;
+			import infoliver.model.vo.ProcedimentoMedicoVO;
+			
+			import leonelcasado.com.adobe.cairngorm.componentes.Alerta;
+			import leonelcasado.componentes.Imagens;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.resources.ResourceManager;
+
+			private var procedimentoMedicoVO:ProcedimentoMedicoVO;
+			private var listaProcedimentoSecundario:Array;
+			private var flag:Boolean=true;
+			
+			private function init():void{
+				criarColunasDinamicas();
+				listarGrupoLaudo();
+				listarTipoProcedimentoMedico();	
+				listarMedico();
+				listarRelatorioProcedimento();
+				
+			}
+
+			private function criarColunasDinamicas():void{
+				dtg.addColunaNumero("Pront","sequencial",null,null,50);
+				dtg.addColunaTexto("Nome","nome",null,null,200);
+				dtg.addColunaTexto("Mãe","nomeMae");
+			}
+
+			private function show():void{
+				listarGrupoLaudo();
+				limpar();
+			}
+
+			private function listarGrupoLaudo():void{
+				new GrupoLaudoEvent(GrupoLaudoEvent.LISTAR,this).dispatch();
+			}
+
+			private function listarPacienteGrupoLaudo():void{
+				if(cmbGrupoLaudo.selectedIndex>0){
+					var grupoLaudo:GrupoLaudo=new GrupoLaudo;
+					grupoLaudo=cmbGrupoLaudo.selectedItem as GrupoLaudo;
+					new GrupoLaudoEvent(GrupoLaudoEvent.LISTAR_PACIENTE_GRUPO,this,grupoLaudo).dispatch();
+				}else
+					limpar();
+			}
+
+			private function listarTipoProcedimentoMedico():void{
+				new ProcedimentoMedicoEvent(ProcedimentoMedicoEvent.LISTAR_TIPO_PROCEDIMENTO,this).dispatch();
+			}
+			
+			private function visualizarProcedimentoParaAudiometria():void{
+				if(cmbProcedimento.selectedItem.sequencial==5){
+					this.currentState="audiometria";
+					lisarProcedimentoPrincipal();
+					lisarProcedimentoSecundario();
+				}else if(cmbProcedimento.selectedItem.sequencial==3){
+					this.currentState="policlinica";					
+					lisarProcedimentoPrincipalPoliclinica();					
+				}
+				
+				
+				else{
+					this.currentState="default";
+				}
+			}
+			
+			private function lisarProcedimentoPrincipal():void{
+				new ProcedimentoMedicoEvent(ProcedimentoMedicoEvent.LISTAR_PROCEDIMENTO_PRINCIPAL,this).dispatch();				
+			}
+			private function lisarProcedimentoPrincipalPoliclinica():void{
+				new ProcedimentoMedicoEvent(ProcedimentoMedicoEvent.LISTAR_PROCEDIMENTO_PRINCIPAL_POLICLINICA,this).dispatch();				
+			}
+			private function lisarProcedimentoSecundario():void{
+				new ProcedimentoMedicoEvent(ProcedimentoMedicoEvent.LISTAR_PROCEDIMENTO_SECUNDARIO,this).dispatch();
+			}
+
+			private function listarMedico():void{
+				new MedicoEvent(MedicoEvent.LISTAR,this).dispatch();
+			}
+
+			private function listarRelatorioProcedimento():void{
+				new RelatorioEvent(RelatorioEvent.LISTAR_RELATORIO_PROCEDIMENTO,this).dispatch();
+			}
+
+			private function gerar():void{
+				if(cmbRelatorio.selectedItem.sequencial==1)
+					gerarLaudo();
+				else if(cmbRelatorio.selectedItem.sequencial==2)
+					gerarControleFrequenciaDeficienciaFisica();
+			}
+			
+			private function gerarControleFrequenciaDeficienciaFisica():void{
+				var grupoLaudo:GrupoLaudo=cmbGrupoLaudo.selectedItem as GrupoLaudo;
+				if(grupoLaudo==null)return;
+				procedimentoMedicoVO=new ProcedimentoMedicoVO;
+				procedimentoMedicoVO.caminhoRelatorio=cmbRelatorio.selectedItem.nomeArquivo;
+				
+				
+				//--------------------------------------------------------------------------		
+				var url:String=ResourceManager.getInstance().getString('strings','url')+"previewRelatorioControleFrequenciaIndividualDeficienciaFisica";
+				var request:URLRequest = new URLRequest(url);
+				preview.initStateProgress();
+				//--------------------------------------------------------------------------
+				url=url+"?seqGrupoLaudo="+cmbGrupoLaudo.selectedItem.sequencial;
+				url=url+"&seqMedico="+cmbMedico.selectedItem.sequencial;
+				url=url+"&seqRelatorio="+cmbRelatorio.selectedItem.sequencial;	
+				url=url+"&seqProcedimentoMedico="+cmbProcedimento.selectedItem.sequencial;
+				if (cmbProcedimento.selectedLabel == "POLICLÍNICA" && cmbProcedimentoPrincipalPoliclinica != null && cmbProcedimentoPrincipalPoliclinica.selectedItem != null) {
+					url+="&seqProcedimentoPrincipalPoliclinica=" + cmbProcedimentoPrincipalPoliclinica.selectedItem.sequencial;
+				}
+				
+				preview.html.location=url;
+
+			}
+			
+			
+			private function gerarLaudo():void{
+				var grupoLaudo:GrupoLaudo=cmbGrupoLaudo.selectedItem as GrupoLaudo;
+				if(grupoLaudo==null)return;
+				procedimentoMedicoVO=new ProcedimentoMedicoVO;
+				procedimentoMedicoVO.caminhoRelatorio=cmbRelatorio.selectedItem.nomeArquivo;
+				//--------------------------------------------------------------------------		
+				var url:String=ResourceManager.getInstance().getString('strings','url')+"previewRelatorioProcedimentoMedico";
+				var request:URLRequest = new URLRequest(url);
+				preview.initStateProgress();
+				//--------------------------------------------------------------------------
+				url=url+"?seqGrupoLaudo="+cmbGrupoLaudo.selectedItem.sequencial;
+				url=url+"&seqMedico="+cmbMedico.selectedItem.sequencial;
+				url=url+"&seqRelatorio="+cmbRelatorio.selectedItem.sequencial;
+				url=url+"&seqProcedimentoMedico="+cmbProcedimento.selectedItem.sequencial;
+				//--------------------------------------------------------------------------
+				if(cmbProcedimento.selectedItem.tipoProcedimento=="AUDIOMETRIA"){
+					url=url+"&seqProcedimentoMedicoPrincipal="+cmbProcedimentoPrincipal.selectedItem.codigoPrincipal;
+					url=url+"&dscProcedimentoMedicoPrincipal="+cmbProcedimentoPrincipal.selectedItem.descricaoPrincipal;
+					//--------------------------------------------------------------------------
+					var arr:Array=cmbProcedimentoSecundario.selectedItems.source;
+					if(arr.length>0){
+						try{
+							url=url+"&seqProcedimentoMedicoSecundario01="+arr[0].codigoSecundario;
+							url=url+"&dscProcedimentoMedicoSecundario01="+arr[0].descricaoSecundario;
+							url=url+"&seqProcedimentoMedicoSecundario02="+arr[1].codigoSecundario;
+							url=url+"&dscProcedimentoMedicoSecundario02="+arr[1].descricaoSecundario;
+							url=url+"&seqProcedimentoMedicoSecundario03="+arr[2].codigoSecundario;
+							url=url+"&dscProcedimentoMedicoSecundario03="+arr[2].descricaoSecundario;
+							url=url+"&seqProcedimentoMedicoSecundario04="+arr[3].codigoSecundario;
+							url=url+"&dscProcedimentoMedicoSecundario04="+arr[3].descricaoSecundario;
+							url=url+"&seqProcedimentoMedicoSecundario05="+arr[4].codigoSecundario;
+							url=url+"&dscProcedimentoMedicoSecundario05="+arr[4].descricaoSecundario;
+						}catch(e:Error){}
+					}
+				}
+					if(cmbProcedimento.selectedItem.tipoProcedimento=="POLICLÍNICA"){
+						url=url+"&seqProcedimentoMedicoPrincipal="+cmbProcedimentoPrincipalPoliclinica.selectedItem.codigoPrincipal;
+						url=url+"&dscProcedimentoMedicoPrincipal="+cmbProcedimentoPrincipalPoliclinica.selectedItem.descricaoPrincipal;
+				}else{
+					url=url+"&seqProcedimentoMedicoPrincipal="+cmbProcedimento.selectedItem.codigoPrincipal;
+					url=url+"&dscProcedimentoMedicoPrincipal="+cmbProcedimento.selectedItem.descricaoPrincipal;
+				}
+				//--------------------------------------------------------------------------
+				preview.html.location=url;
+			}
+
+			public function result(data:Object,event:Event):void{
+				if(event.type==GrupoLaudoEvent.LISTAR){
+					cmbGrupoLaudo.dataProvider=data.result;
+					
+				}else if(event.type==GrupoLaudoEvent.LISTAR_PACIENTE_GRUPO){
+					dtg.inicializarTotalizadores();
+					dtg.setDataGridPaginado(data.result.length,data.result);
+					
+				}else if(event.type==ProcedimentoMedicoEvent.LISTAR_TIPO_PROCEDIMENTO){
+					var listaProcedimentoMedico : ArrayCollection = data.result;
+					cmbProcedimento.dataProvider=data.result;
+				}else if(event.type==ProcedimentoMedicoEvent.LISTAR_PROCEDIMENTO_PRINCIPAL){
+					cmbProcedimentoPrincipal.dataProvider=data.result;						
+					
+				}else if(event.type==ProcedimentoMedicoEvent.LISTAR_PROCEDIMENTO_PRINCIPAL_POLICLINICA){
+						cmbProcedimentoPrincipalPoliclinica.dataProvider=data.result;
+				}
+				else if(event.type==ProcedimentoMedicoEvent.LISTAR_PROCEDIMENTO_SECUNDARIO){
+					cmbProcedimentoSecundario.dataProvider=data.result;
+
+				}else if(event.type==MedicoEvent.LISTAR){
+					cmbMedico.dataProvider=data.result;
+					
+				}else if(event.type==RelatorioEvent.LISTAR_RELATORIO_PROCEDIMENTO){
+					cmbRelatorio.dataProvider=data.result;
+				}
+			}
+			
+			private function gerarListaPacientes() : void {
+				var url:String=ResourceManager.getInstance().getString('strings','url')+"PreviewRelatorioListaPacientes";
+				var request:URLRequest = new URLRequest(url);
+				preview.initStateProgress();
+
+				var grupoLaudo:GrupoLaudo=new GrupoLaudo;
+				grupoLaudo=cmbGrupoLaudo.selectedItem as GrupoLaudo;
+				
+				url=url+"?seqGrupoLaudo=" + grupoLaudo.sequencial;
+				
+				preview.html.location=url;
+			}
+
+			private function limpar():void{
+				dtg.inicializarTotalizadores();
+				preview.init();
+			}
+
+			private function fechar():void{
+				FlexGlobals.topLevelApplication.fecharTela();
+			}			
+		]]>
+	</fx:Script>
+	<mx:states>
+		<s:State name="default"/>
+		<s:State name="audiometria"/>
+		<s:State name="policlinica"/>
+	</mx:states>
+	<mx:HDividedBox width="100%" height="100%" paddingBottom="3" paddingLeft="3">
+		<leonelcasado:CustomFieldSet title="Dados para a Geração do Relatório" width="100%" height="100%">		
+			<mx:Form width="100%">
+				<mx:FormItem label="Relatório:" width="100%" required="true">
+					<leonelcasado:CustomComboBox id="cmbRelatorio" labelField="nome"/>
+				</mx:FormItem>
+				<mx:FormItem label="Grupo:" width="100%" required="true">
+					<leonelcasado:CustomComboBox id="cmbGrupoLaudo" labelField="descricao" isAddSelecione="true"
+						change="listarPacienteGrupoLaudo()"/>
+				</mx:FormItem>
+			</mx:Form>
+			<leonelcasado:CustomDataGrid id="dtg" width="100%" height="100%" 
+				includeInLayoutPaginacao="false" includeInLayoutBtnExcluirRegistro="false"/>
+			<mx:Form width="100%">
+				<mx:FormItem label="Procedimento:" width="100%" required="true">
+					<leonelcasado:CustomComboBox id="cmbProcedimento" labelField="tipoProcedimento" change="visualizarProcedimentoParaAudiometria()"/>
+				</mx:FormItem>
+				<mx:FormItem label="Principal:" width="100%" includeIn="audiometria">
+					<leonelcasado:CustomComboBox id="cmbProcedimentoPrincipal" labelField="descricaoPrincipal"/>
+				</mx:FormItem>
+				<mx:FormItem label="Principal:" width="100%" includeIn="policlinica">
+					<leonelcasado:CustomComboBox id="cmbProcedimentoPrincipalPoliclinica" labelField="descricaoPrincipal"/>
+				</mx:FormItem>
+				<mx:FormItem label="Secundário:" width="100%" includeIn="audiometria">
+					<leonelcasado:CustomComboBoxCheck id="cmbProcedimentoSecundario" labelField="descricaoSecundario" rowCount="10"/>
+				</mx:FormItem>
+				<mx:FormItem label="Médico:" width="100%" required="true">
+					<leonelcasado:CustomComboBox id="cmbMedico" labelField="nome"/>
+				</mx:FormItem>
+				<mx:FormItem>
+					<s:HGroup>
+
+						<componentes:BarraControles id="controles" styleButtons="menuButton"
+							includeInLayoutBtnConsultar="true" includeInLayoutBtnFechar="true"
+							labelBtnConsultar="Gerar" consultar="gerar()" fechar="fechar()"/>
+						<leonelcasado:CustomButton id="btnListarPacientes" label="Gerar Lista de Pacientes" icon="{Imagens.iconPesquisa}" click="{gerarListaPacientes()}"/>
+						
+					</s:HGroup>
+				</mx:FormItem>			
+			</mx:Form>
+		</leonelcasado:CustomFieldSet>
+		<componentes:Preview id="preview" width="80%"/>
+	</mx:HDividedBox>
+</mx:Panel>

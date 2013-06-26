@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+	xmlns:componentes="infoliver.view.componentes.*"
+	title="Grupo Laudo SUS" width="100%" height="100%"
+	paddingTop="3" paddingBottom="3" paddingLeft="3" paddingRight="3"
+	initialize="init()" show="show()">
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.Grupo;
+			import infoliver.model.entity.GrupoLaudo;
+			import infoliver.model.entity.Paciente;
+			import infoliver.model.events.GrupoLaudoEvent;
+			import infoliver.model.events.PacienteEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			import infoliver.view.componentes.ColunaExcluirGrupoLaudoPaciente;
+			import infoliver.view.componentes.ColunaInserirGrupoLaudoPaciente;
+			
+			import leonelcasado.componentes.CustomViewHelper;
+			
+			import mx.core.FlexGlobals;
+			
+			private var appModel:ModelLocator = ModelLocator.getInstance();
+			
+			private function init():void{
+				criarColunasDinamicas();
+			}
+
+			private function show():void{
+				listarGrupo();
+				limpar();
+			}
+			
+			private function criarColunasDinamicas():void{
+				dtg.addColunaNumero("Pront","sequencial",null,null,50);
+				dtg.addColunaTexto("Nome","nome");
+				dtg.addColunaTexto("Mãe","nomeMae");
+				dtg.addColunaComponenteItemRenderer("",ColunaInserirGrupoLaudoPaciente,60);
+				//----------------------------------------------------------------------				
+				dtgPacienteGrupoLaudo.addColunaNumero("Pront","sequencial",null,null,50);
+				dtgPacienteGrupoLaudo.addColunaTexto("Nome","nome");
+				dtgPacienteGrupoLaudo.addColunaTexto("Mãe","nomeMae");
+				dtgPacienteGrupoLaudo.addColunaComponenteItemRenderer("",ColunaExcluirGrupoLaudoPaciente,60);
+			}
+			
+			//=============== CRUD - GRUPO LAUDO ===================================
+			private function listarGrupo():void{
+				cmbGrupoLaudo.listar(GrupoLaudoEvent,GrupoLaudoEvent.LISTAR);
+			}
+			
+			private function getGrupoLaudo(isInclusao:Boolean=false):GrupoLaudo{
+				var grupoLaudo:GrupoLaudo=new GrupoLaudo;
+				if(!isInclusao)grupoLaudo=cmbGrupoLaudo.itemSelecionado as GrupoLaudo;
+				grupoLaudo.descricao=cmbGrupoLaudo.cmbCrud.text;
+				return grupoLaudo;
+			}
+			
+			private function inserirGrupoLaudo():void{
+				cmbGrupoLaudo.inserir(GrupoLaudoEvent,GrupoLaudoEvent.INSERIR,getGrupoLaudo(true));
+			}
+			
+			private function alterarGrupoLaudo():void{
+				if(cmbGrupoLaudo.itemSelecionado is GrupoLaudo){
+					cmbGrupoLaudo.alterar(GrupoLaudoEvent,GrupoLaudoEvent.ALTERAR,getGrupoLaudo());
+				}
+			}
+			
+			private function excluirGrupoLaudo():void{
+				cmbGrupoLaudo.excluir(GrupoLaudoEvent,GrupoLaudoEvent.EXCLUIR,getGrupoLaudo());	
+			}
+			//=============== FIM CRUD - GRUPO LAUDO ===============================
+			
+			public function listarPacienteGrupoLaudo():void{
+				if(cmbGrupoLaudo.cmbCrud.selectedIndex>0){
+					var grupoLaudo:GrupoLaudo=new GrupoLaudo;
+					grupoLaudo=cmbGrupoLaudo.cmbCrud.selectedItem as GrupoLaudo;
+					new GrupoLaudoEvent(GrupoLaudoEvent.LISTAR_PACIENTE_GRUPO,this,grupoLaudo).dispatch();
+				}else
+					dtgPacienteGrupoLaudo.inicializarTotalizadores();
+			}
+
+			public function limpar():void{
+				CustomViewHelper.limparCamposFormulario(this);
+				dtg.inicializarTotalizadores();
+				dtgPacienteGrupoLaudo.inicializarTotalizadores();
+				txtValorBusca.setFocus();
+			}
+
+			private function limparCampoBusca():void{
+				txtValorBusca.text="";
+				txtValorBusca.setFocus();
+			}
+
+			private function listar():void{
+				var paciente:Paciente=new Paciente;
+				if(cmbTipoPesquisa.selectedItem.data==1)
+					paciente.nome=txtValorBusca.texto;
+				else if(cmbTipoPesquisa.selectedItem.data==2)
+					paciente.sequencial=txtValorBusca.texto;
+				else if(cmbTipoPesquisa.selectedItem.data==4)
+					paciente.cpf=txtValorBusca.texto;
+				else if(cmbTipoPesquisa.selectedItem.data==5)
+					paciente.cns=txtValorBusca.texto;
+				else if(cmbTipoPesquisa.selectedItem.data==6)
+					paciente.rg=txtValorBusca.texto;
+				//---------------------------------------------------------------
+				var paginacaoVO:PaginacaoVO=new PaginacaoVO;
+				paginacaoVO.entidade=paciente;
+				paginacaoVO.quantidadePaginacao=dtg.maximo;
+				paginacaoVO.inicioPaginacao=dtg.indice;
+				//---------------------------------------------------------------
+				new PacienteEvent(PacienteEvent.LISTAR_PAGINADO,this,paginacaoVO).dispatch();
+				txtValorBusca.setFocus();
+			}
+			
+			public function result(data:Object,event:Event):void{
+				if(event.type==PacienteEvent.LISTAR_PAGINADO){
+					dtg.inicializarTotalizadores();
+					dtg.setDataGridPaginado(data.result.totalRegistros,data.result.entidade);
+					
+				}else if(event.type==GrupoLaudoEvent.LISTAR_PACIENTE_GRUPO){
+					dtgPacienteGrupoLaudo.inicializarTotalizadores();
+					dtgPacienteGrupoLaudo.setDataGridPaginado(data.result.length,data.result);
+				}
+			}
+
+			private function inicio_Click():void{
+				dtg.inicio();
+				listar();
+			}
+			
+			private function retroceder_Click():void{
+				dtg.retroceder();
+				listar();
+			}
+			
+			private function avancar_Click():void{
+				dtg.avancar();
+				listar();
+			}
+			
+			private function fim_Click():void{
+				dtg.fim();
+				listar();
+			}
+
+			private function fechar():void{
+				FlexGlobals.topLevelApplication.fecharTela();
+			}
+		]]>
+	</fx:Script>
+	<leonelcasado:CustomFieldSet title="Dados do Grupo" width="100%" height="10%">
+		<mx:Form width="100%">
+			<mx:FormItem label="Grupo Laudo:" width="100%">
+				<leonelcasado:CustomComboBoxCrud id="cmbGrupoLaudo" customLabelField="descricao" isOrdenarLista="true" width="100%"
+					selecionarItem="listarPacienteGrupoLaudo()" salvarItem="inserirGrupoLaudo()" alterarItem="alterarGrupoLaudo()" excluirItem="excluirGrupoLaudo()"/>
+			</mx:FormItem>
+		</mx:Form>
+	</leonelcasado:CustomFieldSet>
+	<leonelcasado:CustomFieldSet title="Listagem de Paciente" width="100%" height="100%">
+		<mx:Form width="100%">
+			<mx:FormItem label="Tipo:" width="100%" direction="horizontal">
+				<leonelcasado:CustomComboBox id="cmbTipoPesquisa" change="limparCampoBusca()">
+					<fx:Array>
+						<fx:Object label="NOME" data="1"/>
+						<fx:Object label="PRONTUÁRIO" data="2"/>
+						<fx:Object label="CPF" data="4"/>
+						<fx:Object label="CNS" data="5"/>
+						<fx:Object label="RG" data="6"/>
+					</fx:Array>
+				</leonelcasado:CustomComboBox>
+				<leonelcasado:CustomTextInput id="txtValorBusca" enter="listar()" width="100%"/>
+			</mx:FormItem>
+		</mx:Form>
+		<leonelcasado:CustomDataGrid id="dtg" width="100%" height="100%"
+			primeiroRegistro="inicio_Click()" registroAlterior="retroceder_Click()" 
+			proximoRegistro="avancar_Click()" ultimoRegistro="fim_Click()"/>
+	</leonelcasado:CustomFieldSet>
+	<leonelcasado:CustomFieldSet title="Listagem de Paciente do Grupo" width="100%" height="100%" paddingTop="20">
+		<leonelcasado:CustomDataGrid id="dtgPacienteGrupoLaudo" width="100%" height="100%" 
+			includeInLayoutPaginacao="false" includeInLayoutBtnExcluirRegistro="false"/>		
+	</leonelcasado:CustomFieldSet>
+	<componentes:BarraControles id="controles" styleButtons="menuButton"
+		includeInLayoutBtnFechar="true" fechar="fechar()"/>
+</mx:Panel>

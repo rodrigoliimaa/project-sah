@@ -1,0 +1,746 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		  xmlns:componentes="infoliver.view.componentes.*"
+		  title="Atendimento Profissional" width="100%" height="100%"
+		  paddingTop="3" paddingBottom="3" paddingLeft="3" paddingRight="3" creationComplete="init()">
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.Agendamento;
+			import infoliver.model.entity.Arquivo;
+			import infoliver.model.entity.EncaminhamentoExterno;
+			import infoliver.model.entity.Medico;
+			import infoliver.model.entity.PreAtendimento;
+			import infoliver.model.entity.Setor;
+			import infoliver.model.entity.SigtapOcupacao;
+			import infoliver.model.entity.SigtapProcedimento;
+			import infoliver.model.events.AgendamentoEvent;
+			import infoliver.model.events.ArquivoEvent;
+			import infoliver.model.events.EncaminhamentoExternoEvent;
+			import infoliver.model.events.PreAtendimentoEvent;
+			import infoliver.model.events.ProcedimentoMedicoEvent;
+			import infoliver.model.events.SetorEncaminhamentoExternoEvent;
+			import infoliver.model.events.SetorEvent;
+			import infoliver.model.events.SigtapEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			import infoliver.view.componentes.ColunaChamarAtendimentoMedico;
+			import infoliver.view.componentes.ColunaIniciarAtendimentoMedico;
+			
+			import leonelcasado.componentes.Alerta;
+			import leonelcasado.componentes.CustomViewHelper;
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.resources.ResourceManager;
+			
+			[Bindable]public var listaAtendimentos:Array=[];
+			[Bindable]public var nome:String;
+			[Bindable]public var documento:String;
+			[Bindable]public var nomeEntrevistado:String;
+			[Bindable]public var tipoDocumento:String;			
+			[Bindable]public var listaProcedimentos:Array=[];
+			[Bindable]public var listaPacientes:Array=[];
+			[Bindable]public var listaSequencial:Array=[];
+			[Bindable]public var listaEncaminhamento:Array=[];
+			[Bindable]public var listaSequencialEncaminhamento:Array=[];
+			[Bindable]public var flag:Boolean;
+			[Bindable]public var flagAtendidos:Boolean =false;
+			[Bindable]public var sequencial:Object;
+			[Bindable]public var flagEncaminhamento:Boolean=false;
+			[Bindable]public var listaPre:ArrayCollection= new ArrayCollection();
+			[Bindable]public var encaminhamentoExterno:EncaminhamentoExterno = new EncaminhamentoExterno();
+			[Bindable]public var sequencialSetor:Object;
+			[Bindable]public var flagAcesso:Boolean=true;
+			[Bindable]public var sala:String;
+			[Bindable]public var isInserirNovoRegistro:Boolean;
+			private var file:File;
+			[Bindable]public var listaDocumento:Array=[];
+			
+			public var cids:ArrayCollection;
+			public var ocupacao:SigtapOcupacao;
+			
+			
+			private function init():void{				
+				criarColunasDinamicas();	
+				listarPacientePorMedico();
+				flag=true;		
+				verificaAcesso();
+				carregaComboProcedimento();
+			}
+			
+			private var appModel:ModelLocator = ModelLocator.getInstance();
+			
+			public function chama():void{
+				if(dtgPreAtendimento.dtgCustom.selectedItem!=null){
+					var preAtendimento:PreAtendimento = dtgPreAtendimento.dtgCustom.selectedItem as PreAtendimento;
+					FlexGlobals.topLevelApplication.principal.preAtendimentoServicoSocial.lblNomeChamado.text = preAtendimento.nome;
+					
+				}
+			}
+			public function verificaAcesso():void{
+				if(flagAcesso==true){
+					Alerta.info("Por Favor Indique a Sala de Atendimento","Informar Sala");					
+					flagAcesso = false;
+				}
+				
+			}
+			public function getSala():void{
+				
+				sala = txtSala.texto;
+				
+			}
+			
+			
+			//=========================================================================================
+			private function criarColunasDinamicas():void{
+				
+				dtgPreAtendimento.addColunaTexto("Nome","paciente.nome",null,null,100);
+				dtgPreAtendimento.addColunaTexto("Prontuário","paciente.sequencial",null,null,40);			
+				dtgPreAtendimento.addColunaComponenteItemRenderer("",ColunaChamarAtendimentoMedico,20);
+				dtgPreAtendimento.addColunaComponenteItemRenderer("",ColunaIniciarAtendimentoMedico,20);
+				
+			//	dtgEvolucoes.addColunaTexto("Código","sequencial",null,null,50);
+			//	dtgEvolucoes.addColunaTexto("Procedimento","descricaoPrincipal",null,null,100);
+			//	dtgEvolucoes.addColunaComponenteItemRenderer("",ColunaIniciarAtendimentoMedico,20);
+				
+			}
+			
+			//=============================================== Evoluções===================
+			
+			public function carregaComboProcedimento():void{
+				new SigtapEvent(SigtapEvent.LISTA_SIGTAP_PROCEDIMENTOS,this).dispatch();				
+			
+			}
+			public function adicionaAtendimentos(data:Object):void{
+				
+				var preAtendimento:PreAtendimento = data as PreAtendimento;						
+				var lista:Array = new Array(preAtendimento);
+				var atendimentos:ArrayCollection= new ArrayCollection(lista);
+				
+				
+			}
+			
+			//======================= Entrevista: Paciente  ===========//
+			
+			public function setaDadosEntrevista(data:Object):void{								
+				nomeEntrevistado = data.paciente.nome;					
+				sequencial = data.paciente.sequencial;
+				new ArquivoEvent(ArquivoEvent.LISTAR,this,data.paciente.sequencial).dispatch();
+				//tipoDocumento = data.tipoDocumento;
+				//cmbTipoDocumento.selectedValue = data.tipoDocumento;
+				
+				
+			}
+			
+			
+			
+			//======================= Encaminhamento Interno  ===========//
+			public function adcionaEncaminhamentos():void{
+				if(cmbEncaminhamentoInterno.cmbCrud.selectedItem!=null){
+					var setor:Setor= cmbEncaminhamentoInterno.cmbCrud.selectedItem as Setor;
+					listaEncaminhamento.push(setor);
+					dtgEncaminhamento.dataProvider=listaEncaminhamento;
+					//	listaSequencial.push(pacienteSelecionado.sequencial);
+				}
+			}
+			
+			private function exibirArquivo():void{
+				if(dataGrid.selectedItem!=null){
+					preview.init();
+					if(dataGrid.selectedIndex>=0){
+						preview.loadArquivo(dataGrid.selectedItem,dataGrid.selectedItem.name);
+						file=File(dataGrid.selectedItem);
+						
+						var tipoArquivo:String=dataGrid.selectedItem.extension.toString().toLowerCase();
+						if(tipoArquivo!="txt" && tipoArquivo!="pdf" && 
+							tipoArquivo!="png" && tipoArquivo!="gif" && 
+							tipoArquivo!="jpg" && tipoArquivo!="jpeg" && 
+							tipoArquivo!="xml" && tipoArquivo!="swf"){
+							dataGrid.selectedItem.openWithDefaultApplication();
+							preview.init();
+						}
+					}
+				}
+			}
+			
+			private function adicionarDocumento():void{
+				if(dataGrid.selectedItem==null)return;
+				var tamanhoMaximo:uint=50000;//50MB
+				var tamanhoArquivo:uint=(file.size/1024)+1;
+				if(tamanhoArquivo<=tamanhoMaximo){
+					var arquivo:Arquivo=new Arquivo;
+					arquivo.nome=file.name;
+					arquivo.tamanho=tamanhoArquivo;
+					arquivo.isNovoArquivo=true;
+					//--------------------------------------
+					var bytes:ByteArray = new ByteArray();
+					var fileStream:FileStream = new FileStream();
+					fileStream.open(file, FileMode.READ);
+					fileStream.readBytes(bytes,0,fileStream.bytesAvailable);
+					fileStream.close();
+					arquivo.imagemArquivo=bytes;
+					arquivo.caminhoLocalArquivo=file.nativePath;
+					//--------------------------------------
+					listaDocumento.push(arquivo);				
+					dtgDocumento.dataProvider=listaDocumento;
+				}else
+					Alerta.restriction("Arquivo com tamanho maior do que o permitido.");
+			}
+			
+			private var masks:Array =
+				[
+					null,
+					new RegExp("\\d"),
+					new RegExp("\\d\\d"),
+					new RegExp("\\d\\d\\d"),
+					new RegExp("\\d\\d\\d\\-"),
+					new RegExp("\\d\\d\\d\\-\\d"),
+					new RegExp("\\d\\d\\d\\-\\d\\d"),
+					new RegExp("\\d\\d\\d\\-\\d\\d\\-"),
+					new RegExp("\\d\\d\\d\\-\\d\\d\\-\\d"),
+					new RegExp("\\d\\d\\d\\-\\d\\d\\-\\d\\d"),
+					new RegExp("\\d\\d\\d\\-\\d\\d\\-\\d\\d\\d"),
+					new RegExp("\\d\\d\\d\\-\\d\\d\\-\\d\\d\\d\\d")
+				];
+			// ====================== Listar Pacientes do dia ==================== //
+			public function listarPacientePorMedico():void{
+				
+				//var medico:Medico = new Medico();
+				var agendamento:Agendamento = new Agendamento();
+				//medico.sequencial = 82;
+				
+				agendamento.medico = new Medico();
+				agendamento.medico.sequencial = 82;
+				
+				var paginacaoVO:PaginacaoVO = new PaginacaoVO();
+				paginacaoVO.entidade = agendamento;
+				paginacaoVO.quantidadePaginacao = dtgPreAtendimento.maximo;
+				paginacaoVO.inicioPaginacao = dtgPreAtendimento.indice;
+				
+				new AgendamentoEvent(AgendamentoEvent.LISTA_PAGINADO, this, paginacaoVO).dispatch();
+			}
+			// ======================  Carregar Combos / Crud Combos ==================== //
+			
+			// COMBO ENCAMINHAMENTO EXTERNO==================================================
+			private function getDescricao(isInclusao:Boolean=false):EncaminhamentoExterno{
+				
+				
+				var encaminhamentoExterno:EncaminhamentoExterno=new EncaminhamentoExterno;
+				//if(!isInclusao)encaminhamentoExterno=cmbEncaminhamentoExterno.itemSelecionado as EncaminhamentoExterno;
+				//encaminhamentoExterno.descricao=cmbParaEncaminhamentoExterno.cmbCrud.text;	
+				//encaminhamentoExterno.logradouro = txtLogradouroEncaminhamento.texto;
+				//encaminhamentoExterno.responsavel = txtResponsavelEncaminhamento.texto;
+				//encaminhamentoExterno.referencia = txtReferenciaEncaminhamento.texto;
+				return encaminhamentoExterno;
+			}
+			
+			
+			
+			private function alteraEncaminhamento():EncaminhamentoExterno{
+				var encaminhamentoExterno:EncaminhamentoExterno=new EncaminhamentoExterno;
+				//encaminhamentoExterno.logradouro = txtLogradouroEncaminhamento.texto;
+				//encaminhamentoExterno.responsavel = txtResponsavelEncaminhamento.texto;
+				//encaminhamentoExterno.referencia = txtReferenciaEncaminhamento.texto;
+				//encaminhamentoExterno.sequencial = cmbParaEncaminhamentoExterno.cmbCrud.selectedItem.sequencial;
+				return encaminhamentoExterno;
+			}
+			
+			private function alterarEncainhamentoExterno():void{
+			//	cmbParaEncaminhamentoExterno.alterar(EncaminhamentoExternoEvent,EncaminhamentoExternoEvent.ALTERAR,alteraEncaminhamento());
+				
+			}			
+			public function setaDadosEncaminhamento(data:Object):void{
+				var encaminhamento:EncaminhamentoExterno = new EncaminhamentoExterno();
+				
+			}
+			// Combo Setor Encaminhamento Interno
+			private function getDescricaoSetorInterno(isInclusao:Boolean=false):Setor{
+				var setor :Setor = new Setor();
+				if(!isInclusao)setor=cmbEncaminhamentoInterno.itemSelecionado as Setor;
+				setor.descricao=cmbEncaminhamentoInterno.cmbCrud.text;
+				return setor;
+			}
+			
+			private function inserirSetorInterno():void{
+				cmbEncaminhamentoInterno.inserir(SetorEvent,SetorEvent.INSERIR,getDescricaoSetorInterno(true));
+			}
+			public function carregaComboSetorInterno():void{
+				cmbEncaminhamentoInterno.listar(SetorEvent,SetorEvent.LISTAR);
+			}
+			
+			// Result
+			public function result(data:Object,event:Event):void{
+				if(event.type==AgendamentoEvent.LISTA_PAGINADO){					
+					dtgPreAtendimento.inicializarTotalizadores();
+					dtgPreAtendimento.setDataGridPaginado(data.result.totalRegistros,data.result.entidade);
+					
+				}
+				else if(event.type==SigtapEvent.LISTA_SIGTAP_PROCEDIMENTOS){
+				//cmbprocedimento.dataProvider = data.result;
+					//listaProcedimentos.splice(0);
+					//listaProcedimentos = data.result.source;
+					//dtgEvolucoes.dataProvider=listaProcedimentos;
+				}
+				else if(event.type==EncaminhamentoExternoEvent.LISTAR){
+				///	cmbEncaminhamentoExterno.cmbCrud.dataProvider=data.result;
+					
+				}
+				else if(event.type==EncaminhamentoExternoEvent.LISTARFILTRO){
+					var e:EncaminhamentoExterno = new EncaminhamentoExterno();
+					listaPre.source= data.result.source;
+					encaminhamentoExterno=listaPre.getItemAt(0) as EncaminhamentoExterno;
+				
+					
+					
+				}
+				else if(event.type==SetorEncaminhamentoExternoEvent.LISTAR){
+					//cmbSetorExterno.cmbCrud.dataProvider=data.result;
+				}
+				else if(event.type==SetorEvent.LISTAR){
+					cmbEncaminhamentoInterno.cmbCrud.dataProvider=data.result;
+				}
+				else if(event.type==PreAtendimentoEvent.LISTARCOMFILTRO){
+					dtgPreAtendimento.inicializarTotalizadores();
+					dtgPreAtendimento.setDataGridPaginado(data.result.totalRegistros,data.result.entidade);				
+				}
+				else if(event.type==PreAtendimentoEvent.ALTERAR){
+					//listarVisitantesDia();		
+					
+				}
+				else if(event.type==PreAtendimentoEvent.LISTARATENDIDOS){					
+					dtgAtendidos.inicializarTotalizadores();
+					dtgAtendidos.setDataGridPaginado(data.result.totalRegistros,data.result.entidade);		 
+					
+				}
+				else if(event.type==ArquivoEvent.LISTAR){
+					listaDocumento.splice(0);
+					listaDocumento=data.result.source;
+					dtgDocumento.dataProvider=listaDocumento;
+					
+				}
+			}
+			
+			
+			private function fim_Click():void{
+				//dtg.fim();
+				//listar();
+			}
+			
+			private function fechar():void{
+				FlexGlobals.topLevelApplication.fecharTela();
+			}
+			public function novo():void{
+				
+			}
+			public function selecionarItem():void{
+				
+			}
+			public function alterarItem():void{
+				
+			}
+			public function salvarItem():void{
+				
+			}
+			public function excluirrItem():void{
+				
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<leonelcasado:CustomFieldSet title="Atendimento Médico" width="100%" height="100%">
+		
+		<s:Form width="100%" height="100%">	
+			<mx:TabNavigator id="tabAtendimentoMedico" width="100%" height="100%" paddingTop="10" 
+							 backgroundAlpha="0" creationPolicy="all" borderStyle="none">
+				<s:NavigatorContent label="Pré-Atendimento">
+					<mx:Form width="100%" height="100%">					
+						<leonelcasado:CustomFieldSet title="Listagem para Pré-Atendimento do Dia" width="100%" height="40%">
+							<mx:Form width="100%">
+								<mx:FormItem label="Localizar:" width="100%" direction="horizontal">
+									<leonelcasado:CustomTextInput id="txtBusca" width="100%"/>
+									<leonelcasado:CustomButton id="btnBusca" click="" label="Listar Todos"/>	
+									<leonelcasado:CustomLabel id="lblSala" width="3%" text="Sala Entrevista:"/>
+									<leonelcasado:CustomTextInput id="txtSala" width="100%"/>
+									<leonelcasado:CustomButton id="btnSala" click="getSala()" label="OK"/>
+								</mx:FormItem>
+								<leonelcasado:CustomDataGrid id="dtgPreAtendimento" width="100%" height="100%" includeInLayoutTotalRegistro="false" includeInLayoutPaginacao="false" 
+															 includeInLayoutBtnExcluirRegistro="false"/>							
+							</mx:Form>
+							
+						</leonelcasado:CustomFieldSet>
+						<leonelcasado:CustomFieldSet title="Listagem Atendidos" width="100%" height="60%">
+							<mx:Form width="100%">
+								<mx:FormItem label="Localizar:" width="100%" direction="horizontal">
+									<leonelcasado:CustomTextInput id="txtBuscaAtendidos" width="100%"/>
+									<leonelcasado:CustomButton id="btnBuscaAtendidos" label="Listar Todos"/>								
+								</mx:FormItem>	
+							</mx:Form>		
+							<mx:FormItem width="100%" height="80%">
+								<leonelcasado:CustomDataGrid id="dtgAtendidos" width="100%" includeInLayoutTotalRegistro="false" includeInLayoutPaginacao="false" 
+															 includeInLayoutBtnExcluirRegistro="false"/>
+							</mx:FormItem>
+						</leonelcasado:CustomFieldSet>
+						
+					</mx:Form>
+				</s:NavigatorContent>
+				<s:NavigatorContent width="100%" height="10%" label="Entrevista">
+					<mx:Box width="100%" height="100%">						
+						<leonelcasado:CustomFieldSet title="Dados Visitante/Paciente" width="100%" height="70%">
+							<mx:Form width="100%" height="50%">							
+								<mx:FormItem label="Prontuário" width="100%" height="30%" direction="horizontal">
+									<leonelcasado:CustomLabel id="lblProntuarioEntrevista" width="3%" text="{sequencial}"/>
+									<mx:FormItem label="Nome:" width="100%" height="30%" direction="horizontal">
+										<leonelcasado:CustomLabel id="lblNomeEntrevista" width="3%" text="{nomeEntrevistado}"/>
+									</mx:FormItem>
+								</mx:FormItem>	
+								<mx:FormItem label="Tipo Doc." width="5%" direction="horizontal">
+									<leonelcasado:CustomLabel id="lblTipoDocEntrevista" width="5%" text="{tipoDocumento}"/>
+									<mx:FormItem label="Documento:" width="100%" height="30%" direction="horizontal">
+										<leonelcasado:CustomLabel id="lblDocEntrevista" width="3%" text="{documento}"/>									
+									</mx:FormItem>	
+								</mx:FormItem>	
+							</mx:Form>
+						</leonelcasado:CustomFieldSet>	
+						<leonelcasado:CustomFieldSet title="Procedimetos Realizados" width="100%" height="100%">
+							<mx:Form width="50%">
+								<mx:FormItem label="Código" width="100%" direction="horizontal">
+									<s:TextInput width="100%"/>
+									<s:Label text="Nome do Procedimento"/>
+									<s:TextInput width="100%"/>
+									<s:Button id="btnAdicionar" label="Adicionar"/>									
+								</mx:FormItem></mx:Form>
+							
+							<mx:DataGrid id="dtgSelecionados" width="100%" draggableColumns="false" height="80%">									
+								<mx:columns>
+									<mx:DataGridColumn headerText="Código" dataField="sequencial" width="80"/>
+									<mx:DataGridColumn headerText="Descrição" dataField="descricao"/>								
+									<mx:DataGridColumn width="30">
+										<mx:itemRenderer>
+											<fx:Component>
+												<mx:Box horizontalAlign="center" verticalAlign="middle">
+													<fx:Script>
+														<![CDATA[
+															import infoliver.model.entity.Arquivo;
+															import infoliver.model.entity.Paciente;
+															import infoliver.model.events.ArquivoEvent;
+															
+															import leonelcasado.componentes.Alerta;
+															import leonelcasado.componentes.Imagens;
+															
+															import mx.controls.Alert;
+															import mx.events.CloseEvent;
+															
+															private function excluir():void{
+																outerDocument.listaPacientes.splice(outerDocument.dtgSelecionados.selectedIndex,1);
+																outerDocument.listaSequencial.splice(outerDocument.dtgSelecionados.selectedIndex,1);
+																Alerta.confirm("Deseja excluir o registro selecionado?",confirmarExclusao);
+															}
+															private function confirmarExclusao(event:CloseEvent):void{
+																if(event.detail==Alert.YES){																		
+																	outerDocument.dtgSelecionados.dataProvider=outerDocument.listaPacientes;																			
+																}
+															}								
+															
+														]]>
+													</fx:Script>
+													<leonelcasado:CustomImagem toolTip="Exclusão" click="excluir()" source="{Imagens.iconDelete}"/>
+												</mx:Box>
+											</fx:Component>
+										</mx:itemRenderer>
+									</mx:DataGridColumn>
+								</mx:columns>
+							</mx:DataGrid>							
+							
+						</leonelcasado:CustomFieldSet>					
+						
+						
+						
+						
+						
+					</mx:Box>
+				</s:NavigatorContent>
+				<!-- ***********************************PRONTUÁRIO***************************************************** -->
+				<s:NavigatorContent width="100%" height="100%" label="Prontuário">
+					<mx:HDividedBox label="Documentos" width="100%" height="100%" showEffect="Fade">
+						<mx:VBox id="vbxListaDocumento" width="100%" height="100%" horizontalAlign="right">
+							<mx:VDividedBox width="100%">
+								<mx:FileSystemTree id="tree" width="100%" height="100%" buttonMode="true"
+												   enumerationMode="directoriesOnly" change="dataGrid.directory = File(tree.selectedItem)"/>
+								<mx:FileSystemDataGrid id="dataGrid" width="100%" height="100%" enumerationMode="filesOnly"
+													   directory="{File.documentsDirectory}" buttonMode="true" click="exibirArquivo()"/>
+							</mx:VDividedBox>
+							<!-- **************************************************************************************** -->
+							<mx:Box width="100%" direction="horizontal">
+								<leonelcasado:CustomLabel text="50MB de Tamanho Máximo por Arquivo" fontWeight="bold" fontSize="15"/>
+								<s:Spacer width="100%"/>
+								<leonelcasado:CustomButton label="Adicionar Documento" click="adicionarDocumento()" enter="adicionarDocumento()"/>
+							</mx:Box>
+							<!-- **************************************************************************************** -->
+							<mx:DataGrid id="dtgDocumento" width="100%" height="100%" draggableColumns="false">
+								<mx:columns>
+									<mx:DataGridColumn headerText="Cod" dataField="sequencial" visible="false"/>
+									<mx:DataGridColumn headerText="Nome" dataField="nome"/>
+									<mx:DataGridColumn headerText="Tam" dataField="tamanho" width="50" labelFunction="CustomViewHelper.dataGridMascararValorKB" textAlign="right"/>
+									<mx:DataGridColumn width="30">
+										<mx:itemRenderer>
+											<fx:Component>
+												<mx:Box horizontalAlign="center" verticalAlign="middle">
+													<fx:Script>
+														<![CDATA[
+															import leonelcasado.componentes.Imagens;
+															import mx.core.FlexGlobals;
+															import mx.resources.ResourceManager;
+															
+															private function visualizar(data:*):void{
+																if(outerDocument.isInserirNovoRegistro){
+																	outerDocument.preview.initStateProgress();
+																	outerDocument.preview.title=data.nome;
+																	outerDocument.preview.html.location=data.caminhoLocalArquivo;
+																}else{
+																	var url:String=ResourceManager.getInstance().getString('strings','url')+"preview";
+																	outerDocument.preview.initStateProgress();
+																	outerDocument.preview.html.location=url+"?sequencial="+data.sequencial+"&isDownload=false";
+																}
+															}
+														]]>
+													</fx:Script>
+													<leonelcasado:CustomImagem toolTip="Visualização" source="{Imagens.iconView}" click="visualizar(data)"/>
+												</mx:Box>
+											</fx:Component>
+										</mx:itemRenderer>
+									</mx:DataGridColumn>
+									<mx:DataGridColumn width="30" visible="{!isInserirNovoRegistro}">
+										<mx:itemRenderer>
+											<fx:Component>
+												<mx:Box horizontalAlign="center" verticalAlign="middle">
+													<fx:Script>
+														<![CDATA[
+															import infoliver.util.DownloadFile;
+															import leonelcasado.componentes.Imagens;
+															import mx.resources.ResourceManager;
+															
+															private function downloadFile(data:*):void{
+																var url:String= ResourceManager.getInstance().getString('strings','url')+"preview";
+																var serverUrl:String = url+"?sequencial="+data.sequencial+"&isDownload=true";
+																DownloadFile.download(data.nome,serverUrl,parent.parent);
+															}												
+														]]>
+													</fx:Script>
+													<leonelcasado:CustomImagem toolTip="Download" source="{Imagens.iconDownload}" click="downloadFile(data)"/>
+												</mx:Box>
+											</fx:Component>
+										</mx:itemRenderer>
+									</mx:DataGridColumn>
+									<mx:DataGridColumn width="30">
+										<mx:itemRenderer>
+											<fx:Component>
+												<mx:Box horizontalAlign="center" verticalAlign="middle">
+													<fx:Script>
+														<![CDATA[
+															import infoliver.model.entity.Arquivo;
+															import infoliver.model.events.ArquivoEvent;
+															
+															import leonelcasado.componentes.Alerta;
+															import leonelcasado.componentes.Imagens;
+															
+															import mx.controls.Alert;
+															import mx.events.CloseEvent;
+															
+															private function excluir():void{
+																if(outerDocument.isInserirNovoRegistro){
+																	outerDocument.preview.init();
+																	outerDocument.listaDocumento.splice(outerDocument.dtgDocumento.selectedIndex,1);
+																	outerDocument.dtgDocumento.dataProvider=outerDocument.listaDocumento;
+																}else{
+																	Alerta.confirm("Deseja excluir o registro selecionado?",confirmarExclusao);
+																}
+															}
+															
+															private function confirmarExclusao(event:CloseEvent):void{
+																if(event.detail==Alert.YES){
+																	outerDocument.preview.init();
+																	var arquivo:Arquivo=new Arquivo;
+																	arquivo.sequencial=data.sequencial;
+																	arquivo.paciente.sequencial=outerDocument.data.sequencial;	
+																	new ArquivoEvent(ArquivoEvent.EXCLUIR,this,arquivo).dispatch();
+																}
+															}
+															
+															public function result(data:Object,event:Event):void{
+																if(event.type==ArquivoEvent.EXCLUIR){
+																	outerDocument.listaDocumento.splice(0);
+																	outerDocument.listaDocumento=data.result.entidade.source;
+																	outerDocument.dtgDocumento.dataProvider=outerDocument.listaDocumento;
+																	Alerta.success(data.result.msg);
+																}
+															}
+														]]>
+													</fx:Script>
+													<leonelcasado:CustomImagem toolTip="Exclusão" click="excluir()" source="{Imagens.iconDelete}"/>
+												</mx:Box>
+											</fx:Component>
+										</mx:itemRenderer>
+									</mx:DataGridColumn>
+								</mx:columns>
+							</mx:DataGrid>
+						</mx:VBox>
+						<!-- ******************************************************************************** -->
+						<componentes:Preview id="preview" width="50%"/>
+					</mx:HDividedBox>
+					<!-- **************************************************************************************** -->
+				</s:NavigatorContent>
+				<!-- *****************************************EVOLUÇÕES*********************************************** -->
+				
+				<s:NavigatorContent width="100%" height="100%" label="Evoluções">
+					<mx:Box width="100%" height="100%">						
+						<leonelcasado:CustomFieldSet title="Dados Paciente" width="100%" height="20%">
+							<mx:Form width="100%">							
+								<mx:FormItem label="Prontuário" width="100%" height="30%" direction="horizontal">
+									<leonelcasado:CustomLabel id="lblProntuarioEvolucao" width="3%" text="{sequencial}"/>
+									<mx:FormItem label="Nome:" width="100%" height="30%" direction="horizontal">
+										<leonelcasado:CustomLabel id="lblNomeEvolucao" width="3%" text="{nomeEntrevistado}"/>
+									</mx:FormItem>
+								</mx:FormItem>									
+							</mx:Form>							
+						</leonelcasado:CustomFieldSet>
+						<leonelcasado:CustomFieldSet title="Inserir Evoluções" width="100%">
+							<mx:Form width="100%">		
+								<mx:FormItem label="Procedimento Médico:" width="100%">
+									<leonelcasado:AutoComplete id="cmbprocedimento" labelField="no_procedimento" rowCount="15"
+															   includeButton="true" isAddSelecione="true" width="70%"/>
+								</mx:FormItem>
+								
+								<mx:DataGrid id="dtgEvolucoes" width="100%" draggableColumns="false" height="80%">									
+									<mx:columns>
+										<mx:DataGridColumn headerText="Código" dataField="codigoPrincipal" width="100"/>
+										<mx:DataGridColumn headerText="Descrição" dataField="descricaoPrincipal"/>								
+										<mx:DataGridColumn width="30">
+											<mx:itemRenderer>
+												<fx:Component>
+													<mx:Box horizontalAlign="center" verticalAlign="middle">
+														<fx:Script>
+															<![CDATA[
+																
+																import leonelcasado.componentes.Alerta;
+																import leonelcasado.componentes.Imagens;
+																
+																import mx.controls.Alert;
+																import mx.events.CloseEvent;
+																
+																private function excluir():void{
+																	outerDocument.listaProcedimentos.splice(outerDocument.dtgEvolucoes.selectedIndex,1);
+																	outerDocument.listaSequencial.splice(outerDocument.dtgEvolucoes.selectedIndex,1);
+																	Alerta.confirm("Deseja excluir o registro selecionado?",confirmarExclusao);
+																}
+																private function confirmarExclusao(event:CloseEvent):void{
+																	if(event.detail==Alert.YES){																		
+																		outerDocument.dtgEvolucoes.dataProvider=outerDocument.listaProcedimentos;																			
+																	}
+																}								
+																
+															]]>
+														</fx:Script>
+														<leonelcasado:CustomImagem toolTip="Exclusão" click="excluir()" source="{Imagens.iconDelete}"/>
+													</mx:Box>
+												</fx:Component>
+											</mx:itemRenderer>
+										</mx:DataGridColumn>
+									</mx:columns>
+								</mx:DataGrid>												
+								<leonelcasado:CustomTextArea width="100%"/>
+							</mx:Form>
+						</leonelcasado:CustomFieldSet>
+						<leonelcasado:CustomFieldSet title="Histórico de Evoluções" width="100%" height="100%">
+							<mx:Form width="100%" height="100%">							
+								<leonelcasado:CustomDataGrid id="dtgHistoricoEvolucoes" width="100%" height="100%"
+															 horizontalScrollCustomDataGrid="off"															 
+															 includeInLayoutBtnAlterarRegistro="false"
+															 includeInLayoutBtnExcluirRegistro="false"
+															 includeInLayoutTotalRegistro="false"
+															 includeInLayoutPaginacao="false"
+															 />							
+							</mx:Form>
+						</leonelcasado:CustomFieldSet>
+						
+					</mx:Box>					
+				</s:NavigatorContent>
+				<!-- *************************************RECEITUÁRIO*************************************************** -->
+				<s:NavigatorContent width="100%" height="100%" label="Receituário">
+					<mx:HDividedBox  width="100%" height="100%" paddingBottom="3" paddingLeft="3">
+						<leonelcasado:CustomFieldSet title="Receituário" width="100%" height="100%" paddingTop="20">
+							<leonelcasado:CustomTextArea width="100%" height="100%">
+								
+							</leonelcasado:CustomTextArea>
+						</leonelcasado:CustomFieldSet>
+						<componentes:Preview id="previewReceituario" width="100%" height="100%"/>	
+					</mx:HDividedBox>		
+				</s:NavigatorContent>
+				<!-- *************************************ENCAMINHAMENTO INTERNO*************************************************** -->
+				<s:NavigatorContent width="100%" height="100%" label="Encaminhamento Interno">
+					<leonelcasado:CustomFieldSet title="Encaminhamento Interno" width="100%">
+						<mx:Form width="100%" creationComplete="carregaComboSetorInterno()">
+							<mx:FormItem label="Tipo" width="100%" direction="horizontal">
+								<leonelcasado:CustomComboBoxCrud width="20%" id="cmbEncaminhamentoInterno" customLabelField="descricao" isOrdenarLista="true" 
+																 selecionarItem="selecionarItem()" salvarItem="inserirSetorInterno()" alterarItem="alterarItem()"
+																 excluirItem="excluirrItem()"/>	
+								<s:Button id="btnAdicionarEncaminhamento" label="Adicionar" click="adcionaEncaminhamentos()"/>									
+							</mx:FormItem></mx:Form>
+						
+						<mx:DataGrid id="dtgEncaminhamento" width="100%" draggableColumns="false" height="100%">									
+							<mx:columns>
+								<mx:DataGridColumn headerText="Código" dataField="sequencial" width="80"/>
+								<mx:DataGridColumn headerText="Descrição" dataField="descricao"/>								
+								<mx:DataGridColumn width="30">
+									<mx:itemRenderer>
+										<fx:Component>
+											<mx:Box horizontalAlign="center" verticalAlign="middle">
+												<fx:Script>
+													<![CDATA[
+														import infoliver.model.entity.Arquivo;
+														import infoliver.model.entity.Paciente;
+														import infoliver.model.events.ArquivoEvent;
+														
+														import leonelcasado.componentes.Alerta;
+														import leonelcasado.componentes.Imagens;
+														
+														import mx.controls.Alert;
+														import mx.events.CloseEvent;
+														
+														private function excluir():void{
+															outerDocument.listaEncaminhamento.splice(outerDocument.dtgEncaminhamento.selectedIndex,1);
+															outerDocument.listaSequencialEncaminhamento.splice(outerDocument.dtgEncaminhamento.selectedIndex,1);
+															Alerta.confirm("Deseja excluir o registro selecionado?",confirmarExclusao);
+														}
+														private function confirmarExclusao(event:CloseEvent):void{
+															if(event.detail==Alert.YES){																
+																outerDocument.dtgEncaminhamento.dataProvider=outerDocument.listaEncaminhamento;																
+															}
+														}								
+														
+													]]>
+												</fx:Script>
+												<leonelcasado:CustomImagem toolTip="Exclusão" click="excluir()" source="{Imagens.iconDelete}"/>
+											</mx:Box>
+										</fx:Component>
+									</mx:itemRenderer>
+								</mx:DataGridColumn>
+							</mx:columns>
+						</mx:DataGrid>							
+						
+					</leonelcasado:CustomFieldSet>	
+				</s:NavigatorContent>
+				
+				
+			</mx:TabNavigator>
+		</s:Form>
+		<componentes:BarraControles id="controles" includeInLayoutBtnSalvar="true" salvar="" includeInLayoutBtnFechar="true"
+									styleButtons="menuButton" fechar="fechar()"/>
+	</leonelcasado:CustomFieldSet>	
+</mx:Panel>

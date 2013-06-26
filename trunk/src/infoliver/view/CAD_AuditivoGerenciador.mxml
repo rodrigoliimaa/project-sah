@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		  xmlns:view="infoliver.view.*" width="100%" height="100%"
+		  paddingLeft="3" paddingRight="3" paddingTop="3" paddingBottom="3" 
+		  verticalAlign="top" title="Auditivo" show="init()">
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.entity.Movimentacao;
+			import infoliver.model.entity.MovimentacaoProcedimento;
+			import infoliver.model.entity.Programa;
+			import infoliver.model.events.EquipamentoEvent;
+			
+			import mx.controls.dataGridClasses.DataGridColumn;
+			
+			public static const LABEL_EDICAO:String = "Edição";
+			public static const LABEL_NOVO:String = "Novo";
+			
+			private var programa:Programa;
+			
+			private function atualizarFormularioCadastro():void{
+				if (programa != null && movimentacaoCadastro != null) {
+					movimentacaoCadastro.cmbProgramaProcedimento.dataProvider = [
+						{data:programa.sequencial,label:programa.descricao}
+					];
+					
+					if (programa.sequencial == 1) { // ORTESE E PROTESE
+						movimentacaoCadastro.lblAPACBPI.label = "BPI";
+						movimentacaoCadastro.customLabelCategoriaTipo.text = "TIPO:"
+						movimentacaoCadastro.customComboBoxCategoriaTipo.dataProvider = MovimentacaoProcedimento.LISTA_TIPO;
+						movimentacaoCadastro.dataGridColumnCategoriaTipo.headerText = "TIPO";
+//						movimentacaoCadastro.customLabelCategoriaTipoSecundario.text = "TIPO:"
+//						movimentacaoCadastro.customComboBoxCategoriaTipoSecundario.dataProvider = MovimentacaoProcedimento.LISTA_TIPO;
+//						movimentacaoCadastro.dataGridColumnCategoriaTipoSecundario.headerText = "TIPO";
+//						movimentacaoCadastro.customLabelCategoriaTipoCausasAssociadas.text = "TIPO:"
+//						movimentacaoCadastro.customComboBoxCategoriaTipoCausasAssociadas.dataProvider = MovimentacaoProcedimento.LISTA_TIPO;
+//						movimentacaoCadastro.dataGridColumnCategoriaTipoCausasAssociadas.headerText = "TIPO";
+					} else { // AUDITIVO
+						movimentacaoCadastro.lblAPACBPI.label = "APAC";
+						movimentacaoCadastro.customLabelCategoriaTipo.text = "CATEGORIA:"
+						movimentacaoCadastro.customComboBoxCategoriaTipo.dataProvider = MovimentacaoProcedimento.LISTA_CATEGORIA;
+						movimentacaoCadastro.dataGridColumnCategoriaTipo.headerText = "CATEGORIA";
+//						movimentacaoCadastro.customLabelCategoriaTipoSecundario.text = "CATEGORIA:"
+//						movimentacaoCadastro.customComboBoxCategoriaTipoSecundario.dataProvider = MovimentacaoProcedimento.LISTA_CATEGORIA;
+//						movimentacaoCadastro.dataGridColumnCategoriaTipoSecundario.headerText = "CATEGORIA";
+//						movimentacaoCadastro.customLabelCategoriaTipoCausasAssociadas.text = "CATEGORIA:"
+//						movimentacaoCadastro.customComboBoxCategoriaTipoCausasAssociadas.dataProvider = MovimentacaoProcedimento.LISTA_CATEGORIA;
+//						movimentacaoCadastro.dataGridColumnCategoriaTipoCausasAssociadas.headerText = "CATEGORIA";
+					}
+				}
+			}
+			
+			private function atualizarListaTipoPesquisa():void{
+				movimentacaoListagem.cmbTipoPesquisa.dataProvider = movimentacaoListagem.LISTA_TIPO_PESQUISA_AUDITIVO;
+				movimentacaoListagem.cmbSituacoes.dataProvider = movimentacaoListagem.LISTA_SITUACOES_AUDITIVO;
+				(movimentacaoListagem.dtg.colunas[movimentacaoListagem.APAC_BPI_DATAGRID_INDEX] as DataGridColumn).headerText = movimentacaoListagem.APAC_BPI;
+				/* if (programa != null && movimentacaoListagem != null) {
+					if (programa.sequencial == 1) { // ORTESE E PROTESE
+						movimentacaoListagem.cmbTipoPesquisa.dataProvider = movimentacaoListagem.LISTA_TIPO_PESQUISA_ORTESE_PROTESE;
+						movimentacaoListagem.cmbSituacoes.dataProvider = movimentacaoListagem.LISTA_SITUACOES_ORTESE_PROTESE;
+						(movimentacaoListagem.dtg.colunas[movimentacaoListagem.APAC_BPI_DATAGRID_INDEX] as DataGridColumn).headerText = movimentacaoListagem.BPI;
+					} else { // AUDITIVO
+					}
+				} */
+			}
+			
+			public function limparCamposFormularios():void {
+				movimentacaoListagem.txtCodigoMedico.text = "";
+				movimentacaoListagem.txtNomeMedico.text = "";
+				movimentacaoListagem.txtCodigoProcedimento.text = "";
+				movimentacaoListagem.txtNomeProcedimento.text = "";
+				movimentacaoListagem.checkBoxDataSolicitacao.selected = false;
+				movimentacaoListagem.checkBoxDataSituacao.selected = false;
+				movimentacaoListagem.checkBoxAutorizado.selected = false;
+				movimentacaoListagem.dthInicioSituacao.text = "";
+				movimentacaoListagem.dthFimSituacao.text = "";
+				movimentacaoListagem.dthInicioSolicitacao.text = "";
+				movimentacaoListagem.dthFimSolicitacao.text = "";
+			}
+			
+			public function atualizarListagem(param:Programa):void{
+				if (movimentacaoListagem != null &&
+					movimentacaoListagem.hasListagem() == true &&
+					programa.sequencial != param.sequencial
+				) {
+					movimentacaoListagem.limparListagem();
+				}
+			}
+			
+			public function atualizarPrograma(param:Programa):void{
+				atualizarListagem(param);
+				
+				this.programa = param;
+				
+				atualizarTitulo();
+				atualizarListaTipoPesquisa();
+				atualizarFormularioCadastro();
+			}
+			
+			private function atualizarTitulo():void{
+				if (programa != null) {
+					title = programa.descricao;
+				}
+			}
+			
+			public function carregarEquipamentos():void{
+				new EquipamentoEvent(EquipamentoEvent.LISTA, this).dispatch();
+			}
+			
+			public function exibirCadastro():void{
+				habilitarDesabilitarCadastro(true);
+				tabMovimentacaoGerenciador.selectedIndex = tabMovimentacaoGerenciador.getItemIndex(movimentacaoCadastro);
+			}
+			
+			public function exibirListagem():void{
+				tabMovimentacaoGerenciador.selectedIndex = tabMovimentacaoGerenciador.getItemIndex(movimentacaoListagem);
+			}
+			
+			public function getPrograma():Programa{
+				return this.programa;
+			}
+			
+			public function habilitarDesabilitarCadastro(habilitar:Boolean):void{
+				movimentacaoCadastro.enabled = habilitar;
+			}
+			
+			public function init():void{
+				atualizarListaTipoPesquisa();
+				atualizarFormularioCadastro();
+				carregarEquipamentos();
+				habilitarDesabilitarCadastro(false);
+				exibirListagem();
+			}
+			
+			public function novaMovimentacao(movimentacao:Movimentacao = null):void{
+				if (movimentacao != null) { 
+					prepararExibirEdicao(movimentacao);
+				} else {
+					prepararExibirNovo();
+				}
+				exibirCadastro();
+			}
+			
+			public function prepararExibirEdicao(movimentacao:Movimentacao):void{
+				movimentacaoCadastro.isInserirNovoRegistro = false;
+				movimentacaoCadastro.label = LABEL_EDICAO;
+				movimentacaoCadastro.setMovimentacao(movimentacao);
+				movimentacaoCadastro.preencherFormulario();
+				movimentacaoCadastro.habilitarCamposEdicao();
+				movimentacaoCadastro.atualizarValor();
+			}
+			
+			public function prepararExibirNovo():void{
+				movimentacaoCadastro.isInserirNovoRegistro = true;
+				movimentacaoCadastro.label = LABEL_NOVO;
+				movimentacaoCadastro.limpar();
+				movimentacaoCadastro.habilitarCamposNovo();
+			}
+			
+			public function result(data:Object,event:Event):void{
+				if (event.type == EquipamentoEvent.LISTA) {
+					movimentacaoCadastro.setEquipamentos(data.result);
+				}
+			}
+		]]>
+	</fx:Script>
+	<mx:TabNavigator id="tabMovimentacaoGerenciador" width="100%" height="100%" 
+					 horizontalGap="0" backgroundAlpha="0" paddingTop="0" borderStyle="none"
+					 useHandCursor="true" buttonMode="true" creationPolicy="all">
+		<view:CAD_AuditivoListagem id="movimentacaoListagem" label="Listagem" width="100%" height="100%"/>
+		<view:CAD_AuditivoCadastro id="movimentacaoCadastro" label="Novo" width="100%" height="100%"/>
+	</mx:TabNavigator>
+</mx:Panel>	

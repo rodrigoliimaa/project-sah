@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<leonelcasado:ServiceLocator xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml">
+	<mx:Metadata>
+		[ResourceBundle("strings")]
+	</mx:Metadata>	
+	<mx:Script>
+		<![CDATA[
+			import mx.messaging.Channel;
+			import mx.messaging.ChannelSet;
+			import mx.messaging.channels.AMFChannel;
+			import mx.resources.ResourceManager;
+
+			private var cs:ChannelSet;
+			
+			//Usado no Adobe Air
+			private function getChannelSet():ChannelSet{
+				if(cs==null){
+					cs = new ChannelSet();
+					var url:String = ResourceManager.getInstance().getString('strings','urlAmf');
+					var customChannel:Channel = new AMFChannel("my-amf", url);
+					cs.addChannel(customChannel);
+				}
+				return cs;
+			}
+		]]>
+	</mx:Script>
+	<mx:RemoteObject id="autenticacaoFacade" destination="autenticacaoFacade" channelSet="{getChannelSet()}" showBusyCursor="true"/>
+	<mx:RemoteObject id="facade" destination="facade" channelSet="{getChannelSet()}" showBusyCursor="true"/>
+</leonelcasado:ServiceLocator>

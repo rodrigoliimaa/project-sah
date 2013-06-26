@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+	xmlns:componentes="infoliver.view.componentes.*" 
+	verticalScrollPolicy="off" width="100%" height="100%"
+	title="Usuário"	paddingLeft="5" paddingRight="5" verticalAlign="middle"
+	initialize="init()" show="show()">
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.Usuario;
+			import infoliver.model.events.UsuarioEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			
+			import leonelcasado.com.adobe.cairngorm.componentes.Alerta;
+			import leonelcasado.componentes.CustomViewHelper;
+			import leonelcasado.componentes.MD5;
+			
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.utils.StringUtil;
+			
+			[Bindable] private var appModel:ModelLocator = ModelLocator.getInstance();			
+			private var isInserirNovoRegistro:Boolean=true;
+			
+			public function init():void{
+				criarColunasDinamicas();
+			}
+			
+			private function criarColunasDinamicas():void{
+				dtg.addColunaNumero("Cod","sequencial",null,null,1,false);
+				dtg.addColunaTexto("Nome","nome",null,dtg.LEFT,200);
+				dtg.addColunaTexto("Login","login");
+				dtg.addColunaCentralizada("1º Acesso","indicadorPrimeiroAcesso");
+				dtg.addColunaData("Data Bloqueio","dataBloqueio");
+				dtg.addColunaTexto("Motivo Bloqueio","motivoBloqueio",null,dtg.LEFT,250);
+				dtg.addColunaDataHora("Data Cadastro","dataHoraCadastro");
+			}
+			
+			private function show():void{
+				limpar();
+				novo();
+			}
+
+			private function novo():void{
+				txtNome.setFocus();
+				CustomViewHelper.limparCamposFormulario(this);
+				isInserirNovoRegistro=true;
+				controles.labelBtnSalvar="Salvar";
+				dtg.btnExcluirRegistro.enabled=false;
+				dtg.dtgCustom.selectedItem=null;
+				barraLayoutView.inicializar();
+				this.currentState="inserir";
+			}
+		
+			private function setCampos():void{
+				if(dtg.dtgCustom.selectedItem==null)return;
+				this.currentState="alterar";
+				isInserirNovoRegistro=false;
+				controles.labelBtnSalvar="Alterar";
+				txtNome.text=dtg.dtgCustom.selectedItem.nome;
+				txtLogin.text=dtg.dtgCustom.selectedItem.login;
+				txtDataBloqueio.selectedDate=dtg.dtgCustom.selectedItem.dataBloqueio;
+				txtMotivoBloqueio.text=dtg.dtgCustom.selectedItem.motivoBloqueio;
+				chkPrimeiroAcesso.selected=dtg.dtgCustom.selectedItem.indicadorPrimeiroAcesso=='S'?true:false;
+				txtNome.setFocus();
+			}
+			
+			private function setEntidade(usuario:Usuario=null):Usuario{
+				if(usuario==null) usuario=new Usuario;
+				usuario.nome=CustomViewHelper.trim(txtNome.text);
+				usuario.login=CustomViewHelper.trim(txtLogin.text);
+				usuario.dataBloqueio=txtDataBloqueio.text.length>0?txtDataBloqueio.selectedDate:null;
+				usuario.motivoBloqueio=(txtMotivoBloqueio.length>0)?CustomViewHelper.trim(txtMotivoBloqueio.text):txtMotivoBloqueio.text;
+				usuario.sequencialUsuarioCadastro=appModel.loginVO.usuario.sequencial;
+				return usuario;
+			}
+			
+			private function setEntidadeAlterar(entidade:Object):Object{
+				var usuario:Usuario=new Usuario;
+				usuario.sequencial=entidade.sequencial;
+				if(StringUtil.trim(txtSenha.text).length>0){
+					var senha:String=MD5.encrypt(txtSenha.text);
+					usuario.senha=MD5.encrypt(senha);
+				}
+				usuario.indicadorPrimeiroAcesso=chkPrimeiroAcesso.selected==true?'S':'N';
+				//--------------------------------------
+				usuario=setEntidade(usuario);
+				return usuario; 				
+			}
+			
+			private function salvarAlterar():void{
+				if(isInserirNovoRegistro)
+					new UsuarioEvent(UsuarioEvent.INSERIR,this,setEntidade()).dispatch();
+				else
+					new UsuarioEvent(UsuarioEvent.ALTERAR,this,setEntidadeAlterar(dtg.dtgCustom.selectedItem)).dispatch();
+			}
+			
+			private function excluir():void{
+				if(dtg.dtgCustom.selectedItem!=null)
+					Alerta.confirm("Deseja excluir o registro selecionado?",confirmarExclusao);
+			}
+			
+			private function confirmarExclusao(event:CloseEvent):void{
+				if(event.detail==Alert.YES)
+					new UsuarioEvent(UsuarioEvent.EXCLUIR,this,dtg.dtgCustom.selectedItem).dispatch();				
+				else
+					novo();
+			}
+
+			private function atualizarCampos():void{
+				novo();
+				listar();
+			}
+			
+			private function listar():void{
+				var usuario:Usuario=new Usuario;
+				usuario.nome=CustomViewHelper.trim(txtNome.text);
+				usuario.login=CustomViewHelper.trim(txtLogin.text);
+				usuario.dataBloqueio=txtDataBloqueio.text.length>0?txtDataBloqueio.selectedDate:null;
+				usuario.motivoBloqueio=CustomViewHelper.trim(txtMotivoBloqueio.text);
+				//---------------------------------------------------------------
+				var paginacaoVO:PaginacaoVO=new PaginacaoVO;
+				paginacaoVO.entidade=usuario;
+				paginacaoVO.quantidadePaginacao=dtg.maximo;
+				paginacaoVO.inicioPaginacao=dtg.indice;
+				//---------------------------------------------------------------
+				new UsuarioEvent(UsuarioEvent.LISTAR_PAGINADO,this,paginacaoVO).dispatch();
+			}
+			
+			public function result(data:Object,event:Event):void{
+				if(event.type==UsuarioEvent.LISTAR_PAGINADO){
+					dtg.inicializarTotalizadores();
+					dtg.setDataGridPaginado(data.result.totalRegistros,data.result.entidade);
+				}else if(event.type==UsuarioEvent.INSERIR || 
+					event.type==UsuarioEvent.ALTERAR || event.type==UsuarioEvent.EXCLUIR){
+					novo();
+					Alerta.success(data.result.msg);
+					dtg.inicializarTotalizadores();
+					dtg.setDataGridPaginado(data.result.entidade.length,data.result.entidade);
+				}
+			}
+						
+			private function limpar():void{
+				barraLayoutView.inicializar();
+				txtNome.setFocus();
+				CustomViewHelper.limparCamposFormulario(this);
+				dtg.inicializarTotalizadores();
+			}
+			
+			private function inicio_Click():void{
+				dtg.inicio();
+				listar();
+			}
+			
+			private function retroceder_Click():void{
+				dtg.retroceder();
+				listar();
+			}
+			
+			private function avancar_Click():void{
+				dtg.avancar();
+				listar();
+			}
+			
+			private function fim_Click():void{
+				dtg.fim();
+				listar();
+			}
+
+			private function fechar():void{
+				FlexGlobals.topLevelApplication.fecharTela();
+			}
+		]]>
+	</fx:Script>
+	<mx:states>
+		<s:State name="inserir"/>
+		<s:State name="alterar"/>
+	</mx:states>
+	<componentes:BarraLayoutView id="barraLayoutView" formulario="{frm}" listagem="{dtg}"/>
+	<leonelcasado:CustomFieldSet id="frm" title="Dados do Usuário" width="100%" height="10%" moveEffect="Move">
+		<mx:Form width="100%">
+			<mx:FormItem label="Nome:" width="50%" required="true">
+				<leonelcasado:CustomTextInput id="txtNome" width="100%"/>
+			</mx:FormItem>
+			<mx:FormItem label="Login:" width="100%" required="true">
+				<leonelcasado:CustomTextInput id="txtLogin" maxChars="10" isUpperCase="false"/>
+			</mx:FormItem>
+			<mx:FormItem label="Senha:" width="100%" required="true" includeIn="alterar">
+				<leonelcasado:CustomTextInput id="txtSenha" displayAsPassword="true" isUpperCase="false"/>
+			</mx:FormItem>
+			<mx:FormItem label="Data de Bloqueio:" width="100%">
+				<leonelcasado:CustomDateField id="txtDataBloqueio"/>
+			</mx:FormItem>			
+			<mx:FormItem label="Motivo Bloqueio:" width="50%">
+				<leonelcasado:CustomTextInput id="txtMotivoBloqueio" width="100%"/>
+			</mx:FormItem>
+			<mx:FormItem label="Primeiro Acesso?:" width="100%" includeIn="alterar">
+				<leonelcasado:CustomCheckBox id="chkPrimeiroAcesso" width="100%"/>
+			</mx:FormItem>
+			<mx:FormItem>
+				<componentes:BarraControles id="controles" styleButtons="menuButton"
+					includeInLayoutBtnNovo="true" includeInLayoutBtnSalvar="true" 
+					includeInLayoutBtnConsultar="true" includeInLayoutBtnFechar="true"
+					novo="novo()" salvar="salvarAlterar()" consultar="listar()" fechar="fechar()"/>
+			</mx:FormItem>			
+		</mx:Form>
+	</leonelcasado:CustomFieldSet>
+	<leonelcasado:CustomDataGrid id="dtg" width="100%" height="100%" moveEffect="Move"
+		horizontalScrollCustomDataGrid="on"	
+		primeiroRegistro="inicio_Click()" registroAlterior="retroceder_Click()" 
+		proximoRegistro="avancar_Click()" ultimoRegistro="fim_Click()" 
+		excluirRegistro="excluir()" selecionarItem="setCampos()"/>
+</mx:Panel>

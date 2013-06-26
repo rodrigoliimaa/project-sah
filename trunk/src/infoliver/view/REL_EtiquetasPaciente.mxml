@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	xmlns:componentes="infoliver.view.componentes.*"
+	xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+	layout="horizontal"	title="Gerador de Etiquetas" width="100%" height="100%"
+	creationComplete="init()">	
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.GrupoLaudo;
+			import infoliver.model.entity.Paciente;
+			import infoliver.model.events.GrupoLaudoEvent;
+			import infoliver.model.events.MedicoEvent;
+			import infoliver.model.events.PacienteEvent;
+			import infoliver.model.events.ProcedimentoMedicoEvent;
+			import infoliver.model.events.RelatorioEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			import infoliver.model.vo.ProcedimentoMedicoVO;
+			import infoliver.util.RoleSistema;
+			import infoliver.view.componentes.ColunaExcluirGrupoLaudoPaciente;
+			import infoliver.view.componentes.ColunaExcluirPacientesEtiquetas;
+			import infoliver.view.componentes.ColunaInserirGrupoLaudoPaciente;
+			import infoliver.view.componentes.ColunaInserirPacientesEtiquetas;
+			
+			import leonelcasado.com.adobe.cairngorm.componentes.Alerta;
+			import leonelcasado.componentes.CustomViewHelper;
+			
+			import mx.binding.utils.BindingUtils;
+			import mx.collections.ArrayCollection;
+			import mx.core.FlexGlobals;
+			import mx.resources.ResourceManager;
+			
+			import spark.components.Button;
+
+			private var procedimentoMedicoVO:ProcedimentoMedicoVO;
+			private var listaProcedimentoSecundario:Array;
+			private var appModel:ModelLocator = ModelLocator.getInstance();
+			[Bindable]private var PacienteRelatorio:Paciente=new Paciente;
+			[Bindable]public var listaPacientes:Array=[];
+			[Bindable]public var listaSequencial:Array=[];
+			private var nome:String;
+			private var flag:Boolean=false;
+			private function init():void{
+				criarColunasDinamicas();
+			}
+			private function adcionaPacientes():void{
+				if(dtg.dtgCustom.selectedItem!=null){
+					var pacienteSelecionado:Paciente = dtg.dtgCustom.selectedItem as Paciente;
+					listaPacientes.push(pacienteSelecionado);
+					dtgSelecionados.dataProvider=listaPacientes;
+					listaSequencial.push(pacienteSelecionado.sequencial);
+						
+				}
+					
+			}
+				
+			private function criarColunasDinamicas():void{
+				
+				dtg.addColunaNumero("Pront","sequencial",null,null,50);				
+				dtg.addColunaTexto("Nome","nome",null,null,200);
+				dtg.addColunaCentralizada("CPF","cpf",CustomViewHelper.dataGridMascararCpf);
+				dtg.addColunaCentralizada("CNS","cns");				
+				dtg.addColunaTexto("Mãe","nomeMae");
+			//-----------------------------------------------------
+				
+				validarPermissoesDaTela();
+				txtValorBusca.setFocus();
+			}
+			
+			private function validarPermissoesDaTela():void{
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_EXCLUIR_PACIENTE))
+					dtg.includeInLayoutBtnExcluirRegistro=true;
+				else
+					dtg.includeInLayoutBtnExcluirRegistro=false;
+				
+			}
+			
+			public function limpar():void{
+				//CustomViewHelper.limparCamposFormulario(this);
+				dtg.inicializarTotalizadores();
+				preview.init();
+				//txtValorBusca.setFocus();
+			}
+			
+			private function limparCampoBusca():void{
+				txtValorBusca.text="";
+				txtValorBusca.setFocus();
+			}
+			
+						
+			public function listar():void{
+				limpar();
+				var paciente:Paciente=new Paciente;					
+				if(flag==true)
+					//Alerta.success("seque" +sequencialPaciente);						
+					paciente.sequencial=PacienteRelatorio.sequencial;
+				else if(cmbTipoPesquisa.selectedItem.data==1)
+					paciente.nome=CustomViewHelper.trim(txtValorBusca.text);
+				else if(cmbTipoPesquisa.selectedItem.data==2)
+				paciente.sequencial=CustomViewHelper.trim(txtValorBusca.text);				
+				else if(cmbTipoPesquisa.selectedItem.data==4)
+					paciente.cpf=CustomViewHelper.trim(txtValorBusca.text);
+				else if(cmbTipoPesquisa.selectedItem.data==5)
+					paciente.cns=CustomViewHelper.trim(txtValorBusca.text);
+				else if(cmbTipoPesquisa.selectedItem.data==6)
+					paciente.rg=CustomViewHelper.trim(txtValorBusca.text);
+			
+					
+				//---------------------------------------------------------------
+				var paginacaoVO:PaginacaoVO=new PaginacaoVO;
+				paginacaoVO.quantidadePaginacao=0;
+				paginacaoVO.inicioPaginacao=0;
+				paginacaoVO.entidade=paciente;
+				paginacaoVO.quantidadePaginacao=dtg.maximo;
+				paginacaoVO.inicioPaginacao=dtg.indice;
+				//---------------------------------------------------------------
+				
+					new PacienteEvent(PacienteEvent.LISTAR_PAGINADO,this,paginacaoVO).dispatch();
+					txtValorBusca.setFocus();
+				
+				
+			}		
+			
+			public function result(data:Object,event:Event):void{
+				 if(event.type==PacienteEvent.LISTAR_PAGINADO && flag==true){						
+					// dtg2.setDataGridPaginado(data.result.totalRegistros,data.result.entidade);
+					 flag=false;
+			}else if(event.type==PacienteEvent.LISTAR_PAGINADO && flag == false){				 
+				dtg.setDataGridPaginado(data.result.totalRegistros,data.result.entidade);
+				
+			}
+			
+			}
+			private function inicio_Click():void{
+				dtg.inicio();
+				listar();
+			}
+			
+			private function retroceder_Click():void{
+				dtg.retroceder();
+				listar();
+			}
+			
+			private function avancar_Click():void{
+				dtg.avancar();
+				listar();
+			}
+			
+			private function fim_Click():void{
+				dtg.fim();
+				listar();
+			}
+			
+			private function fechar():void{
+				FlexGlobals.topLevelApplication.fecharTela();
+				dtg.inicializarTotalizadores();
+				dtgSelecionados.dataProvider=null;
+				txtValorBusca.text = "";
+				preview.init();
+				
+				
+			}
+			
+			
+
+			private function listarSelecionado():void{
+				
+				if(dtg.dtgCustom.selectedItem!=null){
+					
+					var paciente:Paciente=new Paciente();
+					paciente = dtg.dtgCustom.selectedItem as Paciente;
+					PacienteRelatorio.sequencial = paciente.sequencial;
+					flag=true;
+					listar();
+				}
+			}
+			
+			public function gerarEtiquetas():void{
+				if(dtg.dtgCustom.selectedItem!=null && txtQtdEtiquetas.text!=""){
+					var paciente:Paciente=new Paciente();
+					paciente = dtg.dtgCustom.selectedItem as Paciente;
+					PacienteRelatorio.sequencial = paciente.sequencial;
+					var url:String=ResourceManager.getInstance().getString('strings','url')+"previewRelatorioEtiquetasPacientes";				
+					var request:URLRequest = new URLRequest(url);
+					preview.initStateProgress();
+					
+					//--------------------------------------------------------------------------				
+					
+					url=url+"?seqPaciente="+paciente.sequencial+"&qtdEtiquetas="+CustomViewHelper.trim(txtQtdEtiquetas.text)+"&array="+listaSequencial;					
+					preview.html.location=url;
+						
+				}else{
+					Alerta.error("Insira o número de Etiquetas a serem impressas");
+				
+				}
+				
+			}			
+
+			private function limpar1():void{
+				dtg.inicializarTotalizadores();
+				//dtg2.inicializarTotalizadores();
+				preview.init();
+			}
+
+			private function fechar1():void{
+				FlexGlobals.topLevelApplication.fecharTela();
+			}			
+		]]>
+	</fx:Script>
+	<mx:states>
+		<s:State name="default"/>		
+	</mx:states>
+	<mx:HDividedBox width="100%" height="100%" paddingBottom="3" paddingLeft="3">	
+		<leonelcasado:CustomFieldSet title="Dados de Pesquisa" width="100%" height="100%">
+			<mx:Form width="100%">
+				<mx:FormItem label="Tipo:" width="100%" direction="horizontal">
+					<leonelcasado:CustomComboBox id="cmbTipoPesquisa" change="limparCampoBusca()">
+						<fx:Array>
+							<fx:Object label="NOME" data="1"/>
+							<fx:Object label="PRONTUÁRIO" data="2"/>
+							<!--fx:Object label="PRONTUÁRIO ANT." data="3"/-->
+							<fx:Object label="CPF" data="4"/>
+							<fx:Object label="CNS" data="5"/>
+							<fx:Object label="RG" data="6"/>
+						</fx:Array>
+					</leonelcasado:CustomComboBox>
+					<leonelcasado:CustomTextInput id="txtValorBusca" enter="listar()" width="100%"/>
+				</mx:FormItem>
+				
+			</mx:Form>
+			<leonelcasado:CustomDataGrid id="dtg" width="100%" height="40%"
+										 horizontalScrollCustomDataGrid="on"
+										 primeiroRegistro="inicio_Click()" registroAlterior="retroceder_Click()" 
+										 proximoRegistro="avancar_Click()" ultimoRegistro="fim_Click()" 
+										 selecionarItem.default="adcionaPacientes()" />
+			<mx:DataGrid id="dtgSelecionados" width="100%" height="40%" draggableColumns="false">
+				<mx:columns>
+					<mx:DataGridColumn headerText="Prontuário" dataField="sequencial" width="80"/>
+					<mx:DataGridColumn headerText="Nome" dataField="nome"/>								
+					<mx:DataGridColumn width="30">
+						<mx:itemRenderer>
+							<fx:Component>
+								<mx:Box horizontalAlign="center" verticalAlign="middle">
+									<fx:Script>
+										<![CDATA[
+											import infoliver.model.entity.Arquivo;
+											import infoliver.model.entity.Paciente;
+											import infoliver.model.events.ArquivoEvent;
+											
+											import leonelcasado.componentes.Alerta;
+											import leonelcasado.componentes.Imagens;
+											
+											import mx.controls.Alert;
+											import mx.events.CloseEvent;
+											
+											private function excluir():void{
+												outerDocument.listaPacientes.splice(outerDocument.dtgSelecionados.selectedIndex,1);
+												outerDocument.listaSequencial.splice(outerDocument.dtgSelecionados.selectedIndex,1);
+												Alerta.confirm("Deseja excluir o registro selecionado?",confirmarExclusao);
+											}
+											private function confirmarExclusao(event:CloseEvent):void{
+												if(event.detail==Alert.YES){
+													var pac:Paciente=new Paciente;
+													pac.sequencial=data.sequencial;
+													outerDocument.dtgSelecionados.dataProvider=outerDocument.listaPacientes;
+													//outerDocument.listaPacientes.push(pac);	
+												}
+											}								
+											
+										]]>
+									</fx:Script>
+									<leonelcasado:CustomImagem toolTip="Exclusão" click="excluir()" source="{Imagens.iconDelete}"/>
+								</mx:Box>
+							</fx:Component>
+						</mx:itemRenderer>
+					</mx:DataGridColumn>
+				</mx:columns>
+			</mx:DataGrid>
+										 
+			<mx:FormItem label="Quantidade de Etiquetas:" direction="horizontal">
+				<leonelcasado:CustomTextInput id="txtQtdEtiquetas" enter="gerarEtiquetas()" width="100%"/>				
+				<componentes:BarraControles id="controles" styleButtons="menuButton"
+											includeInLayoutBtnConsultar="true" labelBtnConsultar="Gerar"
+											includeInLayoutBtnFechar="true" consultar="gerarEtiquetas()"
+											fechar="fechar()"/>
+			</mx:FormItem>
+		</leonelcasado:CustomFieldSet>		
+			<componentes:Preview id="preview" width="80%" height="100%"/>			
+	</mx:HDividedBox>
+	
+</mx:Panel>

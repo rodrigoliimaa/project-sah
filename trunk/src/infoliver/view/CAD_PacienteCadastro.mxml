@@ -1,0 +1,710 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+	xmlns:componentes="infoliver.view.componentes.*"
+	width="100%" height="100%" initialize="init()" show="show()">
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.Arquivo;
+			import infoliver.model.entity.Paciente;
+			import infoliver.model.events.ArquivoEvent;
+			import infoliver.model.events.EncaminhadorEvent;
+			import infoliver.model.events.EscolaridadeEvent;
+			import infoliver.model.events.OcupacaoEvent;
+			import infoliver.model.events.PacienteEvent;
+			import infoliver.model.events.RacaEvent;
+			import infoliver.model.events.TipoResponsavelEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			
+			import leonelcasado.componentes.Alerta;
+			import leonelcasado.componentes.CustomViewHelper;
+			import leonelcasado.componentes.Imagens;
+			
+			import mx.collections.ArrayCollection;
+			import mx.collections.ArrayList;
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.managers.PopUpManager;
+			import mx.resources.ResourceManager;
+			
+			private var appModel:ModelLocator = ModelLocator.getInstance();
+			[Bindable]public var isInserirNovoRegistro:Boolean;
+			[Bindable]public var listaDocumento:Array=[];
+			[Bindable]public var pacienteNovo:Paciente;
+			[Bindable]public var listaPaciente:ArrayCollection;
+			[Bindable]public var sequencialPaciente:int;
+			private var file:File;
+			
+			private function init():void{
+				carregarCombos();	
+			}
+			
+			public function show():void{
+				limpar();
+			}
+			private function confirmarImpressao(event:CloseEvent):void{
+				if(event.detail==Alert.YES){					
+					var popUp:REL_EtiqPacienteNovo=PopUpManager.createPopUp(FlexGlobals.topLevelApplication.parent, REL_EtiqPacienteNovo, true) as REL_EtiqPacienteNovo;
+					popUp.data = sequencialPaciente;					
+					popUp.width=FlexGlobals.topLevelApplication.principal.cnvPrincipal.width;
+					popUp.height=FlexGlobals.topLevelApplication.principal.cnvPrincipal.height;
+					PopUpManager.centerPopUp(popUp);
+				}
+			}
+			private function listar():void{				
+				var paciente:Paciente=new Paciente;				
+				paciente.nome=CustomViewHelper.trim(txtNomePaciente.text);
+				
+				//---------------------------------------------------------------
+				var paginacaoVO:PaginacaoVO=new PaginacaoVO;
+				paginacaoVO.entidade=paciente;
+				
+				//---------------------------------------------------------------
+				new PacienteEvent(PacienteEvent.LISTAR_PAGINADO,this,paginacaoVO).dispatch();
+				
+			}
+			
+			private function limpar():void{
+				CustomViewHelper.limparCamposFormulario(this);
+				//----------------------------------------
+				cmbUfNaturalidade.selectedIndex=0;
+				cmbMunicipioNaturalidade.cmbMunicipio.dataProvider=null;
+				cmbOrgaoEmissor.selectedIndex=0;
+				cmbUfOrgaoEmissor.selectedIndex=0;
+				cmbOcupacao.selectedIndex=0;
+				cmbUfLogradouro.selectedIndex=0;
+				cmbMunicipioLogradouro.cmbMunicipio.dataProvider=null;
+				//----------------------------------------
+				dataGrid.selectedItem=null;
+				listaDocumento.splice(0);
+				dtgDocumento.dataProvider=listaDocumento;
+				//----------------------------------------
+				preview.init();
+				txtNomePaciente.setFocus();
+				imgPaciente.inicializarCamera();
+				tabPaciente.selectedIndex=0;
+			
+				if(!isInserirNovoRegistro)
+					setCamposParaAlteracao();
+			}
+			
+			private function setarFocoCampoIniciaTab():void{
+				if(tabPaciente.selectedIndex==0)
+					txtNomePaciente.setFocus();
+				else if(tabPaciente.selectedIndex==1)
+					txtCep.setFocus();			
+			}
+			
+			private function carregarCombos():void{
+				new EncaminhadorEvent(EncaminhadorEvent.LISTAR,this).dispatch();
+				new EscolaridadeEvent(EscolaridadeEvent.LISTAR,this).dispatch();
+				new OcupacaoEvent(OcupacaoEvent.LISTAR,this).dispatch();
+				new RacaEvent(RacaEvent.LISTAR,this).dispatch();
+				new TipoResponsavelEvent(TipoResponsavelEvent.LISTAR,this).dispatch();
+			}
+			
+			private function setCamposParaAlteracao():void{
+				lblProntuario.text=data.sequencial;				
+				lblProntuarioAntigo.text=data.sequencialPacienteAnterior;				
+				//-----------------------------------------------------				
+				
+				cmbRaca.selectedValue=data.raca.descricao;
+				cmbOcupacao.selectedValue=String(data.ocupacao.descricao).toUpperCase();				
+				cmbEscolaridade.selectedValue=data.escolaridade.descricao;
+				cmbEncaminhador.selectedValue=data.encaminhador.descricao;
+				cmbTipoResponsavel.selectedValue=data.tipoResponsavel.descricao;
+				txtNomePaciente.text=data.nome;
+				cmbEstadoCivil.selectedValue=data.estadoCivil;
+				cmbSexo.selectedValue=data.sexo;
+				txtDataNascimento.selectedDate=data.dataNascimento;
+				cmbTipoSanguineo.selectedValue=data.tipoSanguineo;
+				//-----------------------------------------------------				
+				cmbUfNaturalidade.selectedValue=data.ufNaturalidade;
+				cmbMunicipioNaturalidade.consultarUfMunicipio(data.ufNaturalidade,data.municipioNaturalidade);
+				//-----------------------------------------------------				
+				txtNomeConjuge.text=data.nomeConjuge;
+				txtNomePai.text=data.nomePai;
+				txtNomeMae.text=data.nomeMae;
+				txtTelefoneMae.textoComMascara(data.telefoneMae);
+				txtCep.textoComMascara(data.cep);
+				txtLogradouro.text=data.logradouro;
+				txtNumeroLogradouro.text=data.numeroLogradouro;
+				txtComplementoLogradouro.text=data.complementoLogradouro;
+				txtReferenciaLogradouro.text=data.referenciaLogradouro;
+				txtBairroLogradouro.text=data.bairroLogradouro;
+				//-----------------------------------------------------				
+				cmbUfLogradouro.selectedValue=data.ufLogradouro;
+				cmbMunicipioLogradouro.consultarUfMunicipio(data.ufLogradouro,data.municipioLogradouro);
+				//-----------------------------------------------------				
+				txtTelefone01.textoComMascara(data.telefone01);
+				txtTelefone02.textoComMascara(data.telefone02);
+				txtTelefone03.textoComMascara(data.telefone03);
+				txtEmail.text=data.enderecoEletronico;
+				txtRg.text=data.rg;
+				//-----------------------------------------------------				
+				cmbOrgaoEmissor.selectedValue=data.orgaoEmissor;
+				cmbUfOrgaoEmissor.selectedValue=data.ufOrgaoEmissor;
+				txtDataExpedicao.selectedDate=data.dataExpedicao;
+				txtCpf.textoComMascara(data.cpf);
+				txtCns.text=data.cns;
+				txtNomeCartorio.text=data.nomeCartorio;
+				txtNumeroRegistro.text=data.numeroRegistro;
+				txtCodigoLivro.text=data.codigoLivro;
+				txtNumeroFolha.text=data.numeroFolhaLivro;
+				txtDataRegistro.selectedDate=data.dataRegistroLivro;
+				chkAssociado.selected=data.indicadorAssociado=='N'?false:true;
+				//-----------------------------------------------------------------
+				chkEstudo.selected=data.indicadorEstudo=='N'?false:true;
+				if(chkEstudo.selected){
+					txtLocalEstudo.enabled=true;
+					txtLocalEstudo.text=data.localEstudo;
+				}				
+				chkTrabalho.selected=data.indicadorTrabalho=='N'?false:true;
+				if(chkTrabalho.selected){
+					txtLocalTrabalho.enabled=true;
+					txtLocalTrabalho.text=data.localTrabalho;
+				}
+				//-----------------------------------------------------------------
+				txtNomeResponsavel.text=data.nomeResponsavel;
+				txtRgResponsavel.text=data.rgResponsavel;
+				txtCpfResponsavel.textoComMascara(data.cpfResponsavel);
+				txtTelefoneResponsavel.textoComMascara(data.telefoneResponsavel);
+				//-----------------------------------------------------------------
+				imgPaciente.source=data.imagemPaciente;
+				//-----------------------------------------------------------------
+				new ArquivoEvent(ArquivoEvent.LISTAR,this,data.sequencial).dispatch();
+			}
+			
+			private function setEntidade():Paciente{
+				var paciente:Paciente=new Paciente;
+				paciente.raca.sequencial=cmbRaca.selectedIndex>0?cmbRaca.selectedItem.sequencial:null;
+				paciente.ocupacao.sequencial=cmbOcupacao.selectedIndex>0?cmbOcupacao.selectedItem.sequencial:null;
+				paciente.escolaridade.sequencial=cmbEscolaridade.selectedIndex>0?cmbEscolaridade.selectedItem.sequencial:null;
+				paciente.encaminhador.sequencial=cmbEncaminhador.selectedIndex>0?cmbEncaminhador.selectedItem.sequencial:null;
+				paciente.tipoResponsavel.sequencial=cmbTipoResponsavel.selectedIndex>0?cmbTipoResponsavel.selectedItem.sequencial:null;	
+				paciente.usuarioCadastro.sequencial=appModel.loginVO.usuario.sequencial;
+				paciente.nome=txtNomePaciente.texto;
+				paciente.estadoCivil=cmbEstadoCivil.selectedItem.data;
+				paciente.sexo=cmbSexo.selectedIndex>0?cmbSexo.selectedItem.data:null;
+				paciente.dataNascimento=txtDataNascimento.text.length>0?txtDataNascimento.selectedDate:null;
+				paciente.tipoSanguineo=cmbTipoSanguineo.selectedIndex>0?cmbTipoSanguineo.selectedItem.data:null;
+				
+				paciente.ufNaturalidade=cmbUfNaturalidade.selectedIndex>0?cmbUfNaturalidade.selectedItem.uf:null;
+				paciente.municipioNaturalidade=cmbMunicipioNaturalidade.cmbMunicipio.selectedItem!=null?cmbMunicipioNaturalidade.cmbMunicipio.selectedItem.municipio:null;
+				
+				paciente.nomeConjuge=txtNomeConjuge.texto;
+				paciente.nomePai=txtNomePai.texto;
+				paciente.nomeMae=txtNomeMae.texto;
+				paciente.telefoneMae=txtTelefoneMae.textoSemMascara();
+				
+				paciente.cep=txtCep.textoSemMascara();
+				paciente.logradouro=txtLogradouro.texto;
+				paciente.numeroLogradouro=txtNumeroLogradouro.texto;
+				paciente.complementoLogradouro=txtComplementoLogradouro.texto;
+				paciente.referenciaLogradouro=txtReferenciaLogradouro.texto;
+				paciente.bairroLogradouro=txtBairroLogradouro.texto;				
+				paciente.ufLogradouro=cmbUfLogradouro.selectedIndex>0?cmbUfLogradouro.selectedItem.uf:null;
+				paciente.municipioLogradouro=cmbMunicipioLogradouro.cmbMunicipio.selectedItem!=null?cmbMunicipioLogradouro.cmbMunicipio.selectedItem.municipio:null;
+				paciente.codigoIbgeMunicipioLogradouro=cmbMunicipioLogradouro.txtCodigoIbgeMunicipio.texto;
+				
+				paciente.telefone01=txtTelefone01.textoSemMascara();
+				paciente.telefone02=txtTelefone02.textoSemMascara();
+				paciente.telefone03=txtTelefone03.textoSemMascara();
+				paciente.enderecoEletronico=txtEmail.texto;
+				
+				paciente.rg=txtRg.texto;
+				paciente.orgaoEmissor=cmbOrgaoEmissor.selectedIndex>0?cmbOrgaoEmissor.selectedItem.data:null;
+				paciente.ufOrgaoEmissor=cmbUfOrgaoEmissor.selectedIndex>0?cmbUfOrgaoEmissor.selectedItem.uf:null;
+				
+				paciente.dataExpedicao=txtDataExpedicao.text.length>0?txtDataExpedicao.selectedDate:null;
+				paciente.cpf=txtCpf.textoSemMascara();
+				paciente.cns=txtCns.texto;
+				
+				paciente.nomeCartorio=txtNomeCartorio.texto;
+				paciente.numeroRegistro=txtNumeroRegistro.texto;
+				paciente.codigoLivro=txtCodigoLivro.texto;
+				paciente.numeroFolhaLivro=txtNumeroFolha.texto;
+				paciente.dataRegistroLivro=txtDataRegistro.text.length>0?txtDataRegistro.selectedDate:null;
+				
+				paciente.indicadorAssociado=chkAssociado.selected==true?'S':'N';
+				paciente.indicadorEstudo=chkEstudo.selected==true?'S':'N';
+				paciente.localEstudo=txtLocalEstudo.texto;
+				paciente.indicadorTrabalho=chkTrabalho.selected==true?'S':'N';
+				paciente.localTrabalho=txtLocalTrabalho.texto;
+				paciente.nomeResponsavel=txtNomeResponsavel.texto;
+				paciente.rgResponsavel=txtRgResponsavel.texto;
+				paciente.cpfResponsavel=txtCpfResponsavel.textoSemMascara();
+				paciente.telefoneResponsavel=txtTelefoneResponsavel.textoSemMascara();
+				//--------------------------------------------------------				
+				if(imgPaciente.imgByte!=null){
+					paciente.imagemPaciente=imgPaciente.imgByte;
+					paciente.indicadorImagemPaciente='S';
+				}
+				//--------------------------------------------------------				
+				if(isInserirNovoRegistro && listaDocumento.length>0)
+					paciente.arquivos=new ArrayCollection(listaDocumento);
+				//--------------------------------------------------------				
+				return paciente;
+			}
+
+			private function setEntidadeAlterar():Paciente{
+				var paciente:Paciente=setEntidade();
+				paciente.sequencial=data.sequencial;
+				sequencialPaciente=data.sequencial;
+				for each(var arq:Arquivo in listaDocumento){
+					if(arq.isNovoArquivo)paciente.arquivos.addItem(arq);
+				}
+				return paciente;
+			}
+			
+			private function salvar():void{
+				if(isInserirNovoRegistro)
+					new PacienteEvent(PacienteEvent.INSERIR,this,setEntidade()).dispatch();
+				else
+					new PacienteEvent(PacienteEvent.ALTERAR,this,setEntidadeAlterar()).dispatch();
+				listar();
+			}
+						
+			private function listarMunicipioNaturalidade():void{
+				cmbMunicipioNaturalidade.listarMunicipio(cmbUfNaturalidade.selectedLabel);
+			}
+
+			private function listarMunicipio():void{
+				cmbMunicipioLogradouro.listarMunicipio(cmbUfLogradouro.selectedLabel);
+			}
+			
+			private function consultarMunicipio():void{
+				cmbMunicipioLogradouro.consultarUfMunicipio(cmbUfLogradouro.selectedLabel,txtCep.cidade);
+			}
+			
+			public function result(data:Object,event:Event):void{
+				var paciente:Paciente=new Paciente();
+				if(event.type==EncaminhadorEvent.LISTAR){
+					cmbEncaminhador.dataProvider=data.result;
+				}else if(event.type==EscolaridadeEvent.LISTAR){
+					cmbEscolaridade.dataProvider=data.result;
+				}else if(event.type==OcupacaoEvent.LISTAR){
+					cmbOcupacao.dataProvider=data.result;
+				}else if(event.type==RacaEvent.LISTAR){
+					cmbRaca.dataProvider=data.result;
+				}else if(event.type==TipoResponsavelEvent.LISTAR){
+					cmbTipoResponsavel.dataProvider=data.result;
+				//-------------------------------------------------
+				}else if(event.type==PacienteEvent.INSERIR || 
+					event.type==PacienteEvent.ALTERAR){
+					isInserirNovoRegistro=true;						
+					limpar();
+					FlexGlobals.topLevelApplication.principal.pacienteGerenciador.init();	
+					if(event.type==PacienteEvent.INSERIR){
+						sequencialPaciente=data.result.entidade.sequencial;
+						Alerta.confirm("Deseja imprimir as Etiquetas ?",confirmarImpressao,data.result.msg+" Prontuário nº:  "+data.result.entidade.sequencial);
+					}else{
+						
+						Alerta.confirm("Deseja imprimir as Etiquetas ?",confirmarImpressao,data.result.msg);
+					}			
+					
+				//-------------------------------------------------
+				}else if(event.type==ArquivoEvent.LISTAR){
+					listaDocumento.splice(0);
+					listaDocumento=data.result.source;
+					dtgDocumento.dataProvider=listaDocumento;
+					
+				}
+				else if(event.type==PacienteEvent.LISTAR_PAGINADO){				
+					
+					
+				}
+			}
+
+			private function exibirArquivo():void{
+				if(dataGrid.selectedItem!=null){
+					preview.init();
+					if(dataGrid.selectedIndex>=0){
+						preview.loadArquivo(dataGrid.selectedItem,dataGrid.selectedItem.name);
+						file=File(dataGrid.selectedItem);
+
+						var tipoArquivo:String=dataGrid.selectedItem.extension.toString().toLowerCase();
+						if(tipoArquivo!="txt" && tipoArquivo!="pdf" && 
+							tipoArquivo!="png" && tipoArquivo!="gif" && 
+							tipoArquivo!="jpg" && tipoArquivo!="jpeg" && 
+							tipoArquivo!="xml" && tipoArquivo!="swf"){
+							dataGrid.selectedItem.openWithDefaultApplication();
+							preview.init();
+						}
+					}
+				}
+			}
+			
+			private function adicionarDocumento():void{
+				if(dataGrid.selectedItem==null)return;
+				var tamanhoMaximo:uint=50000;//50MB
+				var tamanhoArquivo:uint=(file.size/1024)+1;
+				if(tamanhoArquivo<=tamanhoMaximo){
+					var arquivo:Arquivo=new Arquivo;
+					arquivo.nome=file.name;
+					arquivo.tamanho=tamanhoArquivo;
+					arquivo.isNovoArquivo=true;
+					//--------------------------------------
+					var bytes:ByteArray = new ByteArray();
+					var fileStream:FileStream = new FileStream();
+					fileStream.open(file, FileMode.READ);
+					fileStream.readBytes(bytes,0,fileStream.bytesAvailable);
+					fileStream.close();
+					arquivo.imagemArquivo=bytes;
+					arquivo.caminhoLocalArquivo=file.nativePath;
+					//--------------------------------------
+					listaDocumento.push(arquivo);				
+					dtgDocumento.dataProvider=listaDocumento;
+				}else
+					Alerta.restriction("Arquivo com tamanho maior do que o permitido.");
+			}
+			
+			private var masks:Array =
+			[
+			null,
+			new RegExp("\\d"),
+			new RegExp("\\d\\d"),
+			new RegExp("\\d\\d\\d"),
+			new RegExp("\\d\\d\\d\\-"),
+			new RegExp("\\d\\d\\d\\-\\d"),
+			new RegExp("\\d\\d\\d\\-\\d\\d"),
+			new RegExp("\\d\\d\\d\\-\\d\\d\\-"),
+			new RegExp("\\d\\d\\d\\-\\d\\d\\-\\d"),
+			new RegExp("\\d\\d\\d\\-\\d\\d\\-\\d\\d"),
+			new RegExp("\\d\\d\\d\\-\\d\\d\\-\\d\\d\\d"),
+			new RegExp("\\d\\d\\d\\-\\d\\d\\-\\d\\d\\d\\d")
+			];
+			//<leonelcasado:CustomTextInput id="txtCns" textInput="textInputHandler(event)"/>
+			private function textInputHandler(event:TextEvent):void{
+//				var newText:String = txtCns.text + event.text;
+//				var mask:RegExp = masks[newText.length];
+//				if (!mask || !mask.test(newText))
+//					event.preventDefault();
+			}
+		]]>
+	</fx:Script>	
+	<mx:TabNavigator id="tabPaciente" width="100%" height="100%" creationPolicy="all" 
+		backgroundAlpha="0" paddingTop="0" borderStyle="none" change="setarFocoCampoIniciaTab()">
+		<mx:Form label="Dados Pessoais" width="100%" height="100%" showEffect="Fade">
+			<mx:FormItem label="Prontuário:" width="100%" direction="horizontal"
+				includeInLayout="{isInserirNovoRegistro==false?true:false}" visible="{isInserirNovoRegistro==false?true:false}">
+				<leonelcasado:CustomLabel id="lblProntuario"/>
+				<leonelcasado:CustomLabel text="Prontuário Antigo:"/>
+				<leonelcasado:CustomLabel id="lblProntuarioAntigo"/>
+			</mx:FormItem>
+			<mx:FormItem label="Nome:" width="100%">
+				<leonelcasado:CustomTextInput id="txtNomePaciente" width="100%"/>
+			</mx:FormItem>
+			<mx:FormItem label="Est.Civil:" width="100%" direction="horizontal">
+				<leonelcasado:CustomComboBox id="cmbEstadoCivil">
+					<fx:Array>
+						<fx:Object label="SELECIONE" data=""/>
+						<fx:Object label="SOLTEIRO(A)" data="S"/>
+						<fx:Object label="CASADO(A)" data="C"/>
+						<fx:Object label="DIVORCIADO(A)" data="D"/>
+						<fx:Object label="VIUVO(A)" data="V"/>
+					</fx:Array>
+				</leonelcasado:CustomComboBox>
+				<leonelcasado:CustomLabel text="Sexo:"/>
+				<leonelcasado:CustomComboBox id="cmbSexo">
+					<fx:Array>
+						<fx:Object label="SELECIONE" data=""/>
+						<fx:Object label="MASCULINO" data="M"/>
+						<fx:Object label="FEMININO" data="F"/>
+					</fx:Array>
+				</leonelcasado:CustomComboBox>
+				<leonelcasado:CustomLabel text="Data Nascimento:"/>
+				<leonelcasado:CustomDateField id="txtDataNascimento" selectableRange="{{rangeStart:new Date(1860,1,1),rangeEnd:new Date()}}"/>
+				<leonelcasado:CustomLabel text="Tipo Sanguíneo:"/>
+				<leonelcasado:CustomComboBox id="cmbTipoSanguineo">
+					<fx:Array>
+						<fx:Object label="Tipo" data=""/>
+						<fx:Object label="A+" data="A+"/>
+						<fx:Object label="A-" data="A-"/>
+						<fx:Object label="B+" data="B+"/>
+						<fx:Object label="B-" data="B-"/>
+						<fx:Object label="AB+" data="AB+"/>
+						<fx:Object label="AB-" data="AB-"/>
+						<fx:Object label="O+" data="O+"/>
+						<fx:Object label="O-" data="O-"/>
+					</fx:Array>
+				</leonelcasado:CustomComboBox>
+			</mx:FormItem>
+			<mx:FormItem label="Naturalidade:" width="100%" direction="horizontal">
+				<leonelcasado:Uf id="cmbUfNaturalidade" labelView="uf" change="listarMunicipioNaturalidade()"/> 
+				<leonelcasado:Municipio id="cmbMunicipioNaturalidade" width="100%" includeInLayoutIBGE="false"/>
+				<leonelcasado:CustomLabel text="CPF:"/>
+				<leonelcasado:Cpf id="txtCpf"/>
+				<leonelcasado:CustomLabel text="CNS:"/>
+				<leonelcasado:Cns id="txtCns"/>
+			</mx:FormItem>
+			<mx:FormItem label="RG:" width="100%" direction="horizontal">
+				<leonelcasado:Numero id="txtRg"/>
+				<leonelcasado:CustomLabel text="Órgão Emissor:"/>
+				<leonelcasado:CustomComboBox id="cmbOrgaoEmissor" selectedIndex="1">
+					<fx:Array>
+						<fx:Object label="SELECIONE" data=""/>
+						<fx:Object label="SSP" data="SSP"/>
+						<fx:Object label="PMMG" data="PMMG"/>
+						<fx:Object label="PCMG" data="PCMG"/>
+						<fx:Object label="CNT" data="CNT"/>
+						<fx:Object label="DIC" data="DIC"/>
+						<fx:Object label="CTPS" data="CTPS"/>
+						<fx:Object label="FGTS" data="FGTS"/>
+						<fx:Object label="IFP" data="IFP"/>
+						<fx:Object label="IPF" data="IPF"/>
+						<fx:Object label="IML" data="IML"/>
+						<fx:Object label="MTE" data="MTE"/>
+						<fx:Object label="MMA" data="MMA"/>
+						<fx:Object label="MAE" data="MAE"/>
+						<fx:Object label="MEX" data="MEX"/>
+						<fx:Object label="POF" data="POF"/>
+						<fx:Object label="POM" data="POM"/>
+						<fx:Object label="SES" data="SES"/>
+						<fx:Object label="SJS" data="SJS"/>
+						<fx:Object label="SJTS" data="SJTS"/>
+					</fx:Array>
+				</leonelcasado:CustomComboBox>
+				<leonelcasado:CustomLabel text="/"/>
+				<leonelcasado:Uf id="cmbUfOrgaoEmissor" labelView="uf" selectedValue="AL" selectedIndex="2"/> 
+				<leonelcasado:CustomLabel text="Data Expedição:"/>
+				<leonelcasado:CustomDateField id="txtDataExpedicao" selectableRange="{{rangeStart:new Date(1860,1,1),rangeEnd:new Date()}}"/>
+			</mx:FormItem>		
+			<mx:FormItem label="Raça:" width="100%" direction="horizontal">
+				<leonelcasado:CustomComboBox id="cmbRaca" labelField="descricao" isAddSelecione="true"/> 
+				<leonelcasado:CustomLabel text="Escolaridade:"/>
+				<leonelcasado:CustomComboBox id="cmbEscolaridade" labelField="descricao" isAddSelecione="true"/> 
+				<leonelcasado:CustomLabel text="Encaminhador:"/>
+				<leonelcasado:CustomComboBox id="cmbEncaminhador" labelField="descricao" isAddSelecione="true"/>
+			</mx:FormItem>
+			<mx:FormItem label="Ocupação:" width="100%">
+				<leonelcasado:AutoComplete id="cmbOcupacao" labelField="descricao" rowCount="15"
+					includeButton="true" isAddSelecione="true" width="100%"/>
+			</mx:FormItem>
+			<mx:FormItem label="Cônjuge:" width="100%">
+				<leonelcasado:CustomTextInput id="txtNomeConjuge" width="100%"/>
+			</mx:FormItem>
+			<mx:FormItem label="Pai:" width="100%">
+				<leonelcasado:CustomTextInput id="txtNomePai" width="100%"/>
+			</mx:FormItem>
+			<mx:FormItem label="Mãe:" width="100%" direction="horizontal">
+				<leonelcasado:CustomTextInput id="txtNomeMae" width="100%"/>
+				<leonelcasado:CustomLabel text="Tel.Mãe:"/>
+				<leonelcasado:Telefone id="txtTelefoneMae"/>
+			</mx:FormItem>
+			<mx:FormItem label="Cartório:" width="100%" direction="horizontal">
+				<leonelcasado:CustomTextInput id="txtNomeCartorio"/>
+				<leonelcasado:CustomLabel text="Nº Registro:"/>
+				<leonelcasado:Numero id="txtNumeroRegistro"/>
+				<leonelcasado:CustomLabel text="Cod.Livro:"/>
+				<leonelcasado:CustomTextInput id="txtCodigoLivro" width="80"/>
+				<leonelcasado:CustomLabel text="Nº Folha:"/>
+				<leonelcasado:Numero id="txtNumeroFolha" width="80"/>
+				<leonelcasado:CustomLabel text="Dt Registro:"/>
+				<leonelcasado:CustomDateField id="txtDataRegistro" selectableRange="{{rangeStart:new Date(1860,0,1),rangeEnd:new Date()}}"/>
+			</mx:FormItem>
+			<mx:FormItem label="Responsável:" width="100%" direction="horizontal">
+				<leonelcasado:CustomComboBox id="cmbTipoResponsavel" labelField="descricao" isAddSelecione="true"/>
+				<leonelcasado:CustomLabel text="Nome:"/>
+				<leonelcasado:CustomTextInput id="txtNomeResponsavel" width="100%"/>
+				<leonelcasado:CustomLabel text="RG:"/>
+				<leonelcasado:Numero id="txtRgResponsavel"/>
+				<leonelcasado:CustomLabel text="CPF:"/>
+				<leonelcasado:Cpf id="txtCpfResponsavel"/>
+				<leonelcasado:CustomLabel text="Tel:"/>
+				<leonelcasado:Telefone id="txtTelefoneResponsavel"/>
+			</mx:FormItem>			
+		</mx:Form>
+		<!-- **************************************************************************************** -->
+		<mx:Form label="Endereço" width="100%" height="100%" showEffect="Fade">
+			<mx:FormItem label="CEP:" width="100%" direction="horizontal">
+				<leonelcasado:Cep id="txtCep" width="100%"/>
+				<leonelcasado:CustomButton label="Consultar" icon="{Imagens.iconPesquisa}" width="30"									   
+					click="txtCep.consultarCep()" enter="txtCep.consultarCep()"	focusOut="consultarMunicipio()"/>
+			</mx:FormItem>			
+			<mx:FormItem label="UF:" width="100%" direction="horizontal">
+				<leonelcasado:Uf id="cmbUfLogradouro" labelView="uf" selectedValue="{txtCep.uf}" change="listarMunicipio()"/>
+				<leonelcasado:Municipio id="cmbMunicipioLogradouro" width="100%" selectedValue="@{txtCep.cidade}"/>
+			</mx:FormItem>			
+			<mx:FormItem label="Endereço:" width="100%" direction="horizontal">
+				<leonelcasado:CustomTextInput id="txtLogradouro" width="100%" text="@{txtCep.logradouroCompleto}"/>
+				<leonelcasado:CustomLabel text="Nº:"/>
+				<leonelcasado:CustomTextInput id="txtNumeroLogradouro" width="100"/>
+			</mx:FormItem>
+			<mx:FormItem label="Complemento:" width="100%">
+				<leonelcasado:CustomTextInput id="txtComplementoLogradouro" width="100%"/>
+			</mx:FormItem>
+			<mx:FormItem label="Bairro:" width="100%">
+				<leonelcasado:CustomTextInput id="txtBairroLogradouro" width="100%" text="@{txtCep.bairro}"/>
+			</mx:FormItem>
+			<mx:FormItem label="Referência:" width="100%">
+				<leonelcasado:CustomTextInput id="txtReferenciaLogradouro" width="100%"/>
+			</mx:FormItem>				
+			<mx:FormItem label="E-mail:" width="100%">
+				<leonelcasado:Email id="txtEmail" width="100%" isUpperCase="false"/>
+			</mx:FormItem>			
+			<mx:FormItem label="Telefone 01:" width="100%" direction="horizontal">
+				<leonelcasado:Telefone id="txtTelefone01"/>
+				<leonelcasado:CustomLabel text="Telefone 02:"/>
+				<leonelcasado:Telefone id="txtTelefone02"/>
+				<leonelcasado:CustomLabel text="Telefone 03:"/>
+				<leonelcasado:Telefone id="txtTelefone03"/>
+			</mx:FormItem>			
+			<mx:FormItem label="Associado?:" width="100%">
+				<leonelcasado:CustomCheckBox id="chkAssociado"/>
+			</mx:FormItem>
+			<mx:FormItem label="Estuda?:" width="100%" direction="horizontal">		
+				<leonelcasado:CustomCheckBox id="chkEstudo"
+					click="{if(chkEstudo.selected){txtLocalEstudo.enabled=true;txtLocalEstudo.setFocus();}else{txtLocalEstudo.enabled=false;txtLocalEstudo.text='';}}"/>
+				<leonelcasado:CustomLabel text="Local:"/>
+				<leonelcasado:CustomTextInput id="txtLocalEstudo" enabled="false" width="100%"/>
+			</mx:FormItem>		
+			<mx:FormItem label="Trabalha?:" width="100%" direction="horizontal">
+				<leonelcasado:CustomCheckBox id="chkTrabalho" 
+					click="{if(chkTrabalho.selected){txtLocalTrabalho.enabled=true;txtLocalTrabalho.setFocus();}else{txtLocalTrabalho.enabled=false;txtLocalTrabalho.text='';}}"/>
+				<leonelcasado:CustomLabel text="Local:"/>
+				<leonelcasado:CustomTextInput id="txtLocalTrabalho" enabled="false" width="100%"/>
+			</mx:FormItem>
+		</mx:Form>
+		<!-- **************************************************************************************** -->
+		<mx:HDividedBox label="Documentos" width="100%" height="100%" showEffect="Fade">
+			<mx:VBox id="vbxListaDocumento" width="100%" height="100%" horizontalAlign="right">
+				<mx:VDividedBox width="100%">
+					<mx:FileSystemTree id="tree" width="100%" height="100%" buttonMode="true"
+				   		enumerationMode="directoriesOnly" change="dataGrid.directory = File(tree.selectedItem)"/>
+					<mx:FileSystemDataGrid id="dataGrid" width="100%" height="100%" enumerationMode="filesOnly"
+						directory="{File.documentsDirectory}" buttonMode="true" click="exibirArquivo()"/>
+				</mx:VDividedBox>
+				<!-- **************************************************************************************** -->
+				<mx:Box width="100%" direction="horizontal">
+					<leonelcasado:CustomLabel text="50MB de Tamanho Máximo por Arquivo" fontWeight="bold" fontSize="15"/>
+					<s:Spacer width="100%"/>
+					<leonelcasado:CustomButton label="Adicionar Documento" click="adicionarDocumento()" enter="adicionarDocumento()"/>
+				</mx:Box>
+				<!-- **************************************************************************************** -->
+				<mx:DataGrid id="dtgDocumento" width="100%" height="100%" draggableColumns="false">
+					<mx:columns>
+						<mx:DataGridColumn headerText="Cod" dataField="sequencial" visible="false"/>
+						<mx:DataGridColumn headerText="Nome" dataField="nome"/>
+						<mx:DataGridColumn headerText="Tam" dataField="tamanho" width="50" labelFunction="CustomViewHelper.dataGridMascararValorKB" textAlign="right"/>
+						<mx:DataGridColumn width="30">
+							<mx:itemRenderer>
+								<fx:Component>
+									<mx:Box horizontalAlign="center" verticalAlign="middle">
+										<fx:Script>
+											<![CDATA[
+												import leonelcasado.componentes.Imagens;
+												import mx.core.FlexGlobals;
+												import mx.resources.ResourceManager;
+												
+												private function visualizar(data:*):void{
+													if(outerDocument.isInserirNovoRegistro){
+														outerDocument.preview.initStateProgress();
+														outerDocument.preview.title=data.nome;
+														outerDocument.preview.html.location=data.caminhoLocalArquivo;
+													}else{
+														var url:String=ResourceManager.getInstance().getString('strings','url')+"preview";
+														outerDocument.preview.initStateProgress();
+														outerDocument.preview.html.location=url+"?sequencial="+data.sequencial+"&isDownload=false";
+													}
+												}
+											]]>
+										</fx:Script>
+										<leonelcasado:CustomImagem toolTip="Visualização" source="{Imagens.iconView}" click="visualizar(data)"/>
+									</mx:Box>
+								</fx:Component>
+							</mx:itemRenderer>
+						</mx:DataGridColumn>
+						<mx:DataGridColumn width="30" visible="{!isInserirNovoRegistro}">
+							<mx:itemRenderer>
+								<fx:Component>
+									<mx:Box horizontalAlign="center" verticalAlign="middle">
+										<fx:Script>
+											<![CDATA[
+												import infoliver.util.DownloadFile;
+												import leonelcasado.componentes.Imagens;
+												import mx.resources.ResourceManager;
+												
+												private function downloadFile(data:*):void{
+													var url:String= ResourceManager.getInstance().getString('strings','url')+"preview";
+													var serverUrl:String = url+"?sequencial="+data.sequencial+"&isDownload=true";
+													DownloadFile.download(data.nome,serverUrl,parent.parent);
+												}												
+											]]>
+										</fx:Script>
+										<leonelcasado:CustomImagem toolTip="Download" source="{Imagens.iconDownload}" click="downloadFile(data)"/>
+									</mx:Box>
+								</fx:Component>
+							</mx:itemRenderer>
+						</mx:DataGridColumn>
+						<mx:DataGridColumn width="30">
+							<mx:itemRenderer>
+								<fx:Component>
+									<mx:Box horizontalAlign="center" verticalAlign="middle">
+										<fx:Script>
+											<![CDATA[
+												import infoliver.model.entity.Arquivo;
+												import infoliver.model.events.ArquivoEvent;
+												
+												import leonelcasado.componentes.Alerta;
+												import leonelcasado.componentes.Imagens;
+												
+												import mx.controls.Alert;
+												import mx.events.CloseEvent;
+												
+												private function excluir():void{
+													if(outerDocument.isInserirNovoRegistro){
+														outerDocument.preview.init();
+														outerDocument.listaDocumento.splice(outerDocument.dtgDocumento.selectedIndex,1);
+														outerDocument.dtgDocumento.dataProvider=outerDocument.listaDocumento;
+													}else{
+														Alerta.confirm("Deseja excluir o registro selecionado?",confirmarExclusao);
+													}
+												}
+												
+												private function confirmarExclusao(event:CloseEvent):void{
+													if(event.detail==Alert.YES){
+														outerDocument.preview.init();
+														var arquivo:Arquivo=new Arquivo;
+														arquivo.sequencial=data.sequencial;
+														arquivo.paciente.sequencial=outerDocument.data.sequencial;	
+														new ArquivoEvent(ArquivoEvent.EXCLUIR,this,arquivo).dispatch();
+													}
+												}
+												
+												public function result(data:Object,event:Event):void{
+													if(event.type==ArquivoEvent.EXCLUIR){
+														outerDocument.listaDocumento.splice(0);
+														outerDocument.listaDocumento=data.result.entidade.source;
+														outerDocument.dtgDocumento.dataProvider=outerDocument.listaDocumento;
+														Alerta.success(data.result.msg);
+													}
+												}
+											]]>
+										</fx:Script>
+										<leonelcasado:CustomImagem toolTip="Exclusão" click="excluir()" source="{Imagens.iconDelete}"/>
+									</mx:Box>
+								</fx:Component>
+							</mx:itemRenderer>
+						</mx:DataGridColumn>
+					</mx:columns>
+				</mx:DataGrid>
+			</mx:VBox>
+			<!-- ******************************************************************************** -->
+			<componentes:Preview id="preview" width="50%"/>
+		</mx:HDividedBox>
+		<!-- **************************************************************************************** -->
+		<mx:Form label="Imagens" width="100%" height="100%" showEffect="Fade">
+			<mx:FormItem label="Foto Paciente:" width="100%">
+				<leonelcasado:CapturaImagem id="imgPaciente"/>
+			</mx:FormItem>
+		</mx:Form>
+	</mx:TabNavigator>
+	<!-- **************************************************************************************** -->	
+	<componentes:BarraControles id="controles" styleButtons="menuButton"
+		includeInLayoutBtnSalvar="true" salvar="salvar()"/>
+</mx:VBox>
