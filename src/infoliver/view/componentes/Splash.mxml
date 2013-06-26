@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+	width="896" height="401" creationComplete="init()">
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.ModelLocator;
+			import infoliver.model.events.AutenticacaoEvent;
+			import infoliver.model.events.UsuarioEvent;
+			import infoliver.model.vo.LoginVO;
+			
+			import leonelcasado.componentes.Alerta;
+			import leonelcasado.componentes.CustomViewHelper;
+			import leonelcasado.componentes.MD5;
+			
+			import mx.core.FlexGlobals;
+			import mx.rpc.events.FaultEvent;
+			
+			[Bindable]private var appModel:ModelLocator=ModelLocator.getInstance();
+			
+			private function init():void{
+				lblEmpresa.text="Copyright 2010-"+new Date().fullYearUTC+". INFOLIVER-Consultoria e Soluções em Tecnologia. Todos os direitos reservados.";
+				getApplicationVersion();
+				/* txtUsuario.text="rogerio";
+				txtSenha.text="matilde*123"; */
+				txtUsuario.setFocus();
+			}
+			
+			private function getApplicationVersion():void {
+				var appXML:XML = NativeApplication.nativeApplication.applicationDescriptor;
+				var ns:Namespace = appXML.namespace();
+				lblVersao.text="v"+appXML.ns::versionNumber;
+			}
+
+			private function validarLogin():void{
+				if(txtUsuario.length>0 && txtSenha.length>0){
+					appModel.loginVO=new LoginVO;
+					appModel.loginVO.usuario.login=txtUsuario.text;
+					if(this.currentState=="sttLogin"){
+						if(txtSenha.length>0){
+							var senha:String=MD5.encrypt(txtSenha.text);
+							appModel.loginVO.usuario.senha=MD5.encrypt(senha);
+						}
+					}else{
+						if(txtSenha.length>0 && txtNovaSenha.length>0){
+							var senha_2:String=MD5.encrypt(txtSenha.text);
+							appModel.loginVO.usuario.senha=MD5.encrypt(senha_2);
+							//-----------------------------------------------
+							var novaSenha:String=MD5.encrypt(txtNovaSenha.text);
+							appModel.loginVO.usuario.novaSenha=MD5.encrypt(novaSenha);
+						}					
+					}
+					//-------------------------------------
+					new UsuarioEvent(UsuarioEvent.ACESSAR,this,appModel.loginVO.usuario).dispatch();
+					//new AutenticacaoEvent(AutenticacaoEvent.AUTENTICAR_USUARIO,this,appModel.loginVO.usuario.login,appModel.loginVO.usuario.senha).dispatch();
+					//-------------------------------------
+					//FlexGlobals.topLevelApplication.acessarTelaPrincipal();
+				}else
+					Alerta.info("É obrigatório o preenchimento dos campos.");
+			}
+			
+			private function alterarSenha():void{
+				this.currentState="sttAlteraSenha";	
+				txtNovaSenha.text="";
+				txtNovaSenha.setFocus();
+			}
+
+			private function voltar():void{
+				this.currentState="sttLogin";	
+			}
+			
+			public function result(data:Object,event:Event):void{
+				switch(event.type){
+					case UsuarioEvent.ACESSAR:
+						appModel.loginVO=data.result;
+						if(appModel.loginVO.usuario==null)
+							Alerta.error("Servidor de Aplicação não Localizado.");
+						else{
+							appModel.listaPermissoes=appModel.loginVO.permissao.source;
+							FlexGlobals.topLevelApplication.acessarTelaPrincipal();
+						}
+				}
+			}	
+			
+			public function fault(faultEvt:FaultEvent,event:Event):void{
+				Alerta.error(faultEvt.fault.faultString);
+			}
+		]]>
+	</fx:Script>
+	<mx:states>
+		<s:State name="sttLogin"/>
+		<s:State name="sttAlteraSenha"/>
+	</mx:states>
+	<mx:Image source="@Embed(source='/assets/general/splash.png')"/>
+	<s:Label x="520" y="137" fontSize="20" text="ÁREA DE ACESSO RESTRITO"/>
+	<s:Label x="527" y="180" fontSize="15" text="Login:"
+			 x.sttLogin="527" y.sttLogin="180"/>
+	<leonelcasado:CustomTextInput id="txtUsuario" width="173" maxChars="10" isUpperCase="false" x="568" y="175"/>
+	<s:Label x="524" y="216" text="Senha:" fontSize="15"/>
+	<leonelcasado:CustomTextInput id="txtSenha" width="173" displayAsPassword="true" isUpperCase="false" x="568" y="210"
+		enter="btnAcessar.setFocus()"/>
+	<s:Label includeIn="sttAlteraSenha" x="489" y="250" text="Nova Senha:" fontSize="15"/>
+	<leonelcasado:CustomTextInput id="txtNovaSenha" includeIn="sttAlteraSenha" x="568" y="244" width="173" displayAsPassword="true" isUpperCase="false"/>
+
+	<mx:LinkButton includeIn="sttLogin" x="748" y="211" label="Alterar Senha" fontSize="15"
+		click="alterarSenha()" keyDown="{if(event.keyCode==Keyboard.ENTER)alterarSenha()}"/>
+	
+	<leonelcasado:CustomButton id="btnAcessar" label="Acessar" buttonMode="true"
+		x="574" y="240" x.sttAlteraSenha="574" y.sttAlteraSenha="279"
+		click="validarLogin()" keyDown="{if(event.keyCode==Keyboard.ENTER)validarLogin()}"/>
+	<leonelcasado:CustomButton includeIn="sttAlteraSenha" x="667" y="279" label="Voltar" buttonMode="true"
+		click="voltar()" keyDown="{if(event.keyCode==Keyboard.ENTER)voltar()}"/>
+	<leonelcasado:CustomButton includeIn="sttLogin" x="667" y="240" label="Fechar" buttonMode="true"
+		click="FlexGlobals.topLevelApplication.sair()" keyDown="{if(event.keyCode==Keyboard.ENTER)FlexGlobals.topLevelApplication.sair()}"/>
+
+	<mx:Label id="lblEmpresa" x="1" y="380" width="895" textAlign="center"
+		text="Copyright 2010-2011. INFOLIVER-Consultoria e Soluções em Tecnologia. Todos os direitos reservados."/>
+	<s:Label id="lblVersao" x="755" y="118" text="versão" fontSize="15"/>
+</mx:Canvas>

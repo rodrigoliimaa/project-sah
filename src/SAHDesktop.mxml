@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:view="infoliver.view.*" xmlns:control="infoliver.control.*"
+	xmlns:componentes="infoliver.view.componentes.*"
+	width="896" height="401" showStatusBar="false"
+	creationComplete="init()">
+	<fx:Style source="/assets/skinPreview.css"/>
+	<fx:Declarations>
+		<control:FController id="controller"/>
+		<control:Services id="services"/>
+	</fx:Declarations>	
+	<fx:Script>
+		<![CDATA[
+			import air.update.ApplicationUpdaterUI;
+			import air.update.events.UpdateEvent;
+			import infoliver.model.ModelLocator;
+			import leonelcasado.componentes.Alerta;
+			import mx.collections.ArrayCollection;
+			import mx.containers.ViewStack;
+			import mx.controls.HTML;
+
+			private var mainWindow:NativeWindow;
+			private var updater:ApplicationUpdaterUI;
+			[Bindable] private var appModel:ModelLocator = ModelLocator.getInstance();
+			
+			private function init():void{
+				initializeUpdater();
+				// Center the window on the screen --------------------
+				var screenBounds:Rectangle = Screen.mainScreen.bounds;
+				nativeWindow.x = (screenBounds.width - nativeWindow.width) / 2;
+				nativeWindow.y = (screenBounds.height - nativeWindow.height) / 2;
+				//-----------------------------------------------------
+				maximize();
+			}
+			
+			private function initializeUpdater():void{
+				updater = new ApplicationUpdaterUI();
+				updater.configurationFile = new File("app:/update-config.xml");
+				updater.isCheckForUpdateVisible	= false;
+				updater.addEventListener(ErrorEvent.ERROR, updaterErrorHandler);
+				updater.addEventListener(UpdateEvent.INITIALIZED, updaterInitializedHandler);
+				updater.initialize();
+			}
+			
+			private function updaterErrorHandler(event:ErrorEvent):void {
+				Alerta.error(event.toString());
+			}
+			
+			private function updaterInitializedHandler(event:UpdateEvent):void{
+				updater.checkNow();
+			}
+						
+			public function acessarTelaPrincipal():void{
+				this.currentState="stgPrincipal";
+				maximize();
+			}
+			
+			public function fecharTela():void{
+				principal.cnvPrincipal.selectedIndex=0;
+			}
+						
+			public function openFile(pathFile:String):void{
+				var f:File=new File(pathFile);
+				f.openWithDefaultApplication();
+			}
+
+			public function toggleMaximize():void{
+				if (nativeWindow.displayState == NativeWindowDisplayState.MAXIMIZED)
+					restore();
+				else
+					maximize();
+			}
+			
+			public function sair():void{
+				nativeWindow.close();
+				nativeApplication.exit();
+			}			
+		]]>
+	</fx:Script>
+	<s:states>
+		<s:State name="stgLogin"/>
+		<s:State name="stgPrincipal"/>
+	</s:states>
+	<mx:Box id="boxPrincipal" width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+		<componentes:Splash includeIn="stgLogin"/>
+		<componentes:Principal id="principal" includeIn="stgPrincipal"/>
+	</mx:Box>
+</s:WindowedApplication>

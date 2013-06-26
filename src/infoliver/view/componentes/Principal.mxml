@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+	xmlns:componentes="infoliver.view.componentes.*" xmlns:view="infoliver.view.*"	
+	width="100%" height="100%" verticalAlign="top" creationComplete="init()">
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.ModelLocator;
+			import infoliver.util.Imagens;
+			import infoliver.util.LoadMenu;
+			
+			import mx.core.FlexGlobals;
+			import mx.events.ItemClickEvent;
+			import mx.resources.ResourceManager;
+			
+			[Bindable] private var appModel:ModelLocator = ModelLocator.getInstance();	
+			
+			private function init():void{
+				FlexGlobals.topLevelApplication.showStatusBar=true;
+				FlexGlobals.topLevelApplication.status="Bem-vindo(a): "+appModel.loginVO.usuario.nome;
+			}
+				
+			private function sizeLeftPanel():void{
+				if (menu.width<=0){
+					menu.width=180;	       			
+				}else if (menu.width>=0){
+					menu.width=0;
+				}
+			}
+
+			private function sair():void{
+				FlexGlobals.topLevelApplication.sair();	
+			}			
+		]]>
+	</fx:Script>
+	<mx:ApplicationControlBar width="100%" horizontalAlign="right"
+		paddingTop="4" paddingBottom="2" paddingLeft="3" paddingRight="3">
+		<mx:Image source="@Embed(source='/assets/general/logoSauth.png')"/>
+		<s:Spacer width="100%"/>
+		<mx:Image source="{appModel.loginVO.empresa.imagemLogo}"/>
+	</mx:ApplicationControlBar>
+	<mx:HBox id="hboxPrincipal" width="100%" height="100%" horizontalAlign="right" verticalAlign="middle"
+		paddingTop="3" paddingBottom="5" horizontalGap="3">
+		<leonelcasado:CustomButton width="5" height="15" click="sizeLeftPanel()" toggle="true" styleName="collapseRight"/>
+		<!-- ************************************************************************ -->
+		<componentes:Menu id="menu" stagePrincipal="{cnvPrincipal}" width="180" height="100%"/>			
+		<!-- ************************************************************************ -->
+		<mx:ViewStack id="cnvPrincipal" width="100%" height="100%" verticalGap="0">
+			<mx:Box id="inicio" width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+				<mx:Image source="@Embed(source='/assets/general/bg.png')"/>
+			</mx:Box>		
+			<view:CAD_PacienteGerenciador id="pacienteGerenciador" width="100%" height="100%"/>				
+			<view:CAD_GrupoLaudo id="grupoLaudo" width="100%" height="100%"/>				
+			<view:REL_ProcedimentoMedico id="procedimentoMedico" width="100%" height="100%"/>
+			<view:MAN_Empresa id="empresa" width="100%" height="100%"/>
+			<view:MAN_Usuario id="usuario" width="100%" height="100%"/>
+			<view:MAN_GrupoUsuario id="grupoUsuario" width="100%" height="100%"/>				
+			<view:MAN_GrupoPermissao id="grupoPermissao" width="100%" height="100%"/>				
+			<view:MAN_LogAcesso id="logAcesso" width="100%" height="100%"/>	
+			<componentes:Browser id="contato" url="{ResourceManager.getInstance().getString('strings','urlVitrine')}" includeInLayoutControlsBrowser="false"/>
+			<view:REL_EtiqPacienteNovo id="rel_etqPacienteNovo" width="100%" height="100%"/>
+			<!-- PRATA: BEGIN -->
+			<view:CAD_MedicoGerenciador id="medico" width="100%" height="100%"/>
+			<view:CAD_FeriadoGerenciador id="feriado" width="100%" height="100%"/>
+			<view:CAD_AgendamentoGerenciador id="agendamento" width="100%" height="100%"/>
+			<view:CAD_LicencaGerenciador id="licenca" width="100%" height="100%"/>
+			<view:CAD_FornecedorGerenciador id="fornecedor" width="100%" height="100%"/>
+			<view:CAD_MovimentacaoGerenciador id="movimentacao" width="100%" height="100%"/>
+			<!-- PRATA: END -->
+			<view:ATE_PreAtendimentoRecepcao id="preAtendimento" width="100%" height="100%"/>
+			<view:ATE_PreAtendimentoServicoSocial id="preAtendimentoServicoSocial" width="100%" height="100%"/>
+			<view:ATE_TelaChamadaPaciente id="telaChamada" width="100%" height="100%"/>
+			<view:ATE_AtendimentoMedico id="atendimentoMedico" width="100%" height="100%"/> 			
+			<view:REL_MapaBpi id="relatorioMapa" width="100%" height="100%"/>
+			<view:REL_BpiEncaminhamento id="relatorioBpi" width="100%" height="100%"/>
+			<view:REL_Equipamentos id="relatorioEquipamentos" width="100%" height="100%"/>
+			
+			
+			<view:CAD_EquipeMedicaGerenciador id="equipeMedica" width="100%" height="100%" />
+			<view:CAD_AuditivoGerenciador id="auditivo" width="100%" height="100%" />
+		</mx:ViewStack>
+	</mx:HBox>
+</mx:VBox>

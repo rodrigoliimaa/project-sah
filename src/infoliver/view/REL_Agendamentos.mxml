@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx" 
+		  xmlns:componentes="infoliver.view.componentes.*"
+		  xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		  layout="horizontal"	title="Relatório Agendamentos" width="100%" height="100%">
+	
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.Medico;
+			import infoliver.model.entity.Ocupacao;
+			import infoliver.model.entity.Paciente;
+			import infoliver.model.events.MedicoEvent;
+			import infoliver.model.events.PacienteEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			
+			import leonelcasado.com.adobe.cairngorm.componentes.Alerta;
+			import leonelcasado.componentes.CustomViewHelper;
+			
+			import mx.core.FlexGlobals;
+			import mx.managers.PopUpManager;
+			import mx.resources.ResourceManager;
+			
+			public const NOME:String = "NOME";
+			public const CPF:String = "CPF";
+			public const RG:String = "RG";
+			public const CNS:String = "CNS";
+			public const OCUPACAO:String = "OCUPACAO";
+			public const LISTA_TIPO_PESQUISA:Array = [
+				NOME, CPF, RG, CNS, OCUPACAO
+			];
+			
+			//			public var medicos:ArrayCollection;
+			public var agendamentoCadastro:CAD_AgendamentoCadastro;
+			
+			private var appModel:ModelLocator = ModelLocator.getInstance();
+			
+			public function criarColunas():void{
+				dtg.addColunaCentralizada("COD","sequencial", null, 30);
+				dtg.addColunaCentralizada("NOME","nome", null, 300);
+				//				dtg.addColunaCentralizada("CPF","cpf");
+				//				dtg.addColunaCentralizada("RG","rg");
+				//				dtg.addColunaCentralizada("ORGÃO EXPEDIDOR","orgaoExpedidor", null, 60);
+				//				dtg.addColunaCentralizada("TELEFONE 1","telefone1");
+				//				dtg.addColunaCentralizada("TELEFONE 2","telefone2");
+				//				dtg.addColunaCentralizada("TELEFONE 3","telefone2");
+				//				dtg.addColunaCentralizada("EMAIL","email");
+				dtg.addColunaCentralizada("CNS","cns");
+				//				dtg.addColunaNumero("COD","ocupacao.sequencial", null, "right", 0, false);
+				dtg.addColunaCentralizada("CBO","ocupacao.codigoOcupacao", null, 0, false);
+				dtg.addColunaCentralizada("OCUPACAO","ocupacao.descricao", null, 300);
+				dtg.addColunaCentralizada("ATIVO","indicadorAtivo", null, 30);
+				
+				//				dtg.addColunaData("DATA DE CADASTRO","dataCadastro", null, 90);
+				dtg4.addColunaCentralizada("COD","sequencial", null, 30);
+				dtg4.addColunaCentralizada("NOME","nome", null, 300);
+				//				dtg.addColunaCentralizada("CPF","cpf");
+				//				dtg.addColunaCentralizada("RG","rg");
+				//				dtg.addColunaCentralizada("ORGÃO EXPEDIDOR","orgaoExpedidor", null, 60);
+				//				dtg.addColunaCentralizada("TELEFONE 1","telefone1");
+				//				dtg.addColunaCentralizada("TELEFONE 2","telefone2");
+				//				dtg.addColunaCentralizada("TELEFONE 3","telefone2");
+				//				dtg.addColunaCentralizada("EMAIL","email");
+				dtg4.addColunaCentralizada("CNS","cns");
+				//				dtg.addColunaNumero("COD","ocupacao.sequencial", null, "right", 0, false);
+				dtg4.addColunaCentralizada("CBO","ocupacao.codigoOcupacao", null, 0, false);
+				dtg4.addColunaCentralizada("OCUPACAO","ocupacao.descricao", null, 300);
+				dtg4.addColunaCentralizada("ATIVO","indicadorAtivo", null, 30);
+			}
+			
+			public function listar():void{
+				var medico:Medico = new Medico();
+				medico.indicadorAtivo = "S";
+				
+				var tipoPesquisa:String = cmbTipoPesquisa.selectedItem.toString();
+				if (tipoPesquisa == NOME) {
+					medico.nome = txtValorBusca.text;
+				} else if (tipoPesquisa == CPF) {
+					medico.cpf = txtValorBusca.text;
+				} else if (tipoPesquisa == RG) {
+					medico.rg = txtValorBusca.text;
+				} else if (tipoPesquisa == CNS) {
+					medico.cns = txtValorBusca.text;
+				} else if (tipoPesquisa == OCUPACAO) {
+					var ocupacao:Ocupacao = new Ocupacao();
+					ocupacao.descricao = txtValorBusca.text;
+					medico.ocupacao = ocupacao;
+				}
+				
+				var paginacaoVO:PaginacaoVO = new PaginacaoVO();
+				paginacaoVO.entidade = medico;
+				paginacaoVO.quantidadePaginacao = dtg.maximo;
+				paginacaoVO.inicioPaginacao = dtg.indice;
+				
+				new MedicoEvent(MedicoEvent.LISTA_PAGINADO, this, paginacaoVO).dispatch();
+				
+				txtValorBusca.setFocus();
+			}
+			
+			public function result(data:Object,event:Event):void{
+				if (event.type == MedicoEvent.LISTA_PAGINADO) {
+					dtg.inicializarTotalizadores();
+					dtg.setDataGridPaginado(data.result.totalRegistros,data.result.entidade);
+				}
+			}
+			
+			public function alterar():void{
+				if(dtg.dtgCustom.selectedItem!=null){
+					agendamentoCadastro.setarMedico(dtg.dtgCustom.selectedItem as Medico);
+					fechar(null);
+				}
+			}
+			
+			public function fechar(event:Event):void{
+				PopUpManager.removePopUp(this);
+			}
+			
+			private function inicio_Click():void{
+				dtg.inicio();
+				listar();
+			}
+			
+			private function retroceder_Click():void{
+				dtg.retroceder();
+				listar();
+			}
+			
+			private function avancar_Click():void{
+				dtg.avancar();
+				listar();
+			}
+			
+			private function fim_Click():void{
+				dtg.fim();
+				listar();
+			}
+			
+			public function onCmbTipoPesquisaChange():void{
+				var tipoPesquisa:String = cmbTipoPesquisa.selectedItem.toString();
+				if(tipoPesquisa == NOME || tipoPesquisa == OCUPACAO) {
+					txtValorBusca.restrict = "A-Z/a-z/ /";
+				} else {
+					txtValorBusca.restrict = "0-9";
+				}
+			}
+			
+			public function gerarEtiquetas():void{
+							
+					var url:String=ResourceManager.getInstance().getString('strings','url')+"previewRelatorioEtiquetasPacientes";				
+					var request:URLRequest = new URLRequest(url);
+					var listaSequencial:Array=[];
+					listaSequencial.push(FlexGlobals.topLevelApplication.principal.pacienteGerenciador.pacienteCadastro.sequencialPaciente);
+					preview.initStateProgress();				
+					//--------------------------------------------------------------------------						
+					url=url+"?seqMedico=";											
+					preview.html.location=url;
+								
+				
+			}
+		]]>
+	</fx:Script>
+	
+	
+	<mx:HDividedBox width="100%" height="100%" paddingBottom="3" paddingLeft="3">		
+			<leonelcasado:CustomFieldSet title="Dados de Pesquisa" width="100%" height="100%">
+				<mx:Form width="100%">
+					<mx:FormItem label="Tipo:" width="100%" direction="horizontal" height="100%">
+						<leonelcasado:CustomComboBox id="cmbTipoPesquisa" change="onCmbTipoPesquisaChange()">
+							<s:ArrayList source="{LISTA_TIPO_PESQUISA}" />
+						</leonelcasado:CustomComboBox>
+						<leonelcasado:CustomTextInput id="txtValorBusca" width="100%" />
+						<!-- restrict="A-Z/a-z/ /" -->
+						<leonelcasado:CustomButton id="btnConsulta" click="listar()" label="Consultar"/>						
+					</mx:FormItem>					
+				</mx:Form>
+			<leonelcasado:CustomDataGrid id="dtg" width="100%" height="100%"
+										 horizontalScrollCustomDataGrid="on"
+										 includeInLayoutBtnExcluirRegistro="false"
+										 primeiroRegistro="inicio_Click()" registroAlterior="retroceder_Click()" 
+										 proximoRegistro="avancar_Click()" ultimoRegistro="fim_Click()"
+										 selecionarItem="alterar()"/>
+				<leonelcasado:CustomDataGrid id="dtg4" width="100%" height="100%"
+											 horizontalScrollCustomDataGrid="on"
+											 includeInLayoutBtnExcluirRegistro="false"
+											 primeiroRegistro="inicio_Click()" registroAlterior="retroceder_Click()" 
+											 proximoRegistro="avancar_Click()" ultimoRegistro="fim_Click()"
+											 selecionarItem="alterar()"/>
+		
+			</leonelcasado:CustomFieldSet>
+		<componentes:Preview id="preview" width="100%" height="100%"/>	
+	</mx:HDividedBox>		
+</mx:Panel>

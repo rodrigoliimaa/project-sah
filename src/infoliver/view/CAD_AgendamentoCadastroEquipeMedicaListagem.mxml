@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:fx="http://ns.adobe.com/mxml/2009"
+				xmlns:s="library://ns.adobe.com/flex/spark"
+				xmlns:mx="library://ns.adobe.com/flex/mx"
+				xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+				xmlns:componentes="infoliver.view.componentes.*"
+				layout="vertical"
+				initialize="init()"
+				showCloseButton="true"
+				title="Pesquisa de Equipe Médica"
+				height="400" width="800">
+	
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.entity.EquipeMedica;
+			import infoliver.model.events.EquipeMedicaEvent;
+			
+			import mx.core.Container;
+			import mx.managers.PopUpManager;
+			
+			public function init():void{
+				addEventListener(Event.CLOSE, fechar);
+				dtg.inicializarTotalizadores();
+				criarColunas();
+				
+			}
+			
+			import mx.collections.ArrayCollection;
+			import mx.controls.DataGrid;
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.Medico;
+			import infoliver.model.entity.Ocupacao;
+			import infoliver.model.events.MedicoEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			import infoliver.util.RoleSistema;
+			
+			import leonelcasado.com.adobe.cairngorm.componentes.Alerta;
+			import leonelcasado.componentes.Alerta;
+			
+			import mx.core.FlexGlobals;
+			
+			public const DESCRICAO:String = "DESCRIÇÃO";
+			public const LISTA_TIPO_PESQUISA:Array = [
+				DESCRICAO
+			];
+			
+			public var agendamentoCadastro:Container;
+			
+			private var appModel:ModelLocator = ModelLocator.getInstance();
+			
+			public function criarColunas():void{
+				dtg.addColunaCentralizada("COD","sequencial", null, 30);
+				dtg.addColunaCentralizada("DESCRIÇÃO","descricao", null, 30);
+			}
+			
+			public function listar():void{
+				var equipeMedica:EquipeMedica = new EquipeMedica();
+				
+				var tipoPesquisa:String = cmbTipoPesquisa.selectedItem.toString();
+				if (tipoPesquisa == DESCRICAO) {
+					equipeMedica.descricao = txtValorBusca.text;
+				}
+				
+				var paginacaoVO:PaginacaoVO = new PaginacaoVO();
+				paginacaoVO.entidade = equipeMedica;
+				paginacaoVO.quantidadePaginacao = dtg.maximo;
+				paginacaoVO.inicioPaginacao = dtg.indice;
+				
+				new EquipeMedicaEvent(EquipeMedicaEvent.LISTA_PAGINADO, this, paginacaoVO).dispatch();
+				
+				txtValorBusca.setFocus();
+			}
+			
+			public function result(data:Object,event:Event):void{
+				if (event.type == EquipeMedicaEvent.LISTA_PAGINADO) {
+					dtg.inicializarTotalizadores();
+					dtg.setDataGridPaginado(data.result.totalRegistros,data.result.entidade);
+				}
+			}
+			
+			public function alterar():void{
+				if(dtg.dtgCustom.selectedItem!=null){
+					agendamentoCadastro["setarEquipeMedica"](dtg.dtgCustom.selectedItem as EquipeMedica);
+					fechar(null);
+				}
+			}
+			
+			public function fechar(event:Event):void{
+				PopUpManager.removePopUp(this);
+			}
+			
+			private function inicio_Click():void{
+				dtg.inicio();
+				listar();
+			}
+			
+			private function retroceder_Click():void{
+				dtg.retroceder();
+				listar();
+			}
+			
+			private function avancar_Click():void{
+				dtg.avancar();
+				listar();
+			}
+			
+			private function fim_Click():void{
+				dtg.fim();
+				listar();
+			}
+			
+			public function onCmbTipoPesquisaChange():void{
+				var tipoPesquisa:String = cmbTipoPesquisa.selectedItem.toString();
+				if(tipoPesquisa == DESCRICAO) {
+					txtValorBusca.restrict = "A-Z/a-z/ /";
+				} else {
+					txtValorBusca.restrict = "0-9";
+				}
+			}
+		]]>
+	</fx:Script>
+	<mx:Panel width="100%" height="100%" title="">
+		<leonelcasado:CustomFieldSet title="Dados de Pesquisa" width="100%" height="10%">
+			<mx:Form width="100%">
+				<mx:FormItem label="Tipo:" width="100%" direction="horizontal">
+					<leonelcasado:CustomComboBox id="cmbTipoPesquisa" change="onCmbTipoPesquisaChange()">
+						<s:ArrayList source="{LISTA_TIPO_PESQUISA}" />
+					</leonelcasado:CustomComboBox>
+					<leonelcasado:CustomTextInput id="txtValorBusca" width="100%" />
+					<!-- restrict="A-Z/a-z/ /" -->
+				</mx:FormItem>
+				<mx:FormItem>
+					<componentes:BarraControles id="controles" styleButtons="menuButton"
+												includeInLayoutBtnConsultar="true"
+												consultar="listar()"/>
+				</mx:FormItem>
+			</mx:Form>
+		</leonelcasado:CustomFieldSet>
+		<leonelcasado:CustomDataGrid id="dtg" width="100%" height="100%"
+									 horizontalScrollCustomDataGrid="on"
+									 includeInLayoutBtnExcluirRegistro="false"
+									 primeiroRegistro="inicio_Click()" registroAlterior="retroceder_Click()" 
+									 proximoRegistro="avancar_Click()" ultimoRegistro="fim_Click()"
+									 selecionarItem="alterar()"
+									 />
+	</mx:Panel>
+	
+</mx:TitleWindow>
+

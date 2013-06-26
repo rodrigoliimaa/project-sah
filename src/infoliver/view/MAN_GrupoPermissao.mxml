@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+	xmlns:componentes="infoliver.view.componentes.*"
+	paddingLeft="5" paddingRight="5" verticalAlign="middle"
+	title="Grupo Permissão" width="100%" height="100%" show="init()">
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.entity.Grupo;
+			import infoliver.model.entity.GrupoPermissao;
+			import infoliver.model.entity.GrupoUsuario;
+			import infoliver.model.events.GrupoEvent;
+			import infoliver.model.events.GrupoPermissaoEvent;
+			import infoliver.model.events.GrupoUsuarioEvent;
+			import infoliver.model.events.PermissaoEvent;
+			import infoliver.util.Imagens;
+			
+			import mx.collections.ArrayCollection;
+			import mx.core.FlexGlobals;
+
+			[Bindable]private var listaInicio:ArrayCollection=new ArrayCollection;
+			[Bindable]private var listaDestino:ArrayCollection=new ArrayCollection;
+
+			public function init():void{
+				limparCampos();
+				listarGrupo();
+			}
+
+			//=============== CRUD - GRUPO =============================================
+			private function listarGrupo():void{
+				cmbGrupo.listar(GrupoEvent,GrupoEvent.LISTAR);
+			}
+
+			private function getGrupo(isInclusao:Boolean=false):Grupo{
+				var grupo:Grupo=new Grupo;
+				if(!isInclusao)grupo=cmbGrupo.itemSelecionado as Grupo;
+				grupo.descricao=cmbGrupo.cmbCrud.text;
+				return grupo;
+			}
+			
+			private function inserirGrupo():void{
+				cmbGrupo.inserir(GrupoEvent,GrupoEvent.INSERIR,getGrupo(true));
+			}
+			
+			private function alterarGrupo():void{
+				if(cmbGrupo.itemSelecionado is Grupo){
+					cmbGrupo.alterar(GrupoEvent,GrupoEvent.ALTERAR,getGrupo());
+				}
+			}
+			
+			private function excluirGrupo():void{
+				cmbGrupo.excluir(GrupoEvent,GrupoEvent.EXCLUIR,getGrupo());	
+			}
+			//=============== FIM CRUD - GRUPO =====================================
+			
+			private function addItem(event:MouseEvent):void{
+				var grupoPermissao:GrupoPermissao=new GrupoPermissao;
+				grupoPermissao.sequencialGrupo=cmbGrupo.cmbCrud.selectedItem.sequencial;
+				for each (var obj:Object in lstInicio.selectedItems){
+					grupoPermissao.sequencialPermissao=obj.sequencial;
+					new GrupoPermissaoEvent(GrupoPermissaoEvent.INSERIR,this,grupoPermissao).dispatch();
+					listaDestino.addItem(obj);
+					listaInicio.removeItemAt(listaInicio.getItemIndex(obj));
+				}
+			}
+			
+			private function removerItem(event:MouseEvent):void{
+				var grupoPermissao:GrupoPermissao=new GrupoPermissao;
+				grupoPermissao.sequencialGrupo=cmbGrupo.cmbCrud.selectedItem.sequencial;
+				for each (var obj:Object in lstDestino.selectedItems){
+					grupoPermissao.sequencialPermissao=obj.sequencial;
+					new GrupoPermissaoEvent(GrupoPermissaoEvent.EXCLUIR,this,grupoPermissao).dispatch();
+					listaInicio.addItem(obj);
+					listaDestino.removeItemAt(listaDestino.getItemIndex(obj));
+				}
+			}
+			
+			private function listarPermissoes():void{
+				if(cmbGrupo.cmbCrud.selectedIndex>0){
+					listarPermissaoDiferenteDoGrupo();
+					listarPermissaoDoGrupo();
+				}else{
+					listaInicio.removeAll();
+					listaDestino.removeAll();
+				}
+			}
+			
+			private function listarPermissaoDiferenteDoGrupo():void{
+				if(cmbGrupo.cmbCrud.selectedIndex>0){
+					new PermissaoEvent(PermissaoEvent.LISTAR_PERMISSAO_DIFERENTE_DO_GRUPO,this,cmbGrupo.cmbCrud.selectedItem.sequencial).dispatch();
+				}else{
+					listaInicio.removeAll();
+					listaDestino.removeAll();
+				}
+			}
+			
+			private function listarPermissaoDoGrupo():void{
+				if(cmbGrupo.cmbCrud.selectedIndex>0){
+					new PermissaoEvent(PermissaoEvent.LISTAR_PERMISSAO_DO_GRUPO,this,cmbGrupo.cmbCrud.selectedItem.sequencial).dispatch();
+				}else{
+					listaInicio.removeAll();
+					listaDestino.removeAll();
+				}
+			}
+			
+			public function result(data:Object,event:Event):void{
+				switch(event.type){
+					case GrupoEvent.LISTAR:
+						cmbGrupo.cmbCrud.dataProvider=data.result;
+						break;
+					case PermissaoEvent.LISTAR_PERMISSAO_DIFERENTE_DO_GRUPO:
+						listaInicio=data.result;
+						break;
+					case PermissaoEvent.LISTAR_PERMISSAO_DO_GRUPO:
+						listaDestino=data.result;
+						break;
+				}
+			}
+			
+			public function limparCampos():void{
+				cmbGrupo.cmbCrud.dataProvider=null;
+				listaInicio.removeAll();
+				listaDestino.removeAll();
+			}
+			
+			private function fechar():void{
+				FlexGlobals.topLevelApplication.fecharTela();
+			}
+		]]>
+	</fx:Script>
+	<mx:Form width="100%" height="100%">
+		<mx:FormItem label="Grupo:" width="50%">
+			<leonelcasado:CustomComboBoxCrud id="cmbGrupo" customLabelField="descricao" isOrdenarLista="true" width="100%"
+				selecionarItem="listarPermissoes()" salvarItem="inserirGrupo()" alterarItem="alterarGrupo()" excluirItem="excluirGrupo()"/>
+		</mx:FormItem>
+		<mx:FormItem width="100%" height="100%" direction="horizontal">
+			<mx:VBox width="100%" height="100%" verticalGap="0">
+				<mx:Label text="Permissões do Sistema"/>
+				<mx:List id="lstInicio" width="100%" height="100%" labelField="descricao" dataProvider="{listaInicio}"/>
+			</mx:VBox>
+			<mx:VBox verticalAlign="middle" height="100%">
+				<leonelcasado:CustomButton id="moveToLeft" click="addItem(event)" icon="{Imagens.iconPlay}"/>
+				<leonelcasado:CustomButton id="moveToRight" click="removerItem(event)" width="{moveToLeft.width}" icon="{Imagens.iconBack}"/>
+			</mx:VBox>
+			<mx:VBox width="100%" height="100%" verticalGap="0">
+				<mx:Label text="Permissões do Grupo"/>
+				<mx:List id="lstDestino" width="100%" height="100%" labelField="descricao" dataProvider="{listaDestino}"/>
+			</mx:VBox>
+		</mx:FormItem>				
+	</mx:Form>
+	<mx:ControlBar horizontalAlign="right">
+		<leonelcasado:CustomButton label="Fechar" icon="{Imagens.iconClose}" click="fechar()" enter="fechar()"/>
+	</mx:ControlBar>
+</mx:Panel>

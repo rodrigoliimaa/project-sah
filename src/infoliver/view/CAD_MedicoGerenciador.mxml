@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		  xmlns:view="infoliver.view.*" width="100%" height="100%"
+		  paddingLeft="3" paddingRight="3" paddingTop="3" paddingBottom="3" 
+		  verticalAlign="top" title="Profissional" show="init()">
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.entity.Medico;
+			
+			import leonelcasado.componentes.Alerta;
+			
+			import mx.core.FlexGlobals;
+			import mx.core.UIComponent;
+			
+			public function init():void{
+				medicoCadastro.label = "Novo";
+				medicoCadastro.enabled = false;
+				tabMedicoGerenciador.selectedIndex = tabMedicoGerenciador.getItemIndex(medicoListagem);
+			}
+			
+			public function novoMedico(medico:Medico = null):void{
+				if (medico != null) { 
+					medicoCadastro.isInserirNovoRegistro = false;
+					medicoCadastro.label = "Edição";
+					
+					medicoCadastro.limpar();
+					
+					medicoCadastro.setMedico(medico);
+					medicoCadastro.preencherFormulario();
+				} else {
+					medicoCadastro.isInserirNovoRegistro = true;
+					medicoCadastro.label = "Novo";
+					
+					medicoCadastro.limpar();
+				}
+			
+				medicoCadastro.enabled = true;
+				tabMedicoGerenciador.selectedIndex = tabMedicoGerenciador.getItemIndex(medicoCadastro);
+			}
+		]]>
+	</fx:Script>
+					 <!--- change="desabilitaHabilitaTabEdicao()" -->
+	<mx:TabNavigator id="tabMedicoGerenciador" width="100%" height="100%" 
+					 horizontalGap="0" backgroundAlpha="0" paddingTop="0" borderStyle="none"
+					 useHandCursor="true" buttonMode="true" creationPolicy="all">
+		<view:CAD_MedicoListagem id="medicoListagem" label="Listagem" width="100%" height="100%"/>
+		<view:CAD_MedicoCadastro id="medicoCadastro" label="Novo" width="100%" height="100%"/>
+	</mx:TabNavigator>
+</mx:Panel>	

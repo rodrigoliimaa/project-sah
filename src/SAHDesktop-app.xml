@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<application xmlns="http://ns.adobe.com/air/application/3.1">
+	<id>br.com.infoliver.sahdesktop</id>
+	
+	<filename>SAUTH</filename>
+	<programMenuFolder>SAUTH</programMenuFolder>
+	<installFolder>INFOLIVER</installFolder>
+	<versionNumber>1.7.9</versionNumber>
+	
+	<name>SAUTH</name>
+	
+	<initialWindow>
+		<title>SAUTH-Sistema de Automação Hospitalar</title>
+		<content>SAHDesktop.swf</content>
+	</initialWindow>
+	
+	<icon>
+		<image16x16>assets/icons/boneco16.png</image16x16>
+		<image32x32>assets/icons/boneco32.png</image32x32>
+		<image48x48>assets/icons/boneco48.png</image48x48>
+	</icon>
+	
+	<allowBrowserInvocation>true</allowBrowserInvocation>
+	<!--supportedProfiles>extendedDesktop</supportedProfiles-->
+
+	<!-- We recommend omitting the supportedProfiles element, -->
+	<!-- which in turn permits your application to be deployed to all -->
+	<!-- devices supported by AIR. If you wish to restrict deployment -->
+	<!-- (i.e., to only mobile devices) then add this element and list -->
+	<!-- only the profiles which your application does support. -->
+	<!-- <supportedProfiles>desktop extendedDesktop mobileDevice extendedMobileDevice</supportedProfiles> -->
+
+	<!-- Whether the application handles the update when a user double-clicks an update version
+	of the AIR file (true), or the default AIR application installer handles the update (false).
+	Optional. Default false. -->
+	<!-- <customUpdateUI></customUpdateUI> -->
+	
+    <!-- iOS specific capabilities -->
+	<!-- <iPhone> -->
+		<!-- A list of plist key/value pairs to be added to the application Info.plist -->
+		<!-- <InfoAdditions>
+            <![CDATA[
+                <key>UIDeviceFamily</key>
+                <array>
+                    <string>1</string>
+                    <string>2</string>
+                </array>
+                <key>UIStatusBarStyle</key>
+                <string>UIStatusBarStyleBlackOpaque</string>
+                <key>UIRequiresPersistentWiFi</key>
+                <string>YES</string>
+            ]]>
+        </InfoAdditions> -->
+        <!-- <requestedDisplayResolution></requestedDisplayResolution> -->
+	<!-- </iPhone> -->
+
+	<!-- Specify Android specific tags that get passed to AndroidManifest.xml file. -->
+	<!--<android> 
+		<manifestAdditions>
+		<![CDATA[
+			<manifest android:installLocation="auto">
+				<uses-permission android:name="android.permission.INTERNET"/>
+				<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+				<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+				<uses-configuration android:reqFiveWayNav="true"/>
+				<supports-screens android:normalScreens="true"/>
+				<uses-feature android:required="true" android:name="android.hardware.touchscreen.multitouch"/>
+				<application android:enabled="true">
+					<activity android:excludeFromRecents="false">
+						<intent-filter>
+							<action android:name="android.intent.action.MAIN"/>
+							<category android:name="android.intent.category.LAUNCHER"/>
+						</intent-filter>
+					</activity>
+				</application>
+			</manifest>
+		]]>
+		</manifestAdditions> 
+	</android> -->
+	<!-- End of the schema for adding the android specific tags in AndroidManifest.xml file -->
+</application>

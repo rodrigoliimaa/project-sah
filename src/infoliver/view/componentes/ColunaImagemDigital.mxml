@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Box xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+	width="100%" height="100%" horizontalAlign="center" verticalAlign="middle">
+	<fx:Script>
+		<![CDATA[
+			import leonelcasado.componentes.Imagens;
+			import mx.core.FlexGlobals;
+			import mx.managers.PopUpManager;
+			
+			private function visualizar(data:*):void{
+//				var popUp:PreviewImportacao=PopUpManager.createPopUp(FlexGlobals.topLevelApplication.parent, PreviewImportacao, true) as PreviewImportacao;
+//				popUp.data=data;
+//				popUp.caminhoImagemRelativo=FlexGlobals.topLevelApplication.principal.gerenciadorImportacaoExportacaoArquivo.arquivoImportar.rbgCaminhoImagem.selectedValue;
+//				popUp.width=FlexGlobals.topLevelApplication.screen.width-100;
+//				popUp.height=FlexGlobals.topLevelApplication.screen.height-100;
+//				PopUpManager.centerPopUp(popUp);
+			}
+		]]>
+	</fx:Script>
+	<leonelcasado:CustomImagem toolTip="Visualizar" visible="{data.indicadorImagemDigital=='S'?true:false}" source="{Imagens.iconView}" click="visualizar(data)"/>
+</mx:Box>

@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		  xmlns:componentes="infoliver.view.componentes.*"
+		  xmlns:view="infoliver.view.*" width="100%" height="100%"
+		  paddingLeft="3" paddingRight="3" paddingTop="3" paddingBottom="3" 
+		  verticalAlign="top" title="Licença" show="init()">
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.Licenca;
+			import infoliver.model.entity.Medico;
+			import infoliver.model.entity.Motivo;
+			import infoliver.model.events.LicencaEvent;
+			import infoliver.model.events.MotivoEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			import infoliver.util.RoleSistema;
+			
+			import leonelcasado.componentes.Alerta;
+			import leonelcasado.componentes.CustomViewHelper;
+			
+			import mx.collections.ArrayCollection;
+			import mx.core.FlexGlobals;
+			import mx.managers.PopUpManager;
+			import mx.utils.StringUtil;
+			
+			public const NOME:String = "NOME";
+			public const CPF:String = "CPF";
+			public const RG:String = "RG";
+			public const CNS:String = "CNS";
+			public const OCUPACAO:String = "OCUPACAO";
+			public const LISTA_TIPO_PESQUISA:Array = [
+				NOME, CPF, RG, CNS, OCUPACAO
+			];
+			
+			private var licenca:Licenca;
+//			private var licencas:Vector.<Licenca>;
+			private var licencas:ArrayCollection;
+			private var motivos:ArrayCollection;
+			private var medico:Medico;
+			private var isInserirNovoRegistro:Boolean = true;
+			
+			private var appModel:ModelLocator = ModelLocator.getInstance();
+			
+			public function alterar():void{
+				if (dtg.dtgCustom.selectedItem != null) {
+					licenca = dtg.dtgCustom.selectedItem as Licenca;
+
+					var i:int = 0;
+					for (i = 0; i < motivos.length; i++) {
+						if (licenca.motivo.sequencial == (motivos.getItemAt(i) as Motivo).sequencial) {
+							cmbMotivoLicenca.selectedIndex = i; 
+							break;
+						}
+					}
+					
+					dthDataInicioLicenca.selectedDate = licenca.dataInicio;
+					dthDataFimLicenca.selectedDate = licenca.dataFim;
+					txtObservacaoLicenca.text = licenca.observacao;
+					setarMedico(licenca.medico);
+					
+					controles.btnSalvar.enabled = true;
+					
+					isInserirNovoRegistro = false;
+				}
+			}
+			
+			public function criarColunas():void{
+				dtg.addColunaNumero("sequencial","sequencial",null,"right",0,false);
+				dtg.addColunaCentralizada("MOTIVO","motivo", null, 100);
+				dtg.addColunaData("INÍCIO","dataInicio", null, 100);
+				dtg.addColunaData("FIM","dataFim", null, 100);
+				dtg.addColunaCentralizada("OBS.","observacao", null, 300);
+				dtg.addColunaCentralizada("Médico","medico.nome", null);
+			}
+			
+			public function excluir():void{
+				if (dtg.dtgCustom.selectedItem != null) {
+					licenca = dtg.dtgCustom.selectedItem as Licenca;
+					new LicencaEvent(LicencaEvent.EXCLUIR, this, licenca).dispatch();
+				}
+			}
+			
+			public function fechar():void{
+				FlexGlobals.topLevelApplication.fecharTela();
+			}
+			
+			public function init():void{
+				criarColunas();
+				listarMotivos();
+				listar();
+				
+				controles.btnSalvar.enabled = false;
+				
+				validarPermissoesDaTela();
+			}
+			
+			private function validarPermissoesDaTela():void{
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_ALTERAR_LICENCA)) {
+					dtg.includeInLayoutBtnAlterarRegistro=true;
+					dtg.doubleClickEnabled = true;
+				} else {
+					dtg.includeInLayoutBtnAlterarRegistro=false;
+					dtg.doubleClickEnabled = false;
+				}
+				
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_EXCLUIR_LICENCA)) {
+					dtg.includeInLayoutBtnExcluirRegistro=true;
+				} else {
+					dtg.includeInLayoutBtnExcluirRegistro=false;
+				}
+				
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_INSERIR_LICENCA)) {
+					controles.includeInLayoutBtnNovo=true;
+				} else {
+					controles.includeInLayoutBtnNovo=false;
+				}
+				
+				if(appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_MOTIVO)) {
+					motivoGerenciador.enabled = true;
+				} else {
+					motivoGerenciador.enabled = false;
+				}
+			}
+			
+			public function limpar():void{
+				CustomViewHelper.limparCamposFormulario(this);
+			}
+			
+			public function listar():void{
+				if (licenca == null) {
+					licenca = new Licenca();
+				}
+				
+				controles.btnSalvar.enabled = false;
+				isInserirNovoRegistro = true;
+				
+				if (StringUtil.trim( txtObservacaoLicenca.text) != "") {
+					licenca.observacao = StringUtil.trim( txtObservacaoLicenca.text);
+				} else {
+					licenca.observacao = null;
+				}
+
+				if (dthDataInicioLicenca.selectedDate != null) {
+					licenca.dataInicio = dthDataInicioLicenca.selectedDate;
+				} else {
+					licenca.dataInicio = null;
+				}
+
+				if (dthDataFimLicenca.selectedDate != null) {
+					licenca.dataFim = dthDataFimLicenca.selectedDate;
+				} else {
+					licenca.dataFim = null;
+				}
+				
+				if (checkBoxTodosMotivosLicenca.selected != true) {
+					licenca.motivo = (cmbMotivoLicenca.selectedItem as Motivo);
+				} else {
+					licenca.motivo = null;
+				}
+
+				if (medico != null) {
+					licenca.medico = medico;
+				} else {
+					licenca.medico = null;
+				}
+				
+				var paginacaoVO:PaginacaoVO = new PaginacaoVO();
+				paginacaoVO.entidade = licenca;
+				paginacaoVO.quantidadePaginacao = dtg.maximo;
+				paginacaoVO.inicioPaginacao = dtg.indice;
+				
+				new LicencaEvent(LicencaEvent.LISTAR_PAGINADO, this, paginacaoVO).dispatch();
+			}
+			
+			public function novo():void{
+				if (licenca == null) {
+					licenca = new Licenca();
+				}
+				licenca.sequencial = null;
+				
+				limpar();
+				setarMedico(null);
+				
+				controles.btnSalvar.enabled = true;
+				
+//				dthDataFimLicenca.enabled = true;
+//				dthDataInicioLicenca.enabled = true;
+//				txtMotivoLicenca.editable = true;
+				
+				isInserirNovoRegistro = true;
+				
+				txtObservacaoLicenca.setFocus();
+			}
+			
+			public function onDthDataInicioLicencaChange():void{
+				if (dthDataFimLicenca.selectedDate == null ||
+					dthDataFimLicenca.selectedDate.time < dthDataInicioLicenca.selectedDate.time) {
+					dthDataFimLicenca.selectedDate = dthDataInicioLicenca.selectedDate;
+				}
+			}
+			
+			public function onDthDataFimLicencaChange():void{
+				if (dthDataInicioLicenca.selectedDate == null ||
+					dthDataFimLicenca.selectedDate.time < dthDataInicioLicenca.selectedDate.time) {
+					dthDataInicioLicenca.selectedDate = dthDataFimLicenca.selectedDate;
+				}
+			}
+			
+			public function result(data:Object, event:Event):void{
+				if (event.type == LicencaEvent.ALTERAR) {
+					Alerta.info(data.result.msg);
+					listar();
+					limpar();
+					controles.btnSalvar.enabled = false;
+				}
+				
+				if (event.type == LicencaEvent.EXCLUIR) {
+					Alerta.info(data.result.msg);
+					listar();
+					limpar();
+					controles.btnSalvar.enabled = false;
+				}
+				
+				if (event.type == LicencaEvent.INSERIR) {
+					Alerta.info(data.result.msg);
+					listar();
+					limpar();
+					controles.btnSalvar.enabled = false;
+				}
+				
+				if (event.type == LicencaEvent.LISTAR_PAGINADO) {
+					licencas = data.result.entidade;
+					
+					dtg.inicializarTotalizadores();
+					dtg.setDataGridPaginado(data.result.totalRegistros,
+						licencas);
+				}
+				
+				if (event.type == MotivoEvent.LISTAR) {
+					motivos = data.result;
+					cmbMotivoLicenca.dataProvider = motivos;
+					
+					if (licenca != null && licenca.motivo != null && licenca.motivo.sequencial > 0) {
+						var i:int = 0;
+						for (i = 0; i < motivos.length; i++) {
+							if (licenca.motivo.sequencial == (motivos.getItemAt(i) as Motivo).sequencial) {
+								cmbMotivoLicenca.selectedIndex = i; 
+								break;
+							}
+						}
+					}
+				}
+			}
+			
+			public function salvar():void{
+				if (medico == null) {
+					Alerta.info("O campo MÉDICO é obrigatório");
+					return ;
+				}
+				
+				if (licenca == null) {
+					licenca = new Licenca();
+				}
+				
+				licenca.dataFim = dthDataFimLicenca.selectedDate;
+				licenca.motivo = cmbMotivoLicenca.selectedItem as Motivo;
+				licenca.dataInicio = dthDataInicioLicenca.selectedDate;
+				licenca.observacao = StringUtil.trim( txtObservacaoLicenca.text );
+				licenca.medico = medico;
+				
+				if (isInserirNovoRegistro == true) {
+					new LicencaEvent(LicencaEvent.INSERIR, this, licenca).dispatch();
+				} else {
+					licenca.sequencial = dtg.dtgCustom.selectedItem.sequencial;
+					new LicencaEvent(LicencaEvent.ALTERAR, this, licenca).dispatch();
+				}
+			}
+			
+			public function pesquisarMedico():void{
+				var win : CAD_LicencaGerenciadorMedicoListagem = new CAD_LicencaGerenciadorMedicoListagem();
+				
+				win.licencaGerenciador = this;
+				
+				win.showCloseButton = true;
+				
+				PopUpManager.addPopUp(win,this,true);
+				PopUpManager.centerPopUp(win);
+			}
+			
+			public function limparMedico():void{
+				setarMedico(null);
+			}
+			
+			public function setarMedico(param:Medico):void{
+				medico = param;
+				dtgMedico.dataProvider = medico;
+			}
+			
+			private function inicio_Click():void{
+				dtg.inicio();
+				listar();
+			}
+			
+			private function retroceder_Click():void{
+				dtg.retroceder();
+				listar();
+			}
+			
+			private function avancar_Click():void{
+				dtg.avancar();
+				listar();
+			}
+			
+			private function fim_Click():void{
+				dtg.fim();
+				listar();
+			}
+			
+			public function listarMotivos():void{
+				new MotivoEvent(MotivoEvent.LISTAR, this).dispatch();
+			}
+			
+		]]>
+	</fx:Script>
+	<mx:TabNavigator id="tabLicencaGerenciador" width="100%" height="100%" 
+					 horizontalGap="0" backgroundAlpha="0" paddingTop="0" borderStyle="none"
+					 useHandCursor="true" buttonMode="true" creationPolicy="all">
+		<mx:VBox label="Listagem">
+			<leonelcasado:CustomFieldSet title="Dados da Licença" width="100%" height="1%" paddingBottom="1">
+				<mx:Form width="100%">
+					<mx:FormItem label="Motivo:" width="100%">
+						<mx:HBox>
+							<leonelcasado:CustomComboBox id="cmbMotivoLicenca" width="100%" />
+							<leonelcasado:CustomLabel text="Pesquisar com TODOS OS MOTIVOS"/>
+							<leonelcasado:CustomCheckBox id="checkBoxTodosMotivosLicenca"/>
+						</mx:HBox>
+					</mx:FormItem>
+					<mx:HBox>
+						<mx:FormItem label="Data de Início:">
+							<leonelcasado:CustomDateField id="dthDataInicioLicenca"
+														  change="onDthDataInicioLicencaChange()" />
+						</mx:FormItem>
+						<mx:FormItem label="Data de Fim:">
+							<leonelcasado:CustomDateField id="dthDataFimLicenca"
+														  change="onDthDataFimLicencaChange()" />
+						</mx:FormItem>
+					</mx:HBox>
+					<leonelcasado:CustomFieldSet title="Dados do Médico" paddingBottom="5" paddingLeft="20"
+												 paddingRight="20" paddingTop="20">
+						<mx:FormItem label="Médico:" width="100%">
+							<mx:DataGrid id="dtgMedico" rowCount="1" width="100%">
+								<mx:columns>
+									<mx:DataGridColumn headerText="COD" dataField="sequencial" />
+									<mx:DataGridColumn headerText="NOME" dataField="nome" />
+									<mx:DataGridColumn headerText="CNS" dataField="cns" />
+									<mx:DataGridColumn headerText="CBO" dataField="ocupacao.codigoOcupacao" />
+									<mx:DataGridColumn headerText="Ocupação" dataField="ocupacao.descricao" />
+									<mx:DataGridColumn headerText="ATIVO" dataField="indicadorAtivo" />
+								</mx:columns>
+							</mx:DataGrid>
+							<mx:HBox>
+								<leonelcasado:CustomButton label="Pesquisar Médico"
+														   click="pesquisarMedico()" />
+								<leonelcasado:CustomButton label="Limpar Médico"
+														   click="limparMedico()" />
+							</mx:HBox>
+						</mx:FormItem>
+						<mx:FormItem label="Observação:" width="100%">
+							<leonelcasado:CustomTextInput id="txtObservacaoLicenca" width="100%"/>
+						</mx:FormItem>
+					</leonelcasado:CustomFieldSet>
+					<mx:FormItem>
+						<componentes:BarraControles id="controles" styleButtons="menuButton"
+													fechar="fechar()"
+													includeInLayoutBtnConsultar="true"
+													includeInLayoutBtnFechar="true"
+													includeInLayoutBtnNovo="true"
+													includeInLayoutBtnSalvar="true"
+													consultar="listar()"
+													novo="novo()"
+													salvar="salvar()"
+													/>
+					</mx:FormItem>
+				</mx:Form>
+			</leonelcasado:CustomFieldSet>
+			<leonelcasado:CustomDataGrid id="dtg" width="100%" height="100%"
+										 horizontalScrollCustomDataGrid="on"
+										 includeInLayoutBtnAlterarRegistro="true"
+										 includeInLayoutBtnExcluirRegistro="true"
+										 includeInLayoutPaginacao="true"
+										 alterarRegistro="alterar()" selecionarItem="alterar()"
+										 excluirRegistro="excluir()"
+										 />
+		</mx:VBox>
+		<view:CAD_MotivoGerenciador id="motivoGerenciador" label="Motivos" width="100%" height="100%" />
+	</mx:TabNavigator>
+</mx:Panel>	

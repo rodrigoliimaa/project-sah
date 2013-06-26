@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Panel xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		  xmlns:view="infoliver.view.*" width="100%" height="100%"
+		  paddingLeft="3" paddingRight="3" paddingTop="3" paddingBottom="3" 
+		  verticalAlign="top" title="Fornecedor" show="init()">
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.entity.Agendamento;
+			import infoliver.model.entity.Fornecedor;
+			import infoliver.model.entity.Medico;
+			
+			import leonelcasado.componentes.Alerta;
+			
+			import mx.core.FlexGlobals;
+			import mx.core.UIComponent;
+			
+			public function init():void{
+				fornecedorCadastro.enabled = false;
+				tabFornecedorGerenciador.selectedIndex = tabFornecedorGerenciador.getItemIndex(fornecedorListagem);
+			}
+			
+			public function novoFornecedor(fornecedor:Fornecedor = null):void{
+				if (fornecedor != null) { 
+					fornecedorCadastro.isInserirNovoRegistro = false;
+					fornecedorCadastro.label = "Edição";
+					
+//					fornecedorCadastro.fornecedo = fornecedor;
+					fornecedorCadastro.setFornecedor(fornecedor);
+					fornecedorCadastro.preencherFormulario();
+				} else {
+					fornecedorCadastro.isInserirNovoRegistro = true;
+					fornecedorCadastro.label = "Novo";
+					
+					fornecedorCadastro.limpar();
+				}
+				
+				fornecedorCadastro.enabled = true;
+//				agendamentoCadastro.consultarFeriados();
+				tabFornecedorGerenciador.selectedIndex = tabFornecedorGerenciador.getItemIndex(fornecedorCadastro);
+			}
+		]]>
+	</fx:Script>
+	<!--- change="desabilitaHabilitaTabEdicao()" -->
+	<mx:TabNavigator id="tabFornecedorGerenciador" width="100%" height="100%" 
+					 horizontalGap="0" backgroundAlpha="0" paddingTop="0" borderStyle="none"
+					 useHandCursor="true" buttonMode="true" creationPolicy="all">
+		<view:CAD_FornecedorListagem id="fornecedorListagem" label="Listagem" width="100%" height="100%"/>
+		<view:CAD_FornecedorCadastro id="fornecedorCadastro" label="Novo" width="100%" height="100%"/>
+	</mx:TabNavigator>
+</mx:Panel>	

@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		 xmlns:componentes="infoliver.view.componentes.*"
+		 width="100%" height="100%" initialize="init()" show="show()">
+	
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.entity.Agendamento;
+			import infoliver.model.entity.Horario;
+			import infoliver.model.entity.Medico;
+			import infoliver.model.entity.Ocupacao;
+			import infoliver.model.entity.Usuario;
+			import infoliver.model.events.MedicoEvent;
+			import infoliver.model.events.OcupacaoEvent;
+			import infoliver.model.events.UsuarioEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			
+			import leonelcasado.componentes.Alerta;
+			import leonelcasado.componentes.CustomViewHelper;
+			import leonelcasado.componentes.Data;
+			
+			import mx.collections.ArrayCollection;
+			import mx.core.FlexGlobals;
+			import mx.managers.PopUpManager;
+			import mx.utils.StringUtil;
+			
+			[Bindable]public var isInserirNovoRegistro:Boolean = true;
+			private var medico:Medico;
+			private var usuario:Usuario;
+			private var usuarios:ArrayCollection;
+			
+			public function init():void {
+				medico = new Medico();
+				medico.ocupacao = new Ocupacao();
+//				medico.horarios = [];
+				usuarios = new ArrayCollection();
+				medico.horarios = new ArrayCollection();
+				criarColunas();
+			}
+			
+			public function criarColunas():void{
+				dtgHorario.addColunaCentralizada("Dia da Semana", "getDiaSemana");
+				dtgHorario.addColunaCentralizada("Turno", "getTurno");
+				dtgHorario.addColunaCentralizada("Número Máximo de Agendamentos", "numeroMaximoAgendamentos");
+			}
+			
+			public function show():void {
+				
+			}
+			
+			public function limpar():void{
+				CustomViewHelper.limparCamposFormulario(this);				
+				FlexGlobals.topLevelApplication.principal.medico.medicoListagem.dtg.inicializarTotalizadores();
+				FlexGlobals.topLevelApplication.principal.medico.medicoListagem.txtValorBusca.text ="";
+				FlexGlobals.topLevelApplication.principal.medico.init();
+				dtgUsuario.dataProvider = null;
+			}
+			
+			public function listar():void{
+				var medicoParaListagem:Medico = new Medico();
+				medicoParaListagem.nome = txtNomeMedico.text;
+					
+				var paginacaoVO:PaginacaoVO = new PaginacaoVO();
+				paginacaoVO.entidade = medicoParaListagem;
+				paginacaoVO.inicioPaginacao = 0;
+				paginacaoVO.quantidadePaginacao = 10;
+				
+//				FlexGlobals.topLevelApplication.principal.medico.medicoListagem.txtValorBusca.text
+//					= txtNomeMedico.text;
+				new MedicoEvent(MedicoEvent.LISTA_PAGINADO,
+					FlexGlobals.topLevelApplication.principal.medico.medicoListagem,
+					paginacaoVO).dispatch();
+				
+				FlexGlobals.topLevelApplication.principal.medico.init();
+			}
+			
+			public function pesquisarOcupacoesPorDescricao():void{
+				new OcupacaoEvent(OcupacaoEvent.PESQUISAR_POR_DESCRICAO, this, txtPesquisarOcupacaoPorDescricaoMedico.text).dispatch();
+			}
+			
+			public function adicionarOcupacao():void{
+				if (dtgOcupacao.selectedItem != null) {
+					txtSequencialOcupacaoMedico.text	= dtgOcupacao.selectedItem.sequencial;
+					txtDescricaoOcupacaoMedico.text		= dtgOcupacao.selectedItem.descricao;
+					txtCodigoOcupacaoMedico.text		= dtgOcupacao.selectedItem.codigoOcupacao; 
+				}
+			}
+			
+			public function adicionarHorario():void{
+				if (medico.horarios == null) {
+//					medico.horarios = [];
+					medico.horarios = new ArrayCollection();
+				}
+				
+				var horario:Horario = new Horario();
+				horario.diaSemana = cmbDiaSemanaHorario.selectedItem.data as int;
+				horario.turno = cmbTurnoHorario.selectedItem.data as String;
+				horario.numeroMaximoAgendamentos = int(txtNumeroMaximoAgendamentosHorario.text);
+				
+				// verificar se horário já foi adicionado
+				for each (var horarioExistente:Horario in medico.horarios) {
+					if (horarioExistente.diaSemana == horario.diaSemana &&
+						horarioExistente.turno == horario.turno) {
+						Alerta.info("Esse horário (dia da semana e turno) já foi adicionado!");
+						return ;
+					}
+				}
+				
+				if (horario.numeroMaximoAgendamentos <= 0) {
+					Alerta.info("Especifique um NÚMERO MÁXIMO DE AGENDAMENTOS maior que 0");
+					return ;
+				}
+				
+//				medico.horarios.push(horario);
+				medico.horarios.addItem(horario);
+				dtgHorario.dtgCustom.dataProvider = medico.horarios;
+			}
+			
+			public function removerHorario():void{
+				if (dtgHorario.dtgCustom.selectedItem != null) {
+					medico.horarios.removeItemAt(dtgHorario.dtgCustom.selectedIndex);
+				}
+			}
+			
+			public function salvar():void {
+				if (txtCNSMedico.text.length != 15) {
+					Alerta.info("CNS Inválido");
+					return ;
+				}
+				
+				// Dados pessoais
+				medico.nome = txtNomeMedico.text;
+//				medico.cpf = txtCPFMedico.text;
+				medico.cpf = txtCPFMedico.textoSemMascara();
+//				medico.rg = txtRGMedico.text;
+//				medico.orgaoExpedidor = txtOrgaoExpedidorMedico.text;
+				medico.rg = txtRgMedico.texto;
+				medico.orgaoEmissor = cmbOrgaoEmissorMedico.selectedIndex > 0 ?
+					cmbOrgaoEmissorMedico.selectedItem.data : null;
+				medico.ufOrgaoEmissor = cmbUfOrgaoEmissorMedico.selectedIndex > 0 ?
+					cmbUfOrgaoEmissorMedico.selectedItem.uf : null;
+				medico.dataExpedicao = dthExpedicaoMedico.text.length > 0 ?
+					dthExpedicaoMedico.selectedDate : null;
+				medico.telefone1 = txtTelefone1Medico.textoSemMascara();
+				medico.telefone2 = txtTelefone2Medico.textoSemMascara();
+				medico.telefone3 = txtTelefone3Medico.textoSemMascara();
+				medico.email = txtEmailMedico.text;
+				
+				// Dados profissionais
+				medico.indicadorAtivo = checkBoxAtivoMedico.selected ? "S" : "N";
+				medico.cns = txtCNSMedico.text;
+				medico.ocupacao.sequencial = txtSequencialOcupacaoMedico.text;
+				
+				medico.usuarioResponsavel = usuario;
+				
+				if (isInserirNovoRegistro) {
+					new MedicoEvent(MedicoEvent.INSERIR, this, medico).dispatch();
+				} else {
+					new MedicoEvent(MedicoEvent.ALTERAR, this, medico).dispatch();
+				}
+			}
+			
+			public function result(data:Object,event:Event):void {
+				if (event.type == MedicoEvent.ALTERAR) {
+					Alerta.success(data.result.msg);
+					limpar();
+				}
+				
+				if (event.type == MedicoEvent.INSERIR) {
+					Alerta.success(data.result.msg);
+				}
+				
+				if (event.type == OcupacaoEvent.PESQUISAR_POR_DESCRICAO) {
+					dtgOcupacao.dataProvider = data.result;
+				}
+				
+				if (event.type == UsuarioEvent.OBTER) {
+					usuario = data.result as Usuario;
+					usuarios = new ArrayCollection;
+					usuarios.addItem(usuario);
+					dtgUsuario.dataProvider = usuarios;
+					medico.usuarioResponsavel = usuario;
+				}
+			}
+			
+			public function setMedico(param:Medico):void {
+				this.medico = param;
+			}
+			
+			public function preencherFormulario():void{
+				// Dados pessoais
+				txtNomeMedico.text = medico.nome;
+//				txtCPFMedico.text = medico.cpf;
+				txtCPFMedico.textoComMascara(medico.cpf);
+//				txtRGMedico.text = medico.rg;
+//				txtOrgaoExpedidorMedico.text = medico.orgaoExpedidor;
+				txtRgMedico.text = medico.rg;
+				cmbOrgaoEmissorMedico.selectedValue = medico.orgaoEmissor;
+				cmbUfOrgaoEmissorMedico.selectedValue = medico.ufOrgaoEmissor;
+				dthExpedicaoMedico.selectedDate = medico.dataExpedicao;
+//				txtTelefone1Medico.text = medico.telefone1;
+//				txtTelefone2Medico.text = medico.telefone2;
+//				txtTelefone3Medico.text = medico.telefone3;
+				txtTelefone1Medico.textoComMascara(medico.telefone1);
+				txtTelefone2Medico.textoComMascara(medico.telefone2);
+				txtTelefone3Medico.textoComMascara(medico.telefone3);
+				txtEmailMedico.text = medico.email;
+				
+				//Dados profissionais
+				txtCNSMedico.text = medico.cns;
+				txtSequencialOcupacaoMedico.text = medico.ocupacao.sequencial as String;
+				txtDescricaoOcupacaoMedico.text = medico.ocupacao.descricao;
+				txtCodigoOcupacaoMedico.text = medico.ocupacao.codigoOcupacao;
+				
+				checkBoxAtivoMedico.selected =
+					medico.indicadorAtivo == "S" ? true : false;
+				
+				dtgHorario.dtgCustom.dataProvider = medico.horarios;
+				
+				if(medico.usuarioResponsavel.sequencial != null && medico.usuarioResponsavel.sequencial != 0)
+					dtgUsuario.dataProvider = medico.usuarioResponsavel;
+				
+			}
+			
+			public function pesquisarUsuario():void{
+				var win : CAD_MedicoUsuarioListagem = new CAD_MedicoUsuarioListagem();
+				
+				win.medicoCadastro = this;
+				
+				win.showCloseButton = true;
+				
+				PopUpManager.addPopUp(win,this,true);
+				PopUpManager.centerPopUp(win);
+			}
+			
+			public function consultarUsuario():void{
+				var codigoUsuario:String = StringUtil.trim(txtCodigoUsuario.text);
+				if (codigoUsuario == "") {
+					pesquisarUsuario();
+				} else {
+					var m:Usuario = new Usuario();
+					m.sequencial = Number(codigoUsuario);
+					new UsuarioEvent(UsuarioEvent.OBTER, this, m).dispatch();
+				}
+			}
+			
+			public function setarUsuario(param:Usuario):void{
+				usuario = param;
+				dtgUsuario.dataProvider = usuario;
+				medico.usuarioResponsavel = usuario;
+			}
+			
+		]]>
+	</fx:Script>
+	<mx:TabNavigator id="tabMedico" width="100%" height="100%" backgroundAlpha="0"
+					 borderStyle="none" creationPolicy="all" paddingTop="0">
+		<mx:Form width="100%" height="100%" label="Dados Pessoais" showEffect="Fade">
+			<mx:FormItem width="100%" label="Nome:">
+				<leonelcasado:CustomTextInput id="txtNomeMedico" width="100%"/>
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="CPF:">
+				<leonelcasado:Cpf id="txtCPFMedico" width="100%" />
+			</mx:FormItem>
+			<mx:FormItem label="RG:" width="100%" direction="horizontal">
+				<leonelcasado:Numero id="txtRgMedico"/>
+				<leonelcasado:CustomLabel text="Órgão Emissor:"/>
+				<leonelcasado:CustomComboBox id="cmbOrgaoEmissorMedico" selectedIndex="1">
+					<fx:Array>
+						<fx:Object label="SELECIONE" data=""/>
+						<fx:Object label="SSP" data="SSP"/>
+						<fx:Object label="PMMG" data="PMMG"/>
+						<fx:Object label="PCMG" data="PCMG"/>
+						<fx:Object label="CNT" data="CNT"/>
+						<fx:Object label="DIC" data="DIC"/>
+						<fx:Object label="CTPS" data="CTPS"/>
+						<fx:Object label="FGTS" data="FGTS"/>
+						<fx:Object label="IFP" data="IFP"/>
+						<fx:Object label="IPF" data="IPF"/>
+						<fx:Object label="IML" data="IML"/>
+						<fx:Object label="MTE" data="MTE"/>
+						<fx:Object label="MMA" data="MMA"/>
+						<fx:Object label="MAE" data="MAE"/>
+						<fx:Object label="MEX" data="MEX"/>
+						<fx:Object label="POF" data="POF"/>
+						<fx:Object label="POM" data="POM"/>
+						<fx:Object label="SES" data="SES"/>
+						<fx:Object label="SJS" data="SJS"/>
+						<fx:Object label="SJTS" data="SJTS"/>
+					</fx:Array>
+				</leonelcasado:CustomComboBox>
+				<leonelcasado:CustomLabel text="/"/>
+				<leonelcasado:Uf id="cmbUfOrgaoEmissorMedico" labelView="uf" selectedValue="AL" selectedIndex="2"/> 
+				<leonelcasado:CustomLabel text="Data Expedição:"/>
+				<leonelcasado:CustomDateField id="dthExpedicaoMedico" selectableRange="{{rangeStart:new Date(1860,1,1),rangeEnd:new Date()}}"/>
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Telefone 1:">
+				<leonelcasado:Telefone id="txtTelefone1Medico" width="100%"/>
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Telefone 2:">
+				<leonelcasado:Telefone id="txtTelefone2Medico" width="100%"/>
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Telefone 3:">
+				<leonelcasado:Telefone id="txtTelefone3Medico" width="100%"/>
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Email:">
+				<leonelcasado:CustomTextInput id="txtEmailMedico" width="100%"/>
+			</mx:FormItem>
+		</mx:Form>
+		<!-- ************************************************************************** -->
+		<mx:Form width="100%" height="100%" label="Dados Profissionais" showEffect="Fade">
+			<mx:FormItem width="100%" label="Ativo:">
+				<leonelcasado:CustomCheckBox id="checkBoxAtivoMedico"/>
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="CNS:">
+				<leonelcasado:CustomTextInput id="txtCNSMedico" maxChars="15" restrict="0-9"/>
+			</mx:FormItem>
+			<mx:FormItem label="Usuário Responsavel:" width="100%">
+				<mx:HBox>
+					<leonelcasado:CustomLabel text="(COD Usuário:)"/>
+					<leonelcasado:CustomTextInput id="txtCodigoUsuario" enter="consultarUsuario()" restrict="0-9"/>
+					<leonelcasado:CustomButton label="Pesquisar Usuário" click="pesquisarUsuario()" />
+				</mx:HBox>
+				<mx:DataGrid id="dtgUsuario" rowCount="1" width="100%">
+					<mx:columns>
+						<mx:DataGridColumn headerText="COD" dataField="sequencial" />
+						<mx:DataGridColumn headerText="LOGIN" dataField="login" />
+						<mx:DataGridColumn headerText="NOME" dataField="nome" />
+					</mx:columns>
+				</mx:DataGrid>
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Descrição da Ocupação:">
+				<mx:HBox>
+					<leonelcasado:CustomTextInput id="txtPesquisarOcupacaoPorDescricaoMedico"/>
+					<leonelcasado:CustomButton label="Pesquisar" click="pesquisarOcupacoesPorDescricao()"
+											   enter="pesquisarOcupacoesPorDescricao()"/>
+				</mx:HBox>
+				<mx:DataGrid id="dtgOcupacao" height="150" width="100%"
+							 doubleClickEnabled="true" itemDoubleClick="adicionarOcupacao()">
+					<mx:columns>
+						<mx:DataGridColumn headerText="Cod" dataField="sequencial" visible="true"/>
+						<mx:DataGridColumn headerText="Descrição" dataField="descricao" visible="true"/>
+						<mx:DataGridColumn headerText="CBO" dataField="codigoOcupacao" visible="true"/>
+					</mx:columns>
+				</mx:DataGrid>
+				<leonelcasado:CustomButton label="Adicionar OCUPAÇÃO selecionada" click="adicionarOcupacao()" />
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Ocupação:">
+				<mx:HBox>
+					<mx:VBox>
+						<s:TextInput id="txtSequencialOcupacaoMedico" editable="false" />
+						<leonelcasado:CustomLabel text="(COD)" fontStyle="italic"/>
+					</mx:VBox>
+					<mx:VBox>
+						<s:TextInput id="txtCodigoOcupacaoMedico" editable="false" />
+						<leonelcasado:CustomLabel text="(CBO)" fontStyle="italic"/>
+					</mx:VBox>
+					<mx:VBox>
+						<s:TextInput id="txtDescricaoOcupacaoMedico" width="100%" editable="false" />
+						<leonelcasado:CustomLabel text="(Descrição da Ocupação)" fontStyle="italic"/>
+					</mx:VBox>
+				</mx:HBox>
+			</mx:FormItem>
+			<mx:FormItem width="100%" label="Horário:">
+				<mx:HBox>
+					<leonelcasado:CustomLabel text="Dia da Semana" />
+					<leonelcasado:CustomComboBox id="cmbDiaSemanaHorario"  dataProvider="{Horario.COMBO_BOX_DATA_PROVIDER_DIAS_DA_SEMANA}"/>
+					<leonelcasado:CustomLabel text="Turno" />
+					<leonelcasado:CustomComboBox id="cmbTurnoHorario" dataProvider="{Horario.COMBO_BOX_DATA_PROVIDER_TURNOS}" />
+					<leonelcasado:CustomLabel text="Número Máximo de Agendamentos" />
+					<leonelcasado:CustomTextInput id="txtNumeroMaximoAgendamentosHorario" restrict="0-9"/>
+					<leonelcasado:CustomButton label="Adicionar HORÁRIO" click="adicionarHorario()" />
+				</mx:HBox>
+			</mx:FormItem>
+			<mx:FormItem label="" width="100%">
+				<leonelcasado:CustomDataGrid id="dtgHorario" width="100%"
+											 includeInLayoutBtnAlterarRegistro="false"
+											 includeInLayoutBtnExcluirRegistro="true"
+											 includeInLayoutBtnInserirRegistro="false"
+											 includeInLayoutBtnVisualizarRegistro="false"
+											 includeInLayoutTotalRegistro="false"
+											 includeInLayoutPaginacao="false"
+											 excluirRegistro="removerHorario()"
+											 />
+			</mx:FormItem>
+		</mx:Form>
+	</mx:TabNavigator>
+	<!-- *********************************************************************************** -->
+	<componentes:BarraControles id="controles" includeInLayoutBtnSalvar="true" salvar="salvar()"
+								styleButtons="menuButton"/>
+</mx:VBox>

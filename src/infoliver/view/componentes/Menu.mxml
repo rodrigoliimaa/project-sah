@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+	xmlns:componentes="infoliver.view.componentes.*"
+	height="100%" creationCompleteEffect="Fade"> 
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.Programa;
+			import infoliver.util.LoadMenu;
+			import infoliver.util.RoleSistema;
+			
+			import mx.containers.ViewStack;
+			import mx.core.FlexGlobals;
+			
+			[Bindable]private var appModel:ModelLocator = ModelLocator.getInstance();
+			public var stagePrincipal:ViewStack;
+
+			public function loadModule(moduleUrl:uint):void{
+				stagePrincipal.selectedIndex=moduleUrl;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<componentes:CustomBoxGap height="100%">		
+		<!-- ********************************************************************************* -->
+		<componentes:BarraCollapseRight titulo="Cadastro" componenteCollapse="{menuCadastro}" isCollapse="true"/>
+		<mx:VBox id="menuCadastro" width="100%" verticalAlign="top" showEffect="Fade" includeInLayout="true" visible="true">
+			<!-- PRATA: BEGIN -->
+			<componentes:ItemMenu label="Agendamento" click="loadModule(LoadMenu.MN_CAD_AGENDAMENTO)"
+								  includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_AGENDAMENTO)}" 
+								  visible="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_AGENDAMENTO)}"/>
+			
+			<componentes:ItemMenu label="Feriado" click="loadModule(LoadMenu.MN_CAD_FERIADO)"
+								  includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_FERIADO)}" 
+								  visible="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_FERIADO)}"/>
+
+			<componentes:ItemMenu label="Licença" click="loadModule(LoadMenu.MN_CAD_LICENCA)"
+								  includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_LICENCA)}" 
+								  visible="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_LICENCA)}"/>
+			
+			<componentes:ItemMenu label="Profissional" click="loadModule(LoadMenu.MN_CAD_MEDICO)"
+								  includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_MEDICO)}" 
+								  visible="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_MEDICO)}"/>
+			
+			<componentes:ItemMenu label="Equipe Profissional" click="loadModule(LoadMenu.MN_CAD_EQUIPE_MEDICA)"
+								  includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_EQUIPE_MEDICA)}" 
+								  visible="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_EQUIPE_MEDICA)}"/>
+			
+			<componentes:ItemMenu label="Fornecedor" click="loadModule(LoadMenu.MN_CAD_FORNECEDOR)"
+								  includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_FORNECEDOR)}" 
+								  visible="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_FORNECEDOR)}"/>
+			
+			<componentes:ItemMenu label="Órtese e Prótese" click="loadModule(LoadMenu.MN_CAD_ORTESE_PROTESE)"
+								  includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_MOVIMENTACAO)}" 
+								  visible="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_MOVIMENTACAO)}"/>
+			
+			<componentes:ItemMenu label="Auditivo" click="loadModule(LoadMenu.MN_CAD_AUDITIVO)"
+								  includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_MOVIMENTACAO)}" 
+								  visible="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_MOVIMENTACAO)}"/>
+			<!-- PRATA: END -->
+			<componentes:ItemMenu label="Paciente" click="loadModule(LoadMenu.MN_CAD_PACIENTE_GERENCIADOR)"
+				includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_PACIENTE)}" 
+				visible="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_PACIENTE)}"/>
+
+			<componentes:ItemMenu label="Grupo Laudo SUS" click="loadModule(LoadMenu.MN_CAD_GRUPO_LAUDO)"
+				includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_GRUPO_LAUDO)}" 
+				visible="{appModel.isPermissaoValida(RoleSistema.ROLE_GRUPO_LAUDO)}"/>
+		</mx:VBox>
+		<!-- ********************************************************************************* -->
+		<componentes:BarraCollapseRight titulo="Atendimento" componenteCollapse="{menuRecepcao}" isCollapse="true"/>
+		<mx:VBox id="menuRecepcao" width="100%" verticalAlign="top" showEffect="Fade" includeInLayout="true" visible="true">
+			
+			<componentes:ItemMenu label="Recepção" click="loadModule(LoadMenu.MN_ATE_PRE_ATENDIMENTO_RECEPCAO)"
+								  includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_RECEPCAO)}" 
+								  visible="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_RECEPCAO)}"/>
+			<componentes:ItemMenu label="Serviço Social" click="loadModule(LoadMenu.MN_ATE_PRE_ATENDIMENTO_SERVICO_SOCIAL)"
+								  includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_SERVICO_SOCIAL)}" 
+								  visible="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_SERVICO_SOCIAL)}"/>
+			
+			<componentes:ItemMenu label="Tela Chamada" click="loadModule(LoadMenu.MN_ATE_TELA_CHAMADA_PACIENTE)"
+								  includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_RECEPCAO)}" 
+								  visible="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_RECEPCAO)}"/>
+			<componentes:ItemMenu label="Atendimento Profissional" click="loadModule(LoadMenu.MN_ATE_ATENDIMENTO_MEDICO)"
+								  includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_RECEPCAO)}" 
+								  visible="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_RECEPCAO)}"/> 
+		</mx:VBox>
+		<!-- ********************************************************************************* -->
+		<componentes:BarraCollapseRight titulo="Relatório" componenteCollapse="{menuRelatorio}" isCollapse="true"/>
+		<mx:VBox id="menuRelatorio" width="100%" verticalAlign="top" showEffect="Fade" includeInLayout="true" visible="true">
+			<componentes:ItemMenu label="Laudos SUS" click="loadModule(LoadMenu.MN_REL_PROCEDIMENTO_MEDICO)"
+				includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_PROCEDIMENTO_MEDICO)}" 
+				visible="{appModel.isPermissaoValida(RoleSistema.ROLE_PROCEDIMENTO_MEDICO)}"/>
+			<componentes:ItemMenu label="Movimentações" click="loadModule(LoadMenu.MN_REL_MapaBpi)"
+								  includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_PROCEDIMENTO_MEDICO)}" 
+								  visible="{appModel.isPermissaoValida(RoleSistema.ROLE_PROCEDIMENTO_MEDICO)}"/>
+			<componentes:ItemMenu label="Mapa BPI/APAC" click="loadModule(LoadMenu.MN_REL_BpiEncamininhamento)"
+								  includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_PROCEDIMENTO_MEDICO)}" 
+								  visible="{appModel.isPermissaoValida(RoleSistema.ROLE_PROCEDIMENTO_MEDICO)}"/>								
+			<componentes:ItemMenu label="Equipamentos" click="loadModule(LoadMenu.MN_REL_Equipamentos)"
+								  includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_PROCEDIMENTO_MEDICO)}" 
+								  visible="{appModel.isPermissaoValida(RoleSistema.ROLE_PROCEDIMENTO_MEDICO)}"/>
+			
+		</mx:VBox>
+		<!-- ********************************************************************************* -->
+		<componentes:BarraCollapseRight titulo="Manutenção" componenteCollapse="{menuManutencao}" isCollapse="true"/>
+		<mx:VBox id="menuManutencao" width="100%" verticalAlign="top" showEffect="Fade" includeInLayout="true" visible="true">
+			<componentes:ItemMenu label="Empresa" click="loadModule(LoadMenu.MN_MAN_EMPRESA)"
+				includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_CONSULTAR_EMPRESA)}" 
+				visible="{appModel.isPermissaoValida(RoleSistema.ROLE_CONSULTAR_EMPRESA)}"/>
+			
+			<componentes:ItemMenu label="Usuário" click="loadModule(LoadMenu.MN_MAN_USUARIO)"
+				includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_USUARIO)}" 
+				visible="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_USUARIO)}"/>
+
+			<componentes:ItemMenu label="Grupo Usuário" click="loadModule(LoadMenu.MN_MAN_GRUPO_USUARIO)"
+				includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_GRUPO)}" 
+			  	visible="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_GRUPO)}"/>
+
+			<componentes:ItemMenu label="Grupo Permissão" click="loadModule(LoadMenu.MN_MAN_GRUPO_PERMISSAO)"
+				includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_GRUPO)}" 
+				visible="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_GRUPO)}"/>
+			
+			<componentes:ItemMenu label="Log Acesso" click="loadModule(LoadMenu.MN_MAN_LOG_ACESSO)"
+				includeInLayout="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_LOG_ACESSO)}" 
+				visible="{appModel.isPermissaoValida(RoleSistema.ROLE_LISTAR_LOG_ACESSO)}"/>
+			
+			<componentes:ItemMenu label="Contato" click="loadModule(LoadMenu.MN_MAN_CONTATO)"/>
+			<componentes:ItemMenu label="Sair" click="{FlexGlobals.topLevelApplication.sair()}"/>
+		</mx:VBox>
+	</componentes:CustomBoxGap>
+</mx:Canvas>

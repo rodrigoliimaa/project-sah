@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox xmlns:fx="http://ns.adobe.com/mxml/2009"
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:leonelcasado="http://www.leonelcasado.com.br/mxml"
+		 xmlns:componentes="infoliver.view.componentes.*"
+		 width="100%" height="100%" initialize="init()" show="show()">
+	
+	<fx:Script>
+		<![CDATA[
+			import infoliver.model.ModelLocator;
+			import infoliver.model.entity.Agendamento;
+			import infoliver.model.entity.EquipeMedica;
+			import infoliver.model.entity.Feriado;
+			import infoliver.model.entity.Horario;
+			import infoliver.model.entity.Licenca;
+			import infoliver.model.entity.Medico;
+			import infoliver.model.entity.Paciente;
+			import infoliver.model.entity.Usuario;
+			import infoliver.model.events.AgendamentoEvent;
+			import infoliver.model.events.EquipeMedicaEvent;
+			import infoliver.model.events.FeriadoEvent;
+			import infoliver.model.events.MedicoEvent;
+			import infoliver.model.events.PacienteEvent;
+			import infoliver.model.vo.PaginacaoVO;
+			
+			import leonelcasado.componentes.Alerta;
+			import leonelcasado.componentes.CustomViewHelper;
+			
+			import mx.charts.chartClasses.DateRangeUtilities;
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.formatters.DateFormatter;
+			import mx.managers.PopUpManager;
+			import mx.utils.ObjectUtil;
+			import mx.utils.StringUtil;
+			
+			import spark.globalization.StringTools;
+			
+			// para alteração
+			[Bindable]public var isInserirNovoRegistro:Boolean = true;
+			public var medicoSequencialAnterior:Object;
+			public var dataAnterior:Date;
+			public var turnoAnterior:String;
+			
+			public var agendamento:Agendamento;
+			public var feriados:ArrayCollection;
+			public var medico:Medico;
+			public var medicos:ArrayCollection;
+			public var paciente:Paciente;
+			public var pacientes:ArrayCollection;
+			public var equipeMedica:EquipeMedica;
+			public var equipesMedica:ArrayCollection;
+			public var erros:ArrayCollection;
+			public var usuarioLogado:Usuario;
+			
+			public const MEDICO:String = "MÉDICO";
+			public const EQUIPE_MEDICA:String = "EQUIPE MÉDICA";
+			public const LISTA_TIPO:Array = [
+				MEDICO, EQUIPE_MEDICA
+			];
+			
+			public function init():void {
+				dthAgendamento.disabledRanges = [{rangeEnd: getYesterday()}];
+				consultarFeriados();
+			}
+			
+			public function consultarFeriados():void{
+				new FeriadoEvent(FeriadoEvent.LISTAR, this).dispatch();
+			}
+			
+			public function getYesterday():Date{
+				var today:Date = new Date();
+				var millisecondsPerDay:Number = 1000 * 60 * 60 * 24;
+				
+				var yesterday:Date = new Date();
+				yesterday.time = (today.time - millisecondsPerDay);
+				return yesterday;
+			}
+			
+			public function show():void {}
+			
+			public function limpar():void{
+				CustomViewHelper.limparCamposFormulario(this);
+				medico = new Medico();
+				equipeMedica = new EquipeMedica();
+				medico.horarios = new ArrayCollection();
+				equipeMedica.horarios = new ArrayCollection();
+				medicos = new ArrayCollection();
+				pacientes = new ArrayCollection();
+				equipesMedica = new ArrayCollection();
+				dtgHorario.dataProvider = medico.horarios;
+				dtgMedico.dataProvider = medicos;
+				dtgPaciente.dataProvider = pacientes;
+				dtgEquipeMedica.dataProvider = equipesMedica;
+				dtgHorarioEquipeMedica.dataProvider = equipeMedica.horarios;
+			}
+			
+			public function listar():void{
+				var agendamentoParaListagem:Agendamento = new Agendamento();
+				var pacienteParaListagem:Paciente = new Paciente();
+				pacienteParaListagem.nome = paciente.nome;
+				agendamento.paciente = pacienteParaListagem;
+				
+				var paginacaoVO:PaginacaoVO = new PaginacaoVO();
+				paginacaoVO.entidade = agendamentoParaListagem;
+				paginacaoVO.inicioPaginacao = 0;
+				paginacaoVO.quantidadePaginacao = 10;
+				
+				//				FlexGlobals.topLevelApplication.principal.medico.medicoListagem.txtValorBusca.text
+				//					= txtNomeMedico.text;
+				new AgendamentoEvent(AgendamentoEvent.LISTA_PAGINADO,
+					FlexGlobals.topLevelApplication.principal.agendamento.agendamentoListagem,
+					paginacaoVO).dispatch();
+				
+				FlexGlobals.topLevelApplication.principal.agendamento.init();
+			}
+			
+			public function salvar():void {
+				if (agendamento == null) {
+					agendamento = new Agendamento();
+				}
+				
+				// em caso de reagendamento
+				if (isInserirNovoRegistro == false) {
+					// se for o mesmo médico e o mesmo turno, não é possível reagendar
+					// no mesmo turno, só é possível se forem médicos diferentes
+					if (ObjectUtil.compare(dthAgendamento.selectedDate, dataAnterior) == 0
+						&& (cmbTurnoAgendamento.selectedItem.data as String) == turnoAnterior
+						&& (medico.sequencial as int) == (medicoSequencialAnterior as int)) {
+						Alerta.info("Não é possível REAGENDAR para o mesmo MÉDICO, no mesmo DIA E TURNO");
+						return ;
+					}
+				}
+				
+				if(medico.sequencial != null && equipeMedica != null && equipeMedica.sequencial != null) {
+					Alerta.info("Não selecionar Medico e Equipe Médica ao mesmo tempo.");
+					return ;
+				}
+				
+				agendamento.data = dthAgendamento.selectedDate;
+				agendamento.periodoInicial = dthPeriodoIni.selectedDate;
+				agendamento.periodoFinal = dthPeriodoFim.selectedDate;
+				agendamento.medico = medico;
+				agendamento.paciente = paciente;
+				agendamento.situacao = Agendamento.SITUACAO_AGENDADO;
+				agendamento.equipeMedica = equipeMedica;
+				agendamento.turno = cmbTurnoAgendamento.selectedItem.data as String;
+				
+				erros = new ArrayCollection();
+				
+				// verificar se é feriado
+				var feriadoMedico:Boolean = false;
+				for each (var feriado:Feriado in feriados) {
+					if (agendamento.data.time >= feriado.dataInicio.time &&
+						agendamento.data.time <= feriado.dataFim.time) {
+						feriadoMedico = true;
+						break;
+					}
+				}
+				if (feriadoMedico == true) {
+					erros.addItem("\nA data selecionada é um feriado");
+				}
+				
+				// verificar se o médico atende no horário agendado
+				var horarioMedico:Boolean = false;
+				if (medico.horarios != null || equipeMedica.horarios != null) {
+					if(medico.horarios != null && medico.horarios.length > 0) {
+						for each (var horaMedico:Horario in medico.horarios) {
+							if (agendamento.data.day == horaMedico.diaSemana
+								&& agendamento.turno == horaMedico.turno) {
+								horarioMedico = true;
+								break;
+							}
+						}
+						if (horarioMedico == false) {
+							erros.addItem("\nO médico selecionado não atende no horário agendado");
+						}	
+					} else {
+						for each (var horaEquipeMedica:Horario in equipeMedica.horarios) {
+							if (agendamento.data.day == horaEquipeMedica.diaSemana
+								&& agendamento.turno == horaEquipeMedica.turno) {
+								horarioMedico = true;
+								break;
+							}
+						}
+						if (horarioMedico == false) {
+							erros.addItem("\nA equipe médica selecionada não atende no horário agendado");
+						}
+					}
+					
+				}
+				
+				//Verificar se o médico está de licença
+				var licencaMedico:Boolean = false;
+				for each (var licenca:Licenca in medico.licencas) {
+					if (agendamento.data.time >= licenca.dataInicio.time &&
+						agendamento.data.time <= licenca.dataFim.time) {
+						licencaMedico = true;
+						break;
+					}
+				}
+				if (licencaMedico == true) {
+					erros.addItem("\nNa data selecionada o médico está de licença");
+				}
+				
+				if (erros.length > 0) {
+					Alerta.confirm("Agendamento apresenta os seguintes erros:\n" + erros +
+						"\n\nDeseja salvar assim mesmo?", confirmacaoSalvar, "Salvar");
+				} else {
+					if (isInserirNovoRegistro == false) {
+						new AgendamentoEvent(AgendamentoEvent.REAGENDAR, this, agendamento).dispatch();
+					} else {
+						new AgendamentoEvent(AgendamentoEvent.INSERIR, this, agendamento).dispatch();
+					}
+				}
+			}
+			
+			public function confirmacaoSalvar(event:CloseEvent):void{
+				if (event.detail == Alert.YES) {
+					if (isInserirNovoRegistro == false) {
+						new AgendamentoEvent(AgendamentoEvent.REAGENDAR, this, agendamento).dispatch();
+					} else {
+						new AgendamentoEvent(AgendamentoEvent.INSERIR, this, agendamento).dispatch();
+					}
+				}
+			}
+			
+			public function result(data:Object,event:Event):void {
+				if (event.type == AgendamentoEvent.INSERIR ||
+					event.type == AgendamentoEvent.REAGENDAR) {
+					Alerta.success(data.result.msg);
+					limpar();
+					listar();
+				}
+				
+				if (event.type == FeriadoEvent.LISTAR) {
+					feriados = data.result;
+				}
+				
+				if (event.type == MedicoEvent.OBTER) {
+					medico	 = data.result;
+
+					medico = data.result as Medico;
+					
+					if(medico.usuarioResponsavel != null && medico.usuarioResponsavel.sequencial != ModelLocator.getInstance().loginVO.usuario.sequencial) {
+						Alerta.info("Medico não permitido!");
+					} else {
+						medicos = new ArrayCollection;
+						medicos.addItem(medico);
+						dtgMedico.dataProvider = medicos;
+						
+						if(medico != null) {
+							dtgHorario.dataProvider = medico.horarios;
+							dtgLicenca.dataProvider = medico.licencas;	
+						}
+					}
+
+				}
+				
+				if (event.type == PacienteEvent.OBTER) {
+					paciente = data.result as Paciente;
+					pacientes = new ArrayCollection;
+					pacientes.addItem(paciente);
+					dtgPaciente.dataProvider = pacientes;
+				}
+				
+				if (event.type == EquipeMedicaEvent.OBTER) {
+					equipeMedica = data.result as EquipeMedica;
+					equipesMedica = new ArrayCollection;
+					equipesMedica.addItem(equipeMedica);
+					dtgEquipeMedica.dataProvider = equipesMedica;
+					dtgHorarioEquipeMedica.dataProvider = equipeMedica.horarios;
+				}
+				
+			}
+			
+			public function pesquisarMedico():void{
+				var win : CAD_AgendamentoCadastroMedicoListagem = new CAD_AgendamentoCadastroMedicoListagem();
+				
+				win.agendamentoCadastro = this;
+				
+				win.showCloseButton = true;
+				
+				PopUpManager.addPopUp(win,this,true);
+				PopUpManager.centerPopUp(win);
+			}
+			
+			public function pesquisarEquipeMedica():void{
+				var win : CAD_AgendamentoCadastroEquipeMedicaListagem = new CAD_AgendamentoCadastroEquipeMedicaListagem();
+				
+				win.agendamentoCadastro = this;
+				
+				win.showCloseButton = true;
+				
+				PopUpManager.addPopUp(win,this,true);
+				PopUpManager.centerPopUp(win);
+			}
+			
+			public function setarEquipeMedica(param:EquipeMedica):void{
+				equipeMedica = param;
+				dtgEquipeMedica.dataProvider = equipeMedica;
+				dtgHorarioEquipeMedica.dataProvider = equipeMedica.horarios;
+				dtgHorarioEquipeMedica.rowCount = equipeMedica.horarios.length >= 8 ? 8 : equipeMedica.horarios.length;
+			}
+			
+			public function setarMedico(param:Medico):void{
+				medico = param;
+				
+				if(medico.usuarioResponsavel != null && medico.usuarioResponsavel.sequencial != ModelLocator.getInstance().loginVO.usuario.sequencial) {
+					Alerta.info("Medico não permitido!");
+				} else {
+					dtgMedico.dataProvider = medico;
+					dtgHorario.dataProvider = medico.horarios;
+					dtgHorario.rowCount = medico.horarios.length >= 8 ? 8 : medico.horarios.length;
+					dtgLicenca.dataProvider = medico.licencas;
+					dtgLicenca.rowCount = medico.licencas.length >= 8 ? 8 : medico.licencas.length;	
+				}
+				
+			}
+			
+			public function atualizarCalendario():void{
+				dthAgendamento.disabledRanges = [{rangeEnd: new Date()}];
+				
+			}
+			
+			public function consultarMedico():void{
+				var codigoMedico:String = StringUtil.trim(txtCodigoMedico.text);
+				if (codigoMedico == "") {
+					pesquisarMedico();
+				} else {
+					var m:Medico = new Medico();
+					m.sequencial = Number(codigoMedico);
+					new MedicoEvent(MedicoEvent.OBTER, this, m).dispatch();
+				}
+			}
+			
+			public function consultarPaciente():void{
+				var codigoPaciente:String = StringUtil.trim(txtCodigoPaciente.text);
+				if (codigoPaciente == "") {
+					pesquisarPaciente();
+				} else {
+					var m:Paciente = new Paciente();
+					m.sequencial = Number(codigoPaciente);
+					new PacienteEvent(PacienteEvent.OBTER, this, m).dispatch();
+				}
+			}
+			
+			public function consultarEquipeMedica():void {
+				var codigoEquipeMedica:String = StringUtil.trim(txtCodigoEquipeMedica.text);
+				if(codigoEquipeMedica == "") {
+					//pesquisarEquipeMedica();
+				} else {
+					var m:EquipeMedica = new EquipeMedica();
+					m.sequencial = Number(codigoEquipeMedica);
+					new EquipeMedicaEvent(EquipeMedicaEvent.OBTER, this, m).dispatch();
+				}
+			}
+			
+			public function pesquisarPaciente():void{
+				var win : CAD_AgendamentoCadastroPacienteListagem = new CAD_AgendamentoCadastroPacienteListagem();
+				
+				win.agendamentoCadastro = this;
+				
+				win.showCloseButton = true;
+				
+				PopUpManager.addPopUp(win,this,true);
+				PopUpManager.centerPopUp(win);
+			}
+			
+			public function setarPaciente(param:Paciente):void{
+				paciente = param;
+				dtgPaciente.dataProvider = paciente;
+			}
+			
+			public function preencherFormulario():void{
+				setarMedico(agendamento.medico);
+				setarPaciente(agendamento.paciente);
+				dthAgendamento.selectedDate = agendamento.data;
+				cmbTurnoAgendamento.selectedValue = agendamento.turno;
+				
+				medicoSequencialAnterior = agendamento.medico.sequencial;
+				dataAnterior = agendamento.data;
+				turnoAnterior = agendamento.turno;
+			}
+			
+			public function onCmbTipoChange():void{
+				if(cmbTipo.selectedIndex == 0) {
+					fsMedico.visible = true;
+					fsMedico.includeInLayout = true;
+					fsHorarioMedico.visible = true;
+					fsHorarioMedico.includeInLayout = true;
+					fsEquipeMedica.visible = false;
+					fsEquipeMedica.includeInLayout = false;
+					fsHorarioEquipeMedica.visible = false;
+					fsHorarioEquipeMedica.includeInLayout = false;
+				} else {
+					fsMedico.visible = false;
+					fsMedico.includeInLayout = false;
+					fsHorarioMedico.visible = false;
+					fsHorarioMedico.includeInLayout = false;
+					fsEquipeMedica.visible = true;
+					fsEquipeMedica.includeInLayout = true;
+					fsHorarioEquipeMedica.visible = true;
+					fsHorarioEquipeMedica.includeInLayout = true;
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<mx:TabNavigator id="tabPaciente" width="100%" height="100%" backgroundAlpha="0"
+					 borderStyle="none" creationPolicy="all" paddingTop="0">
+		<mx:Form width="100%" height="100%" label="Dados de Agendamento" showEffect="Fade">
+			<leonelcasado:CustomFieldSet title="Dados do Paciente" height="1%" paddingBottom="5" paddingLeft="20"
+										 paddingRight="20" paddingTop="20">
+				<mx:FormItem label="Paciente:" width="100%">
+					<mx:HBox>
+						<leonelcasado:CustomLabel text="(COD Prontuário:)"/>
+						<leonelcasado:CustomTextInput id="txtCodigoPaciente" enter="consultarPaciente()" restrict="0-9"/>
+						<leonelcasado:CustomButton label="Pesquisar Paciente" click="pesquisarPaciente()" />
+					</mx:HBox>
+					<mx:DataGrid id="dtgPaciente" rowCount="1" width="100%">
+						<mx:columns>
+							<mx:DataGridColumn headerText="PRONTUÁRIO" dataField="sequencial" />
+							<mx:DataGridColumn headerText="NOME" dataField="nome" />
+							<mx:DataGridColumn headerText="CNS" dataField="cns" />
+						</mx:columns>
+					</mx:DataGrid>
+				</mx:FormItem>
+			</leonelcasado:CustomFieldSet>
+			
+			<leonelcasado:CustomFieldSet title="Tipo" height="1%" paddingBottom="5" paddingLeft="20"
+										 paddingRight="20" paddingTop="20">
+				<leonelcasado:CustomComboBox id="cmbTipo" change="onCmbTipoChange()">
+					<s:ArrayList source="{LISTA_TIPO}" />
+				</leonelcasado:CustomComboBox>
+			</leonelcasado:CustomFieldSet>
+			
+			<leonelcasado:CustomFieldSet title="Dados do Médico" height="5%" paddingBottom="5" paddingLeft="20"
+										 paddingRight="20" paddingTop="20" visible="true" includeInLayout="true" id="fsMedico">
+				<mx:FormItem label="Médico:" width="100%">
+					<mx:HBox>
+						<leonelcasado:CustomLabel text="(COD Médico:)"/>
+						<leonelcasado:CustomTextInput id="txtCodigoMedico" enter="consultarMedico()" restrict="0-9"/>
+						<leonelcasado:CustomButton label="Pesquisar Médico" click="pesquisarMedico()" />
+					</mx:HBox>
+					<mx:DataGrid id="dtgMedico" rowCount="1" width="100%">
+						<mx:columns>
+							<mx:DataGridColumn headerText="COD" dataField="sequencial" />
+							<mx:DataGridColumn headerText="NOME" dataField="nome" />
+							<mx:DataGridColumn headerText="CNS" dataField="cns" />
+							<mx:DataGridColumn headerText="CBO" dataField="ocupacao.codigoOcupacao" />
+							<mx:DataGridColumn headerText="Ocupação" dataField="ocupacao.descricao" />
+							<mx:DataGridColumn headerText="ATIVO" dataField="indicadorAtivo" />
+						</mx:columns>
+					</mx:DataGrid>
+				</mx:FormItem>
+				<mx:HBox width="100%">
+					<mx:FormItem label="Horário:" width="50%">
+						<mx:DataGrid id="dtgHorario" rowCount="5" width="100%">
+							<mx:columns>
+								<mx:DataGridColumn headerText="Dia da Semana" dataField="getDiaSemana" />
+								<mx:DataGridColumn headerText="Turno" dataField="getTurno" />
+								<mx:DataGridColumn headerText="Número Máximo de Agendamentos" dataField="numeroMaximoAgendamentos" />
+							</mx:columns>
+						</mx:DataGrid>
+					</mx:FormItem>
+					<mx:FormItem label="Licença:" width="50%">
+						<mx:DataGrid id="dtgLicenca" rowCount="1" width="100%">
+							<mx:columns>
+								<mx:DataGridColumn headerText="Início" dataField="getDataInicio" />
+								<mx:DataGridColumn headerText="Fim" dataField="getDataFim" />
+								<mx:DataGridColumn headerText="Motivo" dataField="motivo" />
+							</mx:columns>
+						</mx:DataGrid>
+					</mx:FormItem>
+				</mx:HBox>
+			</leonelcasado:CustomFieldSet>
+			<leonelcasado:CustomFieldSet title="Dados da Equipe Médica" height="5%" paddingBottom="5" paddingLeft="20"
+										 paddingRight="20" paddingTop="20" visible="false" includeInLayout="false" id="fsEquipeMedica">
+				<mx:FormItem label="Equipe Médica:" width="100%">
+					<mx:HBox>
+						<leonelcasado:CustomLabel text="(COD Equipe Médica:)"/>
+						<leonelcasado:CustomTextInput id="txtCodigoEquipeMedica" enter="consultarEquipeMedica()" restrict="0-9"/>
+						<leonelcasado:CustomButton label="Pesquisar Equipe Médica" click="pesquisarEquipeMedica()"/>
+					</mx:HBox>
+					<mx:DataGrid id="dtgEquipeMedica" rowCount="1" width="100%">
+						<mx:columns>
+							<mx:DataGridColumn headerText="COD" dataField="sequencial" />
+							<mx:DataGridColumn headerText="DESCRICAO" dataField="descricao" />
+						</mx:columns>
+					</mx:DataGrid>
+				</mx:FormItem>
+				<mx:HBox width="100%">
+					<mx:FormItem label="Horário:" width="50%">
+						<mx:DataGrid id="dtgHorarioEquipeMedica" rowCount="5" width="100%">
+							<mx:columns>
+								<mx:DataGridColumn headerText="Dia da Semana" dataField="getDiaSemana" />
+								<mx:DataGridColumn headerText="Turno" dataField="getTurno" />
+								<mx:DataGridColumn headerText="Número Máximo de Agendamentos" dataField="numeroMaximoAgendamentos" />
+							</mx:columns>
+						</mx:DataGrid>
+					</mx:FormItem>
+				</mx:HBox>
+			</leonelcasado:CustomFieldSet>
+			<leonelcasado:CustomFieldSet title="Data de Agendamento Médico" height="5%" paddingBottom="5" paddingLeft="20"
+										 paddingRight="20" paddingTop="20" id="fsHorarioMedico">
+				<mx:FormItem width="100%" label="Data:">
+					<mx:HBox>
+						<leonelcasado:CustomDateField id="dthAgendamento" />
+						<leonelcasado:CustomLabel text="Turno: " />
+						<leonelcasado:CustomComboBox id="cmbTurnoAgendamento" dataProvider="{Horario.COMBO_BOX_DATA_PROVIDER_TURNOS}" />
+					</mx:HBox>
+				</mx:FormItem>
+			</leonelcasado:CustomFieldSet>
+			<leonelcasado:CustomFieldSet title="Data de Agendamento Equipe Médica" height="5%" paddingBottom="5" paddingLeft="20"
+										 paddingRight="20" paddingTop="20" visible="false" id="fsHorarioEquipeMedica">
+				<mx:FormItem width="100%" label="Data:">
+					<mx:HBox>
+						<leonelcasado:CustomDateField id="dthPeriodoIni" />
+						<leonelcasado:CustomDateField id="dthPeriodoFim" />
+					</mx:HBox>
+				</mx:FormItem>
+			</leonelcasado:CustomFieldSet>
+		</mx:Form>
+	</mx:TabNavigator>
+	<!-- *********************************************************************************** -->
+	<componentes:BarraControles id="controles" includeInLayoutBtnSalvar="true" salvar="salvar()"
+								styleButtons="menuButton"/>
+</mx:VBox>
